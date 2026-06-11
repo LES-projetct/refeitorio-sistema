@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -83,25 +84,102 @@ public class CompraController {
     @PostMapping("/salvar")
     public String salvarCompraForm(
             @ModelAttribute Compra compra,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         try {
 
-            service.salvarCompra(compra);
+            Compra compraSalva
+                    = service.salvarCompra(compra);
+
+            /*
+         * A mensagem permanece disponível
+         * depois do redirecionamento.
+             */
+            redirectAttributes.addFlashAttribute(
+                    "sucesso",
+                    "Compra nº " + compraSalva.getId()
+                    + " registrada com sucesso."
+            );
 
             return "redirect:/compras/tela";
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
 
-            model.addAttribute("erro", e.getMessage());
+            model.addAttribute(
+                    "erro",
+                    e.getMessage()
+            );
 
-            model.addAttribute("compra", compra);
+            model.addAttribute(
+                    "compra",
+                    compra
+            );
 
             model.addAttribute(
                     "usuarios",
-                    usuarioService.listarTodos());
+                    usuarioService.listarTodos()
+            );
+
+            /*
+         * Esta lista também precisa ser carregada novamente,
+         * pois a página possui o campo de produtos.
+             */
+            model.addAttribute(
+                    "produtos",
+                    produtoService.listarTodos()
+            );
 
             return "compra-form";
+
+        } catch (Exception e) {
+
+            model.addAttribute(
+                    "erro",
+                    "Não foi possível registrar a compra."
+            );
+
+            model.addAttribute(
+                    "compra",
+                    compra
+            );
+
+            model.addAttribute(
+                    "usuarios",
+                    usuarioService.listarTodos()
+            );
+
+            model.addAttribute(
+                    "produtos",
+                    produtoService.listarTodos()
+            );
+
+            return "compra-form";
+        }
+    }
+
+    @GetMapping("/detalhes/{id}")
+    public String detalhesCompra(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            Compra compra = service.buscarPorId(id);
+
+            model.addAttribute("compra", compra);
+
+            return "compra-detalhes";
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "erro",
+                    e.getMessage()
+            );
+
+            return "redirect:/compras/tela";
         }
     }
 }

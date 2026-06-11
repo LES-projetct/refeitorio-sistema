@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
     <head>
         <meta charset="UTF-8">
+
         <title>Acessos</title>
 
-        <link rel="stylesheet" th:href="@{/css/style.css}">
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
     </head>
 
     <body>
@@ -14,9 +17,56 @@
             <div class="topo"></div>
 
             <div th:replace="~{fragments/menu :: menu}"></div>
-            <h1 class="titulo">CONTROLE DE ACESSOS</h1>
 
+            <h1 class="titulo">
+                CONTROLE DE ACESSOS
+            </h1>
+
+            <!-- Registro por RFID -->
+            <div class="acesso-registro-card">
+
+                <label for="rfidAcesso">
+                    Código RFID
+                </label>
+
+                <div class="acesso-controles">
+
+                    <input type="text"
+                           id="rfidAcesso"
+                           class="input-pdv"
+                           placeholder="Aproxime o cartão ou digite o RFID"
+                           autocomplete="off">
+
+                    <button type="button"
+                            id="btnEntrada"
+                            class="botao botao-verde">
+
+                        REGISTRAR ENTRADA
+
+                    </button>
+
+                    <button type="button"
+                            id="btnSaida"
+                            class="botao botao-azul">
+
+                        REGISTRAR SAÍDA
+
+                    </button>
+
+                </div>
+
+                <div id="mensagemAcesso"
+                     class="mensagem-acesso"
+                     role="status"
+                     aria-live="polite"
+                     hidden>
+                </div>
+
+            </div>
+
+            <!-- Histórico -->
             <div class="tabela-container">
+
                 <table class="tabela">
 
                     <thead>
@@ -26,6 +76,7 @@
                             <th>ENTRADA</th>
                             <th>SAÍDA</th>
                             <th>STATUS</th>
+                            <th>SITUAÇÃO</th>
                             <th>MOTIVO</th>
                         </tr>
                     </thead>
@@ -36,11 +87,24 @@
 
                             <td th:text="${acesso.id}"></td>
 
-                            <td th:text="${acesso.usuario.nome}"></td>
+                            <td th:text="${acesso.usuario != null
+                                ? acesso.usuario.nome
+                                : 'Usuário não localizado'}">
+                            </td>
 
-                            <td th:text="${acesso.dataHoraEntrada}"></td>
+                            <td th:text="${acesso.dataHoraEntrada != null
+                                ? #temporals.format(
+                                acesso.dataHoraEntrada,
+                                'dd/MM/yyyy HH:mm')
+                                : '-'}">
+                            </td>
 
-                            <td th:text="${acesso.dataHoraSaida}"></td>
+                            <td th:text="${acesso.dataHoraSaida != null
+                                ? #temporals.format(
+                                acesso.dataHoraSaida,
+                                'dd/MM/yyyy HH:mm')
+                                : '-'}">
+                            </td>
 
                             <td class="coluna-status">
 
@@ -56,27 +120,62 @@
 
                             </td>
 
-                            <td th:text="${acesso.motivoBloqueio}"></td>
+                            <td class="coluna-status">
+
+                                <span th:if="${!acesso.acessoPermitido}"
+                                      class="status situacao-negada">
+                                    NEGADO
+                                </span>
+
+                                <span th:if="${acesso.acessoPermitido
+                                      and acesso.dataHoraSaida == null}"
+                                      class="status situacao-aberta">
+                                    EM ABERTO
+                                </span>
+
+                                <span th:if="${acesso.acessoPermitido
+                                      and acesso.dataHoraSaida != null}"
+                                      class="status situacao-finalizada">
+                                    FINALIZADO
+                                </span>
+
+                            </td>
+
+                            <td th:text="${acesso.motivoBloqueio != null
+                                ? acesso.motivoBloqueio
+                                : '-'}">
+                            </td>
+
+                        </tr>
+
+                        <tr th:if="${acessos == null or acessos.isEmpty()}">
+
+                            <td colspan="7">
+                                Nenhum acesso registrado.
+                            </td>
 
                         </tr>
 
                     </tbody>
 
                 </table>
+
             </div>
 
             <div class="acoes">
 
-                <a href="/" class="botao botao-azul">
+                <a th:href="@{/}"
+                   class="botao botao-azul">
+
                     VOLTAR
+
                 </a>
 
             </div>
 
         </div>
-        <script>
-            document.getElementById("menu-acessos").classList.add("ativo");
-        </script>
+
+        <script th:src="@{/js/acesso.js}"></script>
 
     </body>
 </html>

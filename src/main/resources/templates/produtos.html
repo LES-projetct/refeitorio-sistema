@@ -80,17 +80,14 @@
 
                                 <a th:href="@{/produtos/editar/{id}(id=${produto.id})}"
                                    class="botao-mini botao-azul">
-
                                     EDITAR
-
                                 </a>
 
-                                <a th:href="@{/produtos/excluir/{id}(id=${produto.id})}"
-                                   class="botao-mini botao-vermelho">
-
+                                <button type="button"
+                                        class="botao-mini botao-vermelho btn-excluir-produto"
+                                        th:attr="data-url=@{/produtos/excluir/{id}(id=${produto.id})}">
                                     EXCLUIR
-
-                                </a>
+                                </button>
 
                             </td>
                         </tr>
@@ -115,26 +112,27 @@
 
         </div>
 
-        <div id="modalExcluir" class="modal">
+        <div id="modalExcluirProduto" class="modal">
 
             <div class="modal-conteudo">
 
                 <h2>Confirmar exclusão</h2>
 
-                <p>Deseja realmente excluir este registro?</p>
+                <p>Deseja realmente excluir este produto?</p>
 
                 <div class="acoes">
 
-                    <button id="cancelarModal"
+                    <button type="button"
+                            id="cancelarExclusaoProduto"
                             class="botao botao-azul">
                         CANCELAR
                     </button>
 
-                    <button type="button"
-                            class="botao-mini botao-vermelho btn-excluir"
-                            th:attr="data-url=@{/produtos/excluir/{id}(id=${produto.id})}">
+                    <a href="#"
+                       id="confirmarExclusaoProduto"
+                       class="botao botao-vermelho">
                         EXCLUIR
-                    </button>
+                    </a>
 
                 </div>
 
@@ -143,24 +141,55 @@
         </div>
 
         <script>
-            document.getElementById("menu-produtos").classList.add("ativo");
-            const pesquisa = document.getElementById("pesquisaProdutos");
+            document.addEventListener("DOMContentLoaded", function () {
 
-            pesquisa.addEventListener("keyup", function () {
+                const menuProdutos =
+                        document.getElementById("menu-produtos");
 
-                const termo = pesquisa.value.toLowerCase();
+                if (menuProdutos) {
+                    menuProdutos.classList.add("ativo");
+                }
 
-                const linhas = document.querySelectorAll(
-                        "#tabelaProdutos tbody tr");
+                const modal =
+                        document.getElementById("modalExcluirProduto");
 
-                linhas.forEach(linha => {
+                const confirmar =
+                        document.getElementById("confirmarExclusaoProduto");
 
-                    const texto = linha.innerText.toLowerCase();
+                const cancelar =
+                        document.getElementById("cancelarExclusaoProduto");
 
-                    linha.style.display =
-                            texto.includes(termo)
-                            ? ""
-                            : "none";
+                const botoesExcluir =
+                        document.querySelectorAll(".btn-excluir-produto");
+
+                botoesExcluir.forEach(function (botao) {
+
+                    botao.addEventListener("click", function () {
+
+                        const url =
+                                botao.getAttribute("data-url");
+
+                        confirmar.setAttribute("href", url);
+
+                        modal.style.display = "flex";
+                    });
+                });
+
+                cancelar.addEventListener("click", function () {
+
+                    confirmar.setAttribute("href", "#");
+
+                    modal.style.display = "none";
+                });
+
+                window.addEventListener("click", function (event) {
+
+                    if (event.target === modal) {
+
+                        confirmar.setAttribute("href", "#");
+
+                        modal.style.display = "none";
+                    }
                 });
             });
         </script>

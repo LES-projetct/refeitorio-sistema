@@ -49,8 +49,22 @@ public class ItemCompra {
     @PreUpdate
     public void calcularValorTotal() {
 
-        if (peso != null && valorUnitario != null) {
-            this.valorTotal = peso.multiply(valorUnitario);
+        if (valorUnitario == null) {
+            valorTotal = BigDecimal.ZERO;
+            return;
+        }
+
+        if (peso != null) {
+
+            valorTotal = peso.multiply(valorUnitario);
+
+        } else if (quantidade != null) {
+
+            valorTotal = quantidade.multiply(valorUnitario);
+
+        } else {
+
+            valorTotal = BigDecimal.ZERO;
         }
     }
 }

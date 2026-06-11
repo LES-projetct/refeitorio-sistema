@@ -10,6 +10,9 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -27,14 +30,87 @@ public class RegistroAcessoController {
 
     @ResponseBody
     @PostMapping("/entrada/{codigoRfid}")
-    public RegistroAcesso registrarEntrada(@PathVariable String codigoRfid) {
-        return service.registrarEntradaPorRfid(codigoRfid);
+    public ResponseEntity<Map<String, Object>> registrarEntrada(
+            @PathVariable String codigoRfid) {
+
+        try {
+
+            RegistroAcesso registro
+                    = service.registrarEntradaPorRfid(codigoRfid);
+
+            boolean permitido
+                    = Boolean.TRUE.equals(registro.getAcessoPermitido());
+
+            String mensagem;
+
+            if (permitido) {
+                mensagem = "Entrada liberada para "
+                        + registro.getUsuario().getNome() + ".";
+            } else {
+                mensagem = "Acesso bloqueado: "
+                        + registro.getMotivoBloqueio() + ".";
+            }
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "permitido", permitido,
+                            "mensagem", mensagem,
+                            "registroId", registro.getId()
+                    )
+            );
+
+        } catch (ResponseStatusException e) {
+
+            String mensagem = e.getReason() != null
+                    ? e.getReason()
+                    : "Não foi possível registrar a entrada.";
+
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(
+                            Map.of(
+                                    "permitido", false,
+                                    "mensagem", mensagem
+                            )
+                    );
+        }
     }
 
     @ResponseBody
     @PostMapping("/saida/{codigoRfid}")
-    public RegistroAcesso registrarSaida(@PathVariable String codigoRfid) {
-        return service.registrarSaidaPorRfid(codigoRfid);
+    public ResponseEntity<Map<String, Object>> registrarSaida(
+            @PathVariable String codigoRfid) {
+
+        try {
+
+            RegistroAcesso registro
+                    = service.registrarSaidaPorRfid(codigoRfid);
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "sucesso", true,
+                            "mensagem",
+                            "Saída registrada para "
+                            + registro.getUsuario().getNome() + ".",
+                            "registroId", registro.getId()
+                    )
+            );
+
+        } catch (ResponseStatusException e) {
+
+            String mensagem = e.getReason() != null
+                    ? e.getReason()
+                    : "Não foi possível registrar a saída.";
+
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(
+                            Map.of(
+                                    "sucesso", false,
+                                    "mensagem", mensagem
+                            )
+                    );
+        }
     }
 
     @ResponseBody

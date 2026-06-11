@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -70,7 +71,7 @@ public class CompraService {
                 if (item.getProduto() == null || item.getProduto().getId() == null) {
                     throw new IllegalArgumentException("Produto não informado");
                 }
-                
+
                 Produto produto = produtoRepository.findById(
                         item.getProduto().getId())
                         .orElseThrow(()
@@ -150,6 +151,23 @@ public class CompraService {
         compra.setDataHora(LocalDateTime.now());
 
         return compraRepository.save(compra);
+    }
+
+    @Transactional(readOnly = true)
+    public Compra buscarPorId(Long id) {
+
+        if (id == null) {
+            throw new IllegalArgumentException(
+                    "Identificador da compra não informado"
+            );
+        }
+
+        return compraRepository.buscarDetalhesPorId(id)
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Compra não encontrada"
+                )
+                );
     }
 
     public List<Compra> listarTodas() {

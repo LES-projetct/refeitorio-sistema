@@ -732,3 +732,167 @@ body {
     text-align: center;
     box-sizing: border-box;
 }
+
+/* =========================================================
+   MENSAGEM DE SUCESSO
+   ========================================================= */
+
+.mensagem-sucesso {
+    width: 100%;
+    margin: 0 0 20px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+
+    background-color: #d8ffe3;
+    border: 1px solid #91d8a6;
+    border-radius: 12px;
+
+    color: #176b35;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* =========================================================
+   DETALHES DA COMPRA
+   ========================================================= */
+
+.detalhes-compra-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.card-detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    padding: 18px;
+    box-sizing: border-box;
+
+    background: white;
+    border: 1px solid #e2e2e2;
+    border-radius: 16px;
+
+    text-align: center;
+}
+
+.card-detalhe span {
+    color: #555;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.card-detalhe strong {
+    color: #111;
+    font-size: 18px;
+}
+
+.subtitulo {
+    margin: 25px 0 15px;
+    text-align: center;
+    font-size: 20px;
+}
+
+@media (max-width: 900px) {
+
+    .detalhes-compra-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+
+    .detalhes-compra-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   CONTROLE DE ACESSOS
+   ========================================================= */
+
+.acesso-registro-card {
+    width: 100%;
+    margin-bottom: 22px;
+    padding: 22px;
+    box-sizing: border-box;
+
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.acesso-registro-card label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.acesso-controles {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 210px 210px;
+    gap: 14px;
+    align-items: center;
+}
+
+.acesso-controles .botao {
+    height: 44px;
+    border-radius: 14px;
+}
+
+.mensagem-acesso {
+    width: 100%;
+    margin-top: 14px;
+    padding: 11px 14px;
+    box-sizing: border-box;
+
+    border-radius: 11px;
+
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mensagem-acesso-sucesso {
+    background: #d8ffe3;
+    border: 1px solid #91d8a6;
+    color: #176b35;
+}
+
+.mensagem-acesso-erro {
+    background: #ffe0e0;
+    border: 1px solid #ffaaaa;
+    color: #a00000;
+}
+
+.mensagem-acesso-aviso {
+    background: #fff4cc;
+    border: 1px solid #e7ca62;
+    color: #745500;
+}
+
+@media (max-width: 900px) {
+
+    .acesso-controles {
+        grid-template-columns: 1fr;
+    }
+}
+/* Situação do registro de acesso */
+
+.situacao-aberta {
+    background-color: #fff4cc;
+    color: #745500;
+}
+
+.situacao-finalizada {
+    background-color: #d8ffe3;
+    color: #176b35;
+}
+
+.situacao-negada {
+    background-color: #ffe0e0;
+    color: #a00000;
+}

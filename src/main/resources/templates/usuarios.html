@@ -72,17 +72,14 @@
 
                                 <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}"
                                    class="botao-mini botao-azul">
-
                                     EDITAR
-
                                 </a>
 
-                                <a th:href="@{/usuarios/excluir/{id}(id=${usuario.id})}"
-                                   class="botao-mini botao-vermelho">
-
+                                <button type="button"
+                                        class="botao-mini botao-vermelho btn-excluir"
+                                        th:attr="data-url=@{/usuarios/excluir/{id}(id=${usuario.id})}">
                                     EXCLUIR
-
-                                </a>
+                                </button>
 
                             </td>
 
@@ -113,20 +110,21 @@
 
                 <h2>Confirmar exclusão</h2>
 
-                <p>Deseja realmente excluir este registro?</p>
+                <p>Deseja realmente excluir este usuário?</p>
 
                 <div class="acoes">
 
-                    <button id="cancelarModal"
+                    <button type="button"
+                            id="cancelarModal"
                             class="botao botao-azul">
                         CANCELAR
                     </button>
 
-                    <button type="button"
-                            class="botao-mini botao-vermelho btn-excluir"
-                            th:attr="data-url=@{/usuarios/excluir/{id}(id=${usuario.id})}">
+                    <a href="#"
+                       id="confirmarExcluir"
+                       class="botao botao-vermelho">
                         EXCLUIR
-                    </button>
+                    </a>
 
                 </div>
 
@@ -135,54 +133,92 @@
         </div>
 
         <script>
-            document.getElementById("menu-usuarios").classList.add("ativo");
-            const pesquisa = document.getElementById("pesquisaUsuario");
+            document.addEventListener("DOMContentLoaded", function () {
 
-            pesquisa.addEventListener("keyup", function () {
+                /* Marca o menu Usuários como ativo */
+                const menuUsuarios =
+                        document.getElementById("menu-usuarios");
 
-                const termo = pesquisa.value.toLowerCase();
-
-                const linhas = document.querySelectorAll(
-                        "#tabelaUsuarios tbody tr");
-
-                linhas.forEach(linha => {
-
-                    const texto = linha.innerText.toLowerCase();
-
-                    linha.style.display =
-                            texto.includes(termo)
-                            ? ""
-                            : "none";
-                });
-            });
-        </script>
-        <script>
-            const modal = document.getElementById("modalExcluir");
-            const confirmar = document.getElementById("confirmarExcluir");
-            const cancelar = document.getElementById("cancelarModal");
-
-            document.querySelectorAll(".btn-excluir")
-                    .forEach(botao => {
-
-                        botao.addEventListener("click", function () {
-
-                            const url = this.getAttribute("data-url");
-
-                            confirmar.href = url;
-
-                            modal.style.display = "flex";
-                        });
-                    });
-
-            cancelar.addEventListener("click", function () {
-                modal.style.display = "none";
-            });
-
-            window.addEventListener("click", function (e) {
-
-                if (e.target === modal) {
-                    modal.style.display = "none";
+                if (menuUsuarios) {
+                    menuUsuarios.classList.add("ativo");
                 }
+
+
+                /* =============================================
+                 PESQUISA AUTOMÁTICA
+                 ============================================= */
+
+                const pesquisa =
+                        document.getElementById("pesquisaUsuario");
+
+                pesquisa.addEventListener("input", function () {
+
+                    const termo =
+                            pesquisa.value.toLowerCase().trim();
+
+                    const linhas =
+                            document.querySelectorAll(
+                                    "#tabelaUsuarios tbody tr"
+                                    );
+
+                    linhas.forEach(function (linha) {
+
+                        const texto =
+                                linha.innerText.toLowerCase();
+
+                        linha.style.display =
+                                texto.includes(termo)
+                                ? ""
+                                : "none";
+                    });
+                });
+
+
+                /* =============================================
+                 MODAL DE EXCLUSÃO
+                 ============================================= */
+
+                const modal =
+                        document.getElementById("modalExcluir");
+
+                const confirmar =
+                        document.getElementById("confirmarExcluir");
+
+                const cancelar =
+                        document.getElementById("cancelarModal");
+
+                const botoesExcluir =
+                        document.querySelectorAll(".btn-excluir");
+
+                botoesExcluir.forEach(function (botao) {
+
+                    botao.addEventListener("click", function () {
+
+                        const url =
+                                botao.getAttribute("data-url");
+
+                        confirmar.setAttribute("href", url);
+
+                        modal.style.display = "flex";
+                    });
+                });
+
+                cancelar.addEventListener("click", function () {
+
+                    confirmar.setAttribute("href", "#");
+
+                    modal.style.display = "none";
+                });
+
+                window.addEventListener("click", function (event) {
+
+                    if (event.target === modal) {
+
+                        confirmar.setAttribute("href", "#");
+
+                        modal.style.display = "none";
+                    }
+                });
             });
         </script>
 

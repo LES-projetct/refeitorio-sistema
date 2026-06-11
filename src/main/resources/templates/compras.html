@@ -16,11 +16,24 @@
             <div th:replace="~{fragments/menu :: menu}"></div>
             <h1 class="titulo">COMPRAS</h1>
 
-            <div class="barra-superior">
+            <!-- Mensagem apresentada após uma compra concluída -->
+            <div th:if="${sucesso}"
+                 class="mensagem-sucesso"
+                 role="status">
 
-                
+                <span th:text="${sucesso}"></span>
 
             </div>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <div class="barra-superior"></div>
 
             <div class="tabela-container">
                 <table class="tabela">
@@ -33,6 +46,7 @@
                             <th>SALDO ANTERIOR</th>
                             <th>SALDO ATUAL</th>
                             <th>DATA</th>
+                            <th>AÇÃO</th>
                         </tr>
                     </thead>
 
@@ -44,13 +58,25 @@
 
                             <td th:text="${compra.usuario.nome}"></td>
 
-                            <td th:text="${compra.valorTotal}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(compra.valorTotal, 1, 2)}"></td>
 
-                            <td th:text="${compra.saldoAnterior}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(compra.saldoAnterior, 1, 2)}"></td>
 
-                            <td th:text="${compra.saldoAtualizado}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(compra.saldoAtualizado, 1, 2)}"></td>
 
-                            <td th:text="${compra.dataHora}"></td>
+                            <td th:text="${compra.dataHora != null
+                                ? #temporals.format(compra.dataHora, 'dd/MM/yyyy HH:mm')
+                                : '-'}">
+                            </td>
+
+                            <td>
+                                <a th:href="@{/compras/detalhes/{id}(id=${compra.id})}"
+                                   class="botao-mini botao-azul">
+
+                                    DETALHES
+
+                                </a>
+                            </td>
 
                         </tr>
 
@@ -64,7 +90,7 @@
                 <a href="/" class="botao botao-azul">
                     VOLTAR
                 </a>
-                
+
                 <a href="/compras/nova"
                    class="botao botao-verde">
 

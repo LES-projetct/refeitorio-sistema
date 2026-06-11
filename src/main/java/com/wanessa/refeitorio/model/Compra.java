@@ -36,7 +36,9 @@ public class Compra {
     @ManyToOne
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "compra", 
+            cascade = CascadeType.ALL, 
+            orphanRemoval = true)
     private List<ItemCompra> itens;
 
     @PrePersist
