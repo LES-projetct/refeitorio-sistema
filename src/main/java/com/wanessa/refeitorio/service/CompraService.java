@@ -39,6 +39,7 @@ public class CompraService {
         this.produtoRepository = produtoRepository;
     }
 
+    @Transactional
     public Compra salvarCompra(Compra compra) {
 
         Long usuarioId = compra.getUsuario().getId();
@@ -134,13 +135,13 @@ public class CompraService {
 
         if (novoSaldo.compareTo(limiteNegativo) < 0) {
             throw new IllegalArgumentException(
-                    "Limite de crédito excedido");
+                    "Limite de crédito excedido"
+            );
         }
 
-        if (novoSaldo.compareTo(BigDecimal.ZERO) < 0) {
-            usuario.setAtivo(false);
-        }
-
+        /*
+        * Saldo negativo dentro do limite não bloqueia o usuário.
+         */
         usuario.setSaldo(novoSaldo);
 
         usuarioRepository.save(usuario);

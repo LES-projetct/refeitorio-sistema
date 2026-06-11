@@ -69,13 +69,13 @@ public class UsuarioService {
         existente.setSaldo(usuario.getSaldo());
         existente.setLimiteCredito(usuario.getLimiteCredito());
 
-        // Saldo negativo não pode ficar ativo
         BigDecimal saldo = usuario.getSaldo();
         BigDecimal limiteCredito = usuario.getLimiteCredito();
 
         if (saldo != null && limiteCredito != null) {
 
-            BigDecimal limiteNegativo = limiteCredito.negate();
+            BigDecimal limiteNegativo
+                    = limiteCredito.negate();
 
             if (saldo.compareTo(limiteNegativo) < 0) {
                 throw new IllegalArgumentException(
@@ -84,15 +84,7 @@ public class UsuarioService {
             }
         }
 
-        /*
-            * O status passa a respeitar o valor escolhido
-            * no formulário de edição.
-         */
         if (usuario.getAtivo() != null) {
-            existente.setAtivo(usuario.getAtivo());
-        } else {
-
-            // Saldo zero ou positivo permite alterar o status
             existente.setAtivo(usuario.getAtivo());
         }
 

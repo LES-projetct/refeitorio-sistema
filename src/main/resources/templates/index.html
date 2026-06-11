@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
     <head>
         <meta charset="UTF-8">
+
         <title>Sistema de Refeitório</title>
-        <link rel="stylesheet" th:href="@{/css/style.css}">
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
     </head>
 
     <body>
@@ -13,35 +17,76 @@
             <div class="topo"></div>
 
             <div th:replace="~{fragments/menu :: menu}"></div>
-            <h1 class="titulo">PAINEL ADMINISTRATIVO</h1>
+
+            <h1 class="titulo">
+                PAINEL ADMINISTRATIVO
+            </h1>
 
             <div class="grid-resumo">
 
                 <div class="card-resumo card-usuarios">
+
                     <p>TOTAL DE USUÁRIOS</p>
-                    <h2 th:text="${resumo.totalUsuarios}">0</h2>
+
+                    <h2 th:text="${resumo.totalUsuarios != null
+                        ? resumo.totalUsuarios
+                        : 0}">
+                        0
+                    </h2>
+
                 </div>
 
                 <div class="card-resumo card-compras">
+
                     <p>TOTAL DE COMPRAS</p>
-                    <h2 th:text="${resumo.totalCompras}">0</h2>
+
+                    <h2 th:text="${resumo.totalCompras != null
+                        ? resumo.totalCompras
+                        : 0}">
+                        0
+                    </h2>
+
                 </div>
 
                 <div class="card-resumo card-faturamento">
+
                     <p>FATURAMENTO TOTAL</p>
-                    <h2 th:text="${resumo.faturamentoTotal}">0,00</h2>
+
+                    <h2 th:text="${resumo.faturamentoTotal != null
+                        ? 'R$ ' + #numbers.formatDecimal(
+                        resumo.faturamentoTotal, 1, 2)
+                        : 'R$ 0,00'}">
+                        R$ 0,00
+                    </h2>
+
                 </div>
 
                 <div class="card-resumo card-bloqueios">
-                    <p>ACESSOS BLOQUEADOS</p>
-                    <h2 th:text="${resumo.acessosBloqueados}">0</h2>
+
+                    <p>TENTATIVAS DE ENTRADA NEGADAS</p>
+
+                    <h2 th:text="${resumo.acessosBloqueados != null
+                        ? resumo.acessosBloqueados
+                        : 0}">
+                        0
+                    </h2>
+
                 </div>
 
             </div>
 
         </div>
+
         <script>
-            document.getElementById("menu-dashboard").classList.add("ativo");
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuDashboard =
+                        document.getElementById("menu-dashboard");
+
+                if (menuDashboard) {
+                    menuDashboard.classList.add("ativo");
+                }
+            });
         </script>
 
     </body>
