@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Compras</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+            <h1 class="titulo">COMPRAS</h1>
+
+            <div class="barra-superior">
+
+                
+
+            </div>
+
+            <div class="tabela-container">
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USUÁRIO</th>
+                            <th>VALOR TOTAL</th>
+                            <th>SALDO ANTERIOR</th>
+                            <th>SALDO ATUAL</th>
+                            <th>DATA</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="compra : ${compras}">
+
+                            <td th:text="${compra.id}"></td>
+
+                            <td th:text="${compra.usuario.nome}"></td>
+
+                            <td th:text="${compra.valorTotal}"></td>
+
+                            <td th:text="${compra.saldoAnterior}"></td>
+
+                            <td th:text="${compra.saldoAtualizado}"></td>
+
+                            <td th:text="${compra.dataHora}"></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="acoes">
+
+                <a href="/" class="botao botao-azul">
+                    VOLTAR
+                </a>
+                
+                <a href="/compras/nova"
+                   class="botao botao-verde">
+
+                    NOVA COMPRA
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.getElementById("menu-compras").classList.add("ativo");
+        </script>
+
+    </body>
+</html>

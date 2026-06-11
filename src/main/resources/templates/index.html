@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Sistema de Refeitório</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+            <h1 class="titulo">PAINEL ADMINISTRATIVO</h1>
+
+            <div class="grid-resumo">
+
+                <div class="card-resumo card-usuarios">
+                    <p>TOTAL DE USUÁRIOS</p>
+                    <h2 th:text="${resumo.totalUsuarios}">0</h2>
+                </div>
+
+                <div class="card-resumo card-compras">
+                    <p>TOTAL DE COMPRAS</p>
+                    <h2 th:text="${resumo.totalCompras}">0</h2>
+                </div>
+
+                <div class="card-resumo card-faturamento">
+                    <p>FATURAMENTO TOTAL</p>
+                    <h2 th:text="${resumo.faturamentoTotal}">0,00</h2>
+                </div>
+
+                <div class="card-resumo card-bloqueios">
+                    <p>ACESSOS BLOQUEADOS</p>
+                    <h2 th:text="${resumo.acessosBloqueados}">0</h2>
+                </div>
+
+            </div>
+
+        </div>
+        <script>
+            document.getElementById("menu-dashboard").classList.add("ativo");
+        </script>
+
+    </body>
+</html>

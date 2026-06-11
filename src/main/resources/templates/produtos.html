@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Produtos</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+            <h1 class="titulo">PRODUTOS</h1>
+
+            <div class="barra-superior">
+
+                <input type="text"
+                       id="pesquisaProdutos"
+                       placeholder="Pesquisar produto..."
+                       class="input-arredondado">
+
+
+
+            </div>
+            <div class="tabela-container">
+
+                <table class="tabela" id="tabelaProdutos">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOME</th>
+                            <th>CÓDIGO DE BARRAS</th>
+                            <th>PREÇO VENDA</th>
+                            <th>PREÇO CUSTO</th>
+                            <th>POR PESO</th>
+                            <th>STATUS</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="produto : ${produtos}">
+                            <td th:text="${produto.id}"></td>
+                            <td th:text="${produto.nome}"></td>
+                            <td th:text="${produto.codigoBarras}"></td>
+                            <td th:text="${produto.precoVenda}"></td>
+                            <td th:text="${produto.precoCusto}"></td>
+
+                            <td class="coluna-status">
+
+                                <span class="status status-ok"
+                                      th:if="${produto.vendidoPorPeso}">
+                                    POR PESO
+                                </span>
+
+                                <span class="status status-info"
+                                      th:unless="${produto.vendidoPorPeso}">
+                                    UNITÁRIO
+                                </span>
+
+                            </td>
+
+                            <td>
+                                <span th:if="${produto.ativo}"
+                                      class="status-ativo">
+                                    ATIVO
+                                </span>
+
+                                <span th:unless="${produto.ativo}"
+                                      class="status-bloqueado">
+                                    INATIVO
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <a th:href="@{/produtos/editar/{id}(id=${produto.id})}"
+                                   class="botao-mini botao-azul">
+
+                                    EDITAR
+
+                                </a>
+
+                                <a th:href="@{/produtos/excluir/{id}(id=${produto.id})}"
+                                   class="botao-mini botao-vermelho">
+
+                                    EXCLUIR
+
+                                </a>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="acoes">
+
+                <a href="/" class="botao botao-azul">
+                    VOLTAR
+                </a>
+
+                <a href="/produtos/novo"
+                   class="botao botao-verde">
+
+                    NOVO PRODUTO
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div id="modalExcluir" class="modal">
+
+            <div class="modal-conteudo">
+
+                <h2>Confirmar exclusão</h2>
+
+                <p>Deseja realmente excluir este registro?</p>
+
+                <div class="acoes">
+
+                    <button id="cancelarModal"
+                            class="botao botao-azul">
+                        CANCELAR
+                    </button>
+
+                    <button type="button"
+                            class="botao-mini botao-vermelho btn-excluir"
+                            th:attr="data-url=@{/produtos/excluir/{id}(id=${produto.id})}">
+                        EXCLUIR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.getElementById("menu-produtos").classList.add("ativo");
+            const pesquisa = document.getElementById("pesquisaProdutos");
+
+            pesquisa.addEventListener("keyup", function () {
+
+                const termo = pesquisa.value.toLowerCase();
+
+                const linhas = document.querySelectorAll(
+                        "#tabelaProdutos tbody tr");
+
+                linhas.forEach(linha => {
+
+                    const texto = linha.innerText.toLowerCase();
+
+                    linha.style.display =
+                            texto.includes(termo)
+                            ? ""
+                            : "none";
+                });
+            });
+        </script>
+
+    </body>
+</html>

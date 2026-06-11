@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Usuários</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">USUÁRIOS</h1>
+
+            <div class="barra-superior">
+
+                <input type="text"
+                       id="pesquisaUsuario"
+                       placeholder="Pesquisar usuário..."
+                       class="input-arredondado">
+
+
+
+            </div>
+
+            <div class="tabela-container">
+                <table class="tabela" id="tabelaUsuarios">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOME</th>
+                            <th>EMAIL</th>
+                            <th>RFID</th>
+                            <th>SALDO</th>
+                            <th>STATUS</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="usuario : ${usuarios}">
+
+                            <td th:text="${usuario.id}"></td>
+
+                            <td th:text="${usuario.nome}"></td>
+
+                            <td th:text="${usuario.email}"></td>
+
+                            <td th:text="${usuario.codigoRfid}"></td>
+
+                            <td th:text="${usuario.saldo}"></td>
+
+                            <td>
+                                <span th:if="${usuario.ativo}"
+                                      class="status-ativo">
+                                    ATIVO
+                                </span>
+
+                                <span th:unless="${usuario.ativo}"
+                                      class="status-bloqueado">
+                                    BLOQUEADO
+                                </span>
+                            </td>
+                            <td>
+
+                                <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}"
+                                   class="botao-mini botao-azul">
+
+                                    EDITAR
+
+                                </a>
+
+                                <a th:href="@{/usuarios/excluir/{id}(id=${usuario.id})}"
+                                   class="botao-mini botao-vermelho">
+
+                                    EXCLUIR
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="acoes">
+
+                <a href="/" class="botao botao-azul">
+                    VOLTAR
+                </a>
+
+                <a href="/usuarios/novo" class="botao botao-verde">
+                    NOVO USUÁRIO
+                </a>
+
+            </div>
+
+        </div>
+
+        <div id="modalExcluir" class="modal">
+
+            <div class="modal-conteudo">
+
+                <h2>Confirmar exclusão</h2>
+
+                <p>Deseja realmente excluir este registro?</p>
+
+                <div class="acoes">
+
+                    <button id="cancelarModal"
+                            class="botao botao-azul">
+                        CANCELAR
+                    </button>
+
+                    <button type="button"
+                            class="botao-mini botao-vermelho btn-excluir"
+                            th:attr="data-url=@{/usuarios/excluir/{id}(id=${usuario.id})}">
+                        EXCLUIR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.getElementById("menu-usuarios").classList.add("ativo");
+            const pesquisa = document.getElementById("pesquisaUsuario");
+
+            pesquisa.addEventListener("keyup", function () {
+
+                const termo = pesquisa.value.toLowerCase();
+
+                const linhas = document.querySelectorAll(
+                        "#tabelaUsuarios tbody tr");
+
+                linhas.forEach(linha => {
+
+                    const texto = linha.innerText.toLowerCase();
+
+                    linha.style.display =
+                            texto.includes(termo)
+                            ? ""
+                            : "none";
+                });
+            });
+        </script>
+        <script>
+            const modal = document.getElementById("modalExcluir");
+            const confirmar = document.getElementById("confirmarExcluir");
+            const cancelar = document.getElementById("cancelarModal");
+
+            document.querySelectorAll(".btn-excluir")
+                    .forEach(botao => {
+
+                        botao.addEventListener("click", function () {
+
+                            const url = this.getAttribute("data-url");
+
+                            confirmar.href = url;
+
+                            modal.style.display = "flex";
+                        });
+                    });
+
+            cancelar.addEventListener("click", function () {
+                modal.style.display = "none";
+            });
+
+            window.addEventListener("click", function (e) {
+
+                if (e.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
+        </script>
+
+    </body>
+</html>

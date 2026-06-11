@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Novo Produto</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+            <h1 class="titulo">NOVO PRODUTO</h1>
+
+            <form th:action="@{/produtos/salvar}"
+                  th:object="${produto}"
+                  method="post"
+                  class="formulario">
+
+                <input type="hidden" th:field="*{id}">
+                <label>Nome</label>
+                <input type="text"
+                       th:field="*{nome}"
+                       class="input-arredondado"
+                       required>
+
+                <label>Código de Barras</label>
+                <input type="text"
+                       th:field="*{codigoBarras}"
+                       class="input-arredondado"
+                       required>
+
+                <label>Preço de Custo</label>
+                <input type="number"
+                       step="0.01"
+                       th:field="*{precoCusto}"
+                       class="input-arredondado"
+                       required>
+
+                <label>Preço de Venda</label>
+                <input type="number"
+                       step="0.01"
+                       th:field="*{precoVenda}"
+                       class="input-arredondado"
+                       required>
+
+                <label>Produto por Peso</label>
+
+                <select th:field="*{vendidoPorPeso}"
+                        class="input-arredondado">
+
+                    <option th:value="true">
+                        SIM
+                    </option>
+
+                    <option th:value="false">
+                        NÃO
+                    </option>
+
+                </select>
+
+                <label>Status</label>
+
+                <select th:field="*{ativo}" class="input-arredondado">
+                    <option th:value="true">ATIVO</option>
+                    <option th:value="false">INATIVO</option>
+                </select>
+
+                <div class="acoes">
+
+                    <button type="submit"
+                            class="botao botao-verde">
+
+                        SALVAR
+
+                    </button>
+
+                    <a href="/produtos/tela"
+                       class="botao botao-azul">
+
+                        CANCELAR
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </body>
+</html>

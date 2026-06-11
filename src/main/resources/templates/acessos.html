@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Acessos</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+            <h1 class="titulo">CONTROLE DE ACESSOS</h1>
+
+            <div class="tabela-container">
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USUÁRIO</th>
+                            <th>ENTRADA</th>
+                            <th>SAÍDA</th>
+                            <th>STATUS</th>
+                            <th>MOTIVO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="acesso : ${acessos}">
+
+                            <td th:text="${acesso.id}"></td>
+
+                            <td th:text="${acesso.usuario.nome}"></td>
+
+                            <td th:text="${acesso.dataHoraEntrada}"></td>
+
+                            <td th:text="${acesso.dataHoraSaida}"></td>
+
+                            <td class="coluna-status">
+
+                                <span class="status status-ok"
+                                      th:if="${acesso.acessoPermitido}">
+                                    LIBERADO
+                                </span>
+
+                                <span class="status status-bloqueado"
+                                      th:unless="${acesso.acessoPermitido}">
+                                    BLOQUEADO
+                                </span>
+
+                            </td>
+
+                            <td th:text="${acesso.motivoBloqueio}"></td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="acoes">
+
+                <a href="/" class="botao botao-azul">
+                    VOLTAR
+                </a>
+
+            </div>
+
+        </div>
+        <script>
+            document.getElementById("menu-acessos").classList.add("ativo");
+        </script>
+
+    </body>
+</html>
