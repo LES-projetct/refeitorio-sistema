@@ -42,6 +42,13 @@
                        id="usuarioSelecionado"
                        value="">
 
+                <div id="erroCompra"
+                     class="mensagem-validacao mensagem-compra"
+                     role="alert"
+                     aria-live="assertive"
+                     hidden>
+                </div>
+
                 <div class="pdv-layout">
 
                     <!-- =========================================
@@ -64,16 +71,14 @@
                                     Saldo: R$ 0,00
                                 </span>
                                 <p id="limiteCliente">
-                                    Limite de crédito: R$ 0,00
+                                    Crédito disponível: R$ 0,00
                                 </p>
 
                                 <p id="saldoRestante">
                                     Saldo após a compra: R$ 0,00
                                 </p>
 
-                                <p id="avisoSaldo" class="aviso-saldo" style="display: none;">
-                                    A compra ultrapassa o saldo disponível. O cliente ficará bloqueado.
-                                </p>
+                                <p id="avisoSaldo" class="aviso-saldo" style="display: none;"></p>
 
                             </div>
 
@@ -115,6 +120,12 @@
                                     </option>
 
                                 </select>
+
+                                <p id="erroProduto"
+                                   class="mensagem-validacao"
+                                   aria-live="polite"
+                                   hidden>
+                                </p>
 
                             </div>
 
@@ -194,7 +205,7 @@
 
                         </div>
 
-                        <!-- Quantidade de produtos diferentes -->
+                        <!-- Quantidade total de itens da compra -->
                         <div class="card-info">
 
                             <p>ITENS</p>
@@ -208,8 +219,7 @@
                         <!-- Total enviado ao backend -->
                         <input type="hidden"
                                th:field="*{valorTotal}"
-                               id="valorTotal"
-                               value="0.00">
+                               id="valorTotal">
 
                         <!--
                             Campos ocultos dos itens serão
@@ -256,6 +266,12 @@
                        class="input-pdv"
                        autocomplete="off">
 
+                <p id="erroCliente"
+                   class="mensagem-validacao"
+                   aria-live="polite"
+                   hidden>
+                </p>
+
                 <div class="acoes">
 
                     <button type="button"
@@ -280,572 +296,7 @@
 
         </div>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-
-                /* =====================================================
-                 ELEMENTOS DA PÁGINA
-                 ===================================================== */
-
-                const menuCompras = document.getElementById("menu-compras");
-
-                if (menuCompras) {
-                    menuCompras.classList.add("ativo");
-                }
-
-                const form = document.querySelector(".form-pdv");
-
-                const produto = document.getElementById("produto");
-                const quantidade = document.getElementById("quantidade");
-                const valorUnitario = document.getElementById("valorUnitario");
-                const valorTotal = document.getElementById("valorTotal");
-                const labelQuantidade = document.getElementById("labelQuantidade");
-
-                const tabelaItens = document.querySelector("#tabelaItens tbody");
-                const btnAdicionar = document.getElementById("btnAdicionar");
-                const itensHidden = document.getElementById("itensHidden");
-
-                const valorResumo = document.getElementById("valorResumo");
-                const quantidadeItens = document.getElementById("quantidadeItens");
-
-                const modalCliente = document.getElementById("modalCliente");
-                const abrirModalCliente =
-                        document.getElementById("abrirModalCliente");
-
-                const fecharModalCliente =
-                        document.getElementById("fecharModalCliente");
-
-                const buscarCliente = document.getElementById("buscarCliente");
-                const rfidInput = document.getElementById("rfidInput");
-
-                const nomeCliente = document.getElementById("nomeCliente");
-                const saldoCliente = document.getElementById("saldoCliente");
-
-                const usuarioSelecionado =
-                        document.getElementById("usuarioSelecionado");
-                const saldoRestante =
-                        document.getElementById("saldoRestante");
-
-                const avisoSaldo =
-                        document.getElementById("avisoSaldo");
-
-                const limiteCliente =
-                        document.getElementById("limiteCliente");
-
-                let limiteCreditoCliente = 0;
-
-                let saldoAtualCliente = 0;
-
-
-                /* =====================================================
-                 FUNÇÕES AUXILIARES
-                 ===================================================== */
-
-                function obterOpcaoSelecionada() {
-                    return produto.options[produto.selectedIndex];
-                }
-
-                function produtoVendidoPorPeso() {
-                    const opcao = obterOpcaoSelecionada();
-
-                    return opcao.getAttribute("data-peso") === "true";
-                }
-
-                function obterPrecoProduto() {
-                    const opcao = obterOpcaoSelecionada();
-
-                    const precoTexto = opcao.getAttribute("data-preco");
-
-                    return parseFloat(precoTexto) || 0;
-                }
-
-                function formatarDinheiro(valor) {
-                    return valor.toFixed(2).replace(".", ",");
-                }
-
-
-                /* =====================================================
-                 CONFIGURAÇÃO DO PRODUTO SELECIONADO
-                 ===================================================== */
-
-                function preencherPreco() {
-
-                    const preco = obterPrecoProduto();
-                    const vendidoPorPeso = produtoVendidoPorPeso();
-
-                    valorUnitario.value = preco.toFixed(2);
-
-                    if (vendidoPorPeso) {
-
-                        labelQuantidade.textContent = "Peso (kg)";
-
-                        quantidade.min = "0.001";
-                        quantidade.step = "0.001";
-                        quantidade.value = "1.000";
-
-                    } else {
-
-                        labelQuantidade.textContent = "Quantidade";
-
-                        quantidade.min = "1";
-                        quantidade.step = "1";
-                        quantidade.value = "1";
-                    }
-                }
-
-
-                /* =====================================================
-                 CAMPOS OCULTOS ENVIADOS AO BACKEND
-                 ===================================================== */
-
-                function atualizarItensHidden() {
-
-                    itensHidden.innerHTML = "";
-
-                    const linhas = tabelaItens.querySelectorAll("tr");
-
-                    linhas.forEach(function (linha, index) {
-
-                        const produtoId =
-                                linha.getAttribute("data-produto-id");
-
-                        const vendidoPorPeso =
-                                linha.getAttribute("data-vendido-por-peso") === "true";
-
-                        const qtdOuPeso =
-                                linha.getAttribute("data-quantidade");
-
-                        const valorUnitarioItem =
-                                linha.getAttribute("data-valor-unitario");
-
-                        const totalItem =
-                                linha.getAttribute("data-total");
-
-                        let campoQuantidadeOuPeso;
-
-                        if (vendidoPorPeso) {
-
-                            campoQuantidadeOuPeso = `
-                        <input type="hidden"
-                               name="itens[${index}].peso"
-                               value="${qtdOuPeso}">
-                    `;
-
-                        } else {
-
-                            campoQuantidadeOuPeso = `
-                        <input type="hidden"
-                               name="itens[${index}].quantidade"
-                               value="${qtdOuPeso}">
-                    `;
-                        }
-
-                        itensHidden.insertAdjacentHTML("beforeend", `
-                    <input type="hidden"
-                           name="itens[${index}].produto.id"
-                           value="${produtoId}">
-
-                    ${campoQuantidadeOuPeso}
-
-                    <input type="hidden"
-                           name="itens[${index}].valorUnitario"
-                           value="${valorUnitarioItem}">
-
-                    <input type="hidden"
-                           name="itens[${index}].valorTotal"
-                           value="${totalItem}">
-                `);
-                    });
-                }
-                /* =====================================================
-                 ATUALIZAÇÃO DO SALDO CLIENTE
-                 ===================================================== */
-                function atualizarSaldoRestante(totalCompra) {
-
-                    if (!usuarioSelecionado.value) {
-                        saldoRestante.textContent =
-                                "Saldo após a compra: R$ 0,00";
-
-                        avisoSaldo.style.display = "none";
-                        return;
-                    }
-
-                    const novoSaldo = saldoAtualCliente - totalCompra;
-
-                    saldoRestante.textContent =
-                            "Saldo após a compra: R$ "
-                            + formatarDinheiro(novoSaldo);
-
-                    if (novoSaldo < 0) {
-                        avisoSaldo.style.display = "block";
-                    } else {
-                        avisoSaldo.style.display = "none";
-                    }
-                }
-
-
-                /* =====================================================
-                 ATUALIZAÇÃO DO TOTAL E DA QUANTIDADE DE ITENS
-                 ===================================================== */
-
-                function atualizarResumo() {
-
-                    const linhas = tabelaItens.querySelectorAll("tr");
-
-                    let totalCompra = 0;
-                    let totalItens = 0;
-
-                    linhas.forEach(function (linha) {
-
-                        const totalLinha =
-                                parseFloat(linha.getAttribute("data-total")) || 0;
-
-                        const quantidadeLinha =
-                                parseFloat(linha.getAttribute("data-quantidade")) || 0;
-
-                        const vendidoPorPeso =
-                                linha.getAttribute("data-vendido-por-peso") === "true";
-
-                        totalCompra += totalLinha;
-
-                        /*
-                         * Produto por peso conta como um item.
-                         * Produto por quantidade soma as unidades.
-                         */
-                        if (vendidoPorPeso) {
-                            totalItens += 1;
-                        } else {
-                            totalItens += quantidadeLinha;
-                        }
-                    });
-
-                    valorTotal.value = totalCompra.toFixed(2);
-
-                    valorResumo.textContent =
-                            "R$ " + formatarDinheiro(totalCompra);
-
-                    atualizarSaldoRestante(totalCompra);
-
-                    quantidadeItens.textContent = totalItens;
-
-                    atualizarItensHidden();
-                }
-
-
-                /* =====================================================
-                 ADICIONAR ITEM
-                 ===================================================== */
-
-                btnAdicionar.addEventListener("click", function () {
-
-                    const opcaoSelecionada = obterOpcaoSelecionada();
-
-                    if (!opcaoSelecionada) {
-                        alert("Selecione um produto.");
-                        return;
-                    }
-
-                    const produtoId = produto.value;
-                    const nomeProduto = opcaoSelecionada.textContent.trim();
-
-                    const vendidoPorPeso = produtoVendidoPorPeso();
-                    const valor = obterPrecoProduto();
-                    const qtd = parseFloat(quantidade.value);
-
-                    if (!produtoId) {
-                        alert("Selecione um produto.");
-                        return;
-                    }
-
-                    if (!Number.isFinite(qtd) || qtd <= 0) {
-                        alert("Informe uma quantidade ou peso válido.");
-                        quantidade.focus();
-                        return;
-                    }
-
-                    if (!Number.isFinite(valor) || valor <= 0) {
-                        alert("O produto selecionado não possui preço válido.");
-                        return;
-                    }
-
-                    if (!vendidoPorPeso && !Number.isInteger(qtd)) {
-                        alert("A quantidade deve ser um número inteiro.");
-                        quantidade.focus();
-                        return;
-                    }
-
-                    let linhaExistente = null;
-
-                    tabelaItens.querySelectorAll("tr").forEach(function (linha) {
-
-                        const idTabela =
-                                linha.getAttribute("data-produto-id");
-
-                        if (idTabela === produtoId) {
-                            linhaExistente = linha;
-                        }
-                    });
-
-                    if (linhaExistente) {
-
-                        const quantidadeAtual =
-                                parseFloat(
-                                        linhaExistente.getAttribute("data-quantidade")
-                                        ) || 0;
-
-                        const novaQuantidade = quantidadeAtual + qtd;
-                        const novoTotal = novaQuantidade * valor;
-
-                        linhaExistente.setAttribute(
-                                "data-quantidade",
-                                novaQuantidade.toString()
-                                );
-
-                        linhaExistente.setAttribute(
-                                "data-valor-unitario",
-                                valor.toFixed(2)
-                                );
-
-                        linhaExistente.setAttribute(
-                                "data-total",
-                                novoTotal.toFixed(2)
-                                );
-
-                        linhaExistente.children[1].textContent =
-                                vendidoPorPeso
-                                ? novaQuantidade.toFixed(3)
-                                : novaQuantidade.toFixed(0);
-
-                        linhaExistente.children[2].textContent =
-                                valor.toFixed(2);
-
-                        linhaExistente.children[3].textContent =
-                                novoTotal.toFixed(2);
-
-                    } else {
-
-                        const totalItem = qtd * valor;
-
-                        const quantidadeExibida =
-                                vendidoPorPeso
-                                ? qtd.toFixed(3)
-                                : qtd.toFixed(0);
-
-                        const linha = document.createElement("tr");
-
-                        linha.setAttribute("data-produto-id", produtoId);
-
-                        linha.setAttribute(
-                                "data-vendido-por-peso",
-                                vendidoPorPeso.toString()
-                                );
-
-                        linha.setAttribute(
-                                "data-quantidade",
-                                qtd.toString()
-                                );
-
-                        linha.setAttribute(
-                                "data-valor-unitario",
-                                valor.toFixed(2)
-                                );
-
-                        linha.setAttribute(
-                                "data-total",
-                                totalItem.toFixed(2)
-                                );
-
-                        linha.innerHTML = `
-                    <td>${nomeProduto}</td>
-
-                    <td>${quantidadeExibida}</td>
-
-                    <td>${valor.toFixed(2)}</td>
-
-                    <td>${totalItem.toFixed(2)}</td>
-
-                    <td>
-                        <button type="button"
-                                class="botao-mini botao-vermelho btn-remover-item">
-                            REMOVER
-                        </button>
-                    </td>
-                `;
-
-                        tabelaItens.appendChild(linha);
-                    }
-
-                    atualizarResumo();
-
-                    quantidade.value =
-                            vendidoPorPeso ? "1.000" : "1";
-                });
-
-
-                /* =====================================================
-                 REMOVER ITEM
-                 ===================================================== */
-
-                tabelaItens.addEventListener("click", function (event) {
-
-                    const botaoRemover =
-                            event.target.closest(".btn-remover-item");
-
-                    if (!botaoRemover) {
-                        return;
-                    }
-
-                    event.preventDefault();
-
-                    const linha = botaoRemover.closest("tr");
-
-                    if (linha) {
-                        linha.remove();
-                        atualizarResumo();
-                    }
-                });
-
-
-                /* =====================================================
-                 IDENTIFICAÇÃO DO CLIENTE
-                 ===================================================== */
-
-                abrirModalCliente.addEventListener("click", function () {
-
-                    modalCliente.style.display = "flex";
-                    rfidInput.value = "";
-
-                    setTimeout(function () {
-                        rfidInput.focus();
-                    }, 100);
-                });
-
-                fecharModalCliente.addEventListener("click", function () {
-                    modalCliente.style.display = "none";
-                });
-
-                buscarCliente.addEventListener("click", async function () {
-
-                    const rfid = rfidInput.value.trim();
-
-                    if (!rfid) {
-                        alert("Informe o RFID do cliente.");
-                        rfidInput.focus();
-                        return;
-                    }
-
-                    try {
-
-                        const resposta = await fetch(
-                                `/usuarios/rfid/${encodeURIComponent(rfid)}`
-                                );
-
-                        if (!resposta.ok) {
-                            throw new Error("Usuário não encontrado");
-                        }
-
-                        const usuario = await resposta.json();
-
-                        if (usuario.ativo === false) {
-                            alert("Usuário bloqueado.");
-                            return;
-                        }
-
-                        nomeCliente.textContent = usuario.nome;
-
-                        const saldo =
-                                parseFloat(usuario.saldo) || 0;
-
-                        saldoAtualCliente = saldo;
-
-                        saldoRestante.textContent =
-                                "Saldo após a compra: R$ " + formatarDinheiro(saldo);
-
-                        avisoSaldo.style.display = "none";
-
-                        saldoCliente.textContent =
-                                "Saldo: R$ " + formatarDinheiro(saldo);
-
-                        usuarioSelecionado.value = usuario.id;
-
-                        modalCliente.style.display = "none";
-
-                    } catch (erro) {
-                        alert("Usuário não encontrado.");
-                    }
-                });
-
-                rfidInput.addEventListener("keydown", function (event) {
-
-                    if (event.key === "Enter") {
-                        event.preventDefault();
-                        buscarCliente.click();
-                    }
-                });
-
-                modalCliente.addEventListener("click", function (event) {
-
-                    if (event.target === modalCliente) {
-                        modalCliente.style.display = "none";
-                    }
-                });
-
-
-                /* =====================================================
-                 VALIDAÇÃO ANTES DE FINALIZAR
-                 ===================================================== */
-
-                form.addEventListener("submit", function (event) {
-
-                    const linhas = tabelaItens.querySelectorAll("tr");
-
-                    if (!usuarioSelecionado.value) {
-                        event.preventDefault();
-
-                        alert(
-                                "Identifique o cliente antes de finalizar a compra."
-                                );
-
-                        return;
-                    }
-
-                    if (linhas.length === 0) {
-                        event.preventDefault();
-
-                        alert(
-                                "Adicione pelo menos um item à compra."
-                                );
-
-                        return;
-                    }
-
-                    atualizarResumo();
-                });
-
-
-                /* =====================================================
-                 EVENTOS DOS CAMPOS
-                 ===================================================== */
-
-                produto.addEventListener("change", preencherPreco);
-
-                quantidade.addEventListener("keydown", function (event) {
-
-                    if (event.key === "Enter") {
-                        event.preventDefault();
-                        btnAdicionar.click();
-                    }
-                });
-
-
-                /* =====================================================
-                 INICIALIZAÇÃO DA PÁGINA
-                 ===================================================== */
-
-                preencherPreco();
-                atualizarResumo();
-            });
-        </script>
+        <script th:src="@{/js/compra.js}"></script>
 
     </body>
 </html>

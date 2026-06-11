@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -68,11 +70,26 @@ public class UsuarioService {
         existente.setLimiteCredito(usuario.getLimiteCredito());
 
         // Saldo negativo não pode ficar ativo
-        if (usuario.getSaldo() != null
-                && usuario.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
+        BigDecimal saldo = usuario.getSaldo();
+        BigDecimal limiteCredito = usuario.getLimiteCredito();
 
-            existente.setAtivo(false);
+        if (saldo != null && limiteCredito != null) {
 
+            BigDecimal limiteNegativo = limiteCredito.negate();
+
+            if (saldo.compareTo(limiteNegativo) < 0) {
+                throw new IllegalArgumentException(
+                        "O saldo não pode ultrapassar o limite de crédito"
+                );
+            }
+        }
+
+        /*
+            * O status passa a respeitar o valor escolhido
+            * no formulário de edição.
+         */
+        if (usuario.getAtivo() != null) {
+            existente.setAtivo(usuario.getAtivo());
         } else {
 
             // Saldo zero ou positivo permite alterar o status
@@ -113,8 +130,22 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorRfid(String codigoRfid) {
-        return repository.findByCodigoRfid(codigoRfid)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (codigoRfid == null || codigoRfid.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Código RFID não informado"
+            );
+        }
+
+        return repository
+                .findByCodigoRfidIgnoreCase(codigoRfid.trim())
+                .orElseThrow(()
+                        -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Usuário não encontrado"
+                )
+                );
     }
 
 }

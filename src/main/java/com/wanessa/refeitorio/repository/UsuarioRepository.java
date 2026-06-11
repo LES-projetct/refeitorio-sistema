@@ -15,12 +15,15 @@ import java.util.List;
  * @author wanes
  */
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    
-    Optional<Usuario> findByCodigoRfid(String codigoRfid);
-    
+        
     boolean existsByCodigoRfid(String codigoRfid);
     
     List<Usuario> findBySaldoLessThan(BigDecimal saldo);
 
     List<Usuario> findByAtivoFalse();
+    
+    Optional<Usuario> findByCodigoRfidIgnoreCase(String codigoRfid);
+    
+    Optional<Usuario> findByCodigoRfid(String codigoRfid);
+
 }
