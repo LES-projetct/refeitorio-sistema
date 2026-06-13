@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Meus Acessos</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <h1 class="titulo">
+                MEUS ACESSOS
+            </h1>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <div th:if="${acessos == null or acessos.isEmpty()}"
+                 class="mensagem-info">
+
+                Nenhum acesso encontrado.
+
+            </div>
+
+            <div th:if="${acessos != null and !acessos.isEmpty()}"
+                 class="tabela-container">
+
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ENTRADA</th>
+                            <th>SAÍDA</th>
+                            <th>STATUS</th>
+                            <th>SITUAÇÃO</th>
+                            <th>MOTIVO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="acesso : ${acessos}">
+
+                            <td th:text="${acesso.id}">
+                                1
+                            </td>
+
+                            <td th:text="${#temporals.format(
+                                acesso.dataHoraEntrada,
+                                'dd/MM/yyyy HH:mm')}">
+                                12/06/2026 20:30
+                            </td>
+
+                            <td th:text="${acesso.dataHoraSaida != null
+                                ? #temporals.format(
+                                acesso.dataHoraSaida,
+                                'dd/MM/yyyy HH:mm')
+                                : '-'}">
+                                -
+                            </td>
+
+                            <td>
+
+                                <span th:if="${acesso.acessoPermitido}"
+                                      class="situacao-cliente-regular">
+                                    LIBERADO
+                                </span>
+
+                                <span th:if="${!acesso.acessoPermitido}"
+                                      class="situacao-cliente-bloqueado">
+                                    BLOQUEADO
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                <span th:if="${acesso.acessoPermitido
+                                      and acesso.dataHoraSaida == null}">
+                                    EM ABERTO
+                                </span>
+
+                                <span th:if="${acesso.acessoPermitido
+                                      and acesso.dataHoraSaida != null}">
+                                    FINALIZADO
+                                </span>
+
+                                <span th:if="${!acesso.acessoPermitido}">
+                                    NEGADO
+                                </span>
+
+                            </td>
+
+                            <td th:text="${acesso.motivoBloqueio != null
+                                and !acesso.motivoBloqueio.isBlank()
+                                ? acesso.motivoBloqueio
+                                : '-'}">
+                                -
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/minha-conta}"
+                   class="botao botao-azul">
+
+                    VOLTAR
+
+                </a>
+
+                <form th:action="@{/logout}"
+                      method="post">
+
+                    <button type="submit"
+                            class="botao botao-vermelho">
+
+                        SAIR
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </body>
+</html>

@@ -23,6 +23,10 @@ import com.wanessa.refeitorio.model.Compra;
 import com.wanessa.refeitorio.repository.CompraRepository;
 
 import com.wanessa.refeitorio.dto.MinhaContaDTO;
+import com.wanessa.refeitorio.model.RegistroAcesso;
+import com.wanessa.refeitorio.repository.PagamentoRepository;
+import com.wanessa.refeitorio.repository.RegistroAcessoRepository;
+import com.wanessa.refeitorio.model.Pagamento;
 
 /**
  *
@@ -35,6 +39,8 @@ public class ContaSistemaService {
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
     private final CompraRepository compraRepository;
+    private final RegistroAcessoRepository registroAcessoRepository;
+    private final PagamentoRepository pagamentoRepository;
 
     private static final SecureRandom RANDOM
             = new SecureRandom();
@@ -43,16 +49,22 @@ public class ContaSistemaService {
             ContaSistemaRepository repository,
             PasswordEncoder passwordEncoder,
             UsuarioRepository usuarioRepository,
-            CompraRepository compraRepository) {
+            CompraRepository compraRepository,
+            RegistroAcessoRepository registroAcessoRepository,
+            PagamentoRepository pagamentoRepository) {
 
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.usuarioRepository = usuarioRepository;
         this.compraRepository = compraRepository;
+        this.registroAcessoRepository = registroAcessoRepository;
+        this.pagamentoRepository = pagamentoRepository;
     }
 
     /**
      * Lista todas as contas em ordem alfabética.
+     *
+     * @return
      */
     @Transactional(readOnly = true)
     public List<ContaSistema> listarTodas() {
@@ -61,6 +73,8 @@ public class ContaSistemaService {
 
     /**
      * Lista somente as contas ativas.
+     *
+     * @return
      */
     @Transactional(readOnly = true)
     public List<ContaSistema> listarAtivas() {
@@ -69,6 +83,9 @@ public class ContaSistemaService {
 
     /**
      * Busca uma conta pelo identificador.
+     *
+     * @param id
+     * @return
      */
     @Transactional(readOnly = true)
     public ContaSistema buscarPorId(Long id) {
@@ -83,6 +100,9 @@ public class ContaSistemaService {
 
     /**
      * Busca uma conta pelo login.
+     *
+     * @param login
+     * @return
      */
     @Transactional(readOnly = true)
     public ContaSistema buscarPorLogin(String login) {
@@ -104,6 +124,9 @@ public class ContaSistemaService {
 
     /**
      * Cadastra ou atualiza uma conta.
+     *
+     * @param conta
+     * @return
      */
     @Transactional
     public ContaSistema salvar(ContaSistema conta) {
@@ -246,6 +269,8 @@ public class ContaSistemaService {
     /**
      * Desativa a conta e, quando for uma conta de cliente, também desativa o
      * usuário vinculado.
+     *
+     * @param id
      */
     @Transactional
     public void desativar(Long id) {
@@ -270,6 +295,8 @@ public class ContaSistemaService {
     /**
      * Reativa a conta e o usuário vinculado, desde que o saldo esteja dentro do
      * limite.
+     *
+     * @param id
      */
     @Transactional
     public void reativar(Long id) {
@@ -328,6 +355,9 @@ public class ContaSistemaService {
 
     /**
      * Cria automaticamente a conta de acesso do cliente.
+     *
+     * @param usuario
+     * @return
      */
     @Transactional
     public CredencialInicialDTO criarContaCliente(
@@ -505,6 +535,10 @@ public class ContaSistemaService {
 
     /**
      * Altera o PIN temporário no primeiro acesso.
+     *
+     * @param login
+     * @param novoPin
+     * @param confirmacaoPin
      */
     @Transactional
     public void alterarPinPrimeiroAcesso(
@@ -567,6 +601,9 @@ public class ContaSistemaService {
 
     /**
      * Retorna os dados pessoais e financeiros da conta cliente autenticada.
+     *
+     * @param login
+     * @return
      */
     @Transactional(readOnly = true)
     public MinhaContaDTO consultarMinhaConta(String login) {
@@ -661,6 +698,9 @@ public class ContaSistemaService {
     /**
      * Retorna somente as compras pertencentes ao cliente atualmente
      * autenticado.
+     *
+     * @param login
+     * @return
      */
     @Transactional(readOnly = true)
     public List<Compra> listarMinhasCompras(String login) {
@@ -694,6 +734,237 @@ public class ContaSistemaService {
         }
 
         return compraRepository
+                .findByUsuarioIdOrderByDataHoraDesc(
+                        usuario.getId()
+                );
+    }
+
+    /**
+     * Retorna somente os acessos pertencentes ao cliente atualmente
+     * autenticado.
+     *
+     * @param login
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<RegistroAcesso> listarMeusAcessos(String login) {
+
+        if (login == null || login.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Conta autenticada não encontrada"
+            );
+        }
+
+        ContaSistema conta = repository
+                .findByLoginIgnoreCase(login.trim())
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Conta do sistema não encontrada"
+                )
+                );
+
+        if (conta.getPerfil() != PerfilAcesso.CLIENTE) {
+            throw new IllegalArgumentException(
+                    "Esta conta não pertence a um cliente"
+            );
+        }
+
+        Usuario usuario = conta.getUsuarioRelacionado();
+
+        if (usuario == null || usuario.getId() == null) {
+            throw new IllegalArgumentException(
+                    "A conta não possui usuário vinculado"
+            );
+        }
+
+        return registroAcessoRepository
+                .findByUsuarioIdOrderByDataHoraEntradaDesc(
+                        usuario.getId()
+                );
+    }
+
+    /**
+     * Busca os detalhes de uma compra específica, mas somente se ela pertencer
+     * ao cliente autenticado.
+     *
+     * @param login
+     * @param compraId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Compra buscarMinhaCompraPorId(
+            String login,
+            Long compraId) {
+
+        if (login == null || login.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Conta autenticada não encontrada"
+            );
+        }
+
+        if (compraId == null) {
+            throw new IllegalArgumentException(
+                    "Compra não informada"
+            );
+        }
+
+        ContaSistema conta = repository
+                .findByLoginIgnoreCase(login.trim())
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Conta do sistema não encontrada"
+                )
+                );
+
+        if (conta.getPerfil() != PerfilAcesso.CLIENTE) {
+            throw new IllegalArgumentException(
+                    "Esta conta não pertence a um cliente"
+            );
+        }
+
+        Usuario usuario = conta.getUsuarioRelacionado();
+
+        if (usuario == null || usuario.getId() == null) {
+            throw new IllegalArgumentException(
+                    "A conta não possui usuário vinculado"
+            );
+        }
+
+        return compraRepository
+                .findByIdAndUsuarioId(
+                        compraId,
+                        usuario.getId()
+                )
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Compra não encontrada para este cliente"
+                )
+                );
+    }
+
+    /**
+     * Permite que o cliente altere o próprio PIN dentro da área Minha Conta.
+     * @param login
+     * @param pinAtual
+     * @param novoPin
+     * @param confirmacaoPin
+     */
+    @Transactional
+    public void alterarPinCliente(
+            String login,
+            String pinAtual,
+            String novoPin,
+            String confirmacaoPin) {
+
+        if (login == null || login.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Conta autenticada não encontrada"
+            );
+        }
+
+        if (pinAtual == null || pinAtual.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Informe o PIN atual"
+            );
+        }
+
+        if (novoPin == null || !novoPin.matches("\\d{4}")) {
+            throw new IllegalArgumentException(
+                    "O novo PIN deve possuir exatamente 4 números"
+            );
+        }
+
+        if (!novoPin.equals(confirmacaoPin)) {
+            throw new IllegalArgumentException(
+                    "A confirmação do PIN não corresponde"
+            );
+        }
+
+        ContaSistema conta = repository
+                .findByLoginIgnoreCase(login.trim())
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Conta do sistema não encontrada"
+                )
+                );
+
+        if (conta.getPerfil() != PerfilAcesso.CLIENTE) {
+            throw new IllegalArgumentException(
+                    "Esta operação é permitida somente para clientes"
+            );
+        }
+
+        if (!Boolean.TRUE.equals(conta.getAtivo())) {
+            throw new IllegalArgumentException(
+                    "Conta inativa"
+            );
+        }
+
+        if (!passwordEncoder.matches(
+                pinAtual,
+                conta.getSenha())) {
+
+            throw new IllegalArgumentException(
+                    "PIN atual incorreto"
+            );
+        }
+
+        if (passwordEncoder.matches(
+                novoPin,
+                conta.getSenha())) {
+
+            throw new IllegalArgumentException(
+                    "O novo PIN deve ser diferente do PIN atual"
+            );
+        }
+
+        conta.setSenha(
+                passwordEncoder.encode(novoPin)
+        );
+
+        conta.setDeveTrocarSenha(false);
+
+        repository.save(conta);
+    }
+
+    /**
+     * Retorna somente os pagamentos pertencentes ao cliente atualmente
+     * autenticado.
+     * @param login
+     * @return 
+     */
+    @Transactional(readOnly = true)
+    public List<Pagamento> listarMeusPagamentos(String login) {
+
+        if (login == null || login.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Conta autenticada não encontrada"
+            );
+        }
+
+        ContaSistema conta = repository
+                .findByLoginIgnoreCase(login.trim())
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Conta do sistema não encontrada"
+                )
+                );
+
+        if (conta.getPerfil() != PerfilAcesso.CLIENTE) {
+            throw new IllegalArgumentException(
+                    "Esta conta não pertence a um cliente"
+            );
+        }
+
+        Usuario usuario = conta.getUsuarioRelacionado();
+
+        if (usuario == null || usuario.getId() == null) {
+            throw new IllegalArgumentException(
+                    "A conta não possui usuário vinculado"
+            );
+        }
+
+        return pagamentoRepository
                 .findByUsuarioIdOrderByDataHoraDesc(
                         usuario.getId()
                 );

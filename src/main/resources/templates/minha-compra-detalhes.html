@@ -7,7 +7,7 @@
         <meta name="viewport"
               content="width=device-width, initial-scale=1.0">
 
-        <title>Minhas Compras</title>
+        <title>Minha Compra</title>
 
         <link rel="stylesheet"
               th:href="@{/css/style.css}">
@@ -20,7 +20,7 @@
             <div class="topo"></div>
 
             <h1 class="titulo">
-                MINHAS COMPRAS
+                MINHA COMPRA
             </h1>
 
             <div th:if="${erro}"
@@ -49,7 +49,6 @@
                             <th>DATA</th>
                             <th>TOTAL</th>
                             <th>STATUS</th>
-                            <th>AÇÕES</th>
                         </tr>
                     </thead>
 
@@ -76,12 +75,7 @@
                             </td>
 
                             <td>
-                                <a th:href="@{/minha-conta/compras/{id}(id=${compra.id})}"
-                                   class="botao-mini botao-azul">
-
-                                    VER DETALHES
-
-                                </a>
+                                FINALIZADA
                             </td>
 
                         </tr>
@@ -94,7 +88,7 @@
 
             <div class="acoes acoes-pagina">
 
-                <a th:href="@{/minha-conta}"
+                <a th:href="@{/minha-conta/compras}"
                    class="botao botao-azul">
 
                     VOLTAR

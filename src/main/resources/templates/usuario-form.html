@@ -31,8 +31,12 @@
                 <input type="email" th:field="*{email}" class="input-arredondado" required>
 
                 <label>Código RFID</label>
-                <input type="text" th:field="*{codigoRfid}" class="input-arredondado" required>
-
+                <input type="text"
+                       id="codigoRfid"
+                       th:field="*{codigoRfid}"
+                       class="input-arredondado"
+                       readonly>
+                
                 <label>Saldo</label>
                 <input type="number" step="0.01" th:field="*{saldo}" class="input-arredondado" required>
 

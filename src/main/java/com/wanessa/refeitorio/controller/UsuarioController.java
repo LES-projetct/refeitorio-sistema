@@ -28,6 +28,7 @@ public class UsuarioController {
 
     /**
      * Lista usuários em JSON.
+     * @return 
      */
     @ResponseBody
     @GetMapping
@@ -38,6 +39,8 @@ public class UsuarioController {
 
     /**
      * Cadastra usuário pela API.
+     * @param usuario
+     * @return 
      */
     @ResponseBody
     @PostMapping
@@ -49,6 +52,7 @@ public class UsuarioController {
 
     /**
      * Lista usuários inadimplentes.
+     * @return 
      */
     @ResponseBody
     @GetMapping("/inadimplentes")
@@ -59,6 +63,8 @@ public class UsuarioController {
 
     /**
      * Abre a tela de usuários.
+     * @param model
+     * @return 
      */
     @GetMapping("/tela")
     public String telaUsuarios(Model model) {
@@ -73,11 +79,17 @@ public class UsuarioController {
 
     /**
      * Abre o formulário de cadastro.
+     * @param model
+     * @return 
      */
     @GetMapping("/novo")
     public String novoUsuario(Model model) {
 
         Usuario usuario = new Usuario();
+        
+        usuario.setCodigoRfid(
+                usuarioService.gerarCodigoRfidAutomatico()
+        );
 
         usuario.setAtivo(true);
 
@@ -91,6 +103,10 @@ public class UsuarioController {
 
     /**
      * Salva o formulário de usuário.
+     * @param usuario
+     * @param model
+     * @param redirectAttributes
+     * @return 
      */
     @PostMapping("/salvar")
     public String salvarUsuarioForm(
@@ -182,6 +198,10 @@ public class UsuarioController {
 
     /**
      * Abre a edição do usuário.
+     * @param id
+     * @param model
+     * @param redirectAttributes
+     * @return 
      */
     @GetMapping("/editar/{id}")
     public String editarUsuario(
@@ -214,6 +234,9 @@ public class UsuarioController {
 
     /**
      * Desativa o usuário sem apagar seu histórico.
+     * @param id
+     * @param redirectAttributes
+     * @return 
      */
     @PostMapping("/desativar/{id}")
     public String desativarUsuario(
@@ -242,6 +265,7 @@ public class UsuarioController {
 
     /**
      * Lista usuários bloqueados.
+     * @return 
      */
     @ResponseBody
     @GetMapping("/bloqueados")
@@ -252,6 +276,8 @@ public class UsuarioController {
 
     /**
      * Busca usuário pelo código RFID.
+     * @param codigoRfid
+     * @return 
      */
     @ResponseBody
     @GetMapping("/rfid/{codigoRfid}")

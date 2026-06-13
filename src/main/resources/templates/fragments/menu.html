@@ -12,6 +12,12 @@
                 <a href="/produtos/tela" id="menu-produtos">Produtos</a>
                 <a href="/compras/tela" id="menu-compras">Compras</a>
                 <a href="/acessos/tela" id="menu-acessos">Acessos</a>
+                <a id="menu-pagamentos"
+                   th:href="@{/pagamentos/tela}">
+
+                    Pagamentos
+
+                </a>
                 <a id="menu-contas"
                    th:href="@{/contas/tela}"
                    sec:authorize="hasRole('ADMINISTRADOR')">
@@ -20,10 +26,11 @@
 
                 </a>
 
+
             </div>
 
         </div>
-
     </body>
+
 </html>
 

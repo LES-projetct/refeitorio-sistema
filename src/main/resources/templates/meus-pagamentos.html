@@ -7,7 +7,7 @@
         <meta name="viewport"
               content="width=device-width, initial-scale=1.0">
 
-        <title>Minhas Compras</title>
+        <title>Meus Pagamentos</title>
 
         <link rel="stylesheet"
               th:href="@{/css/style.css}">
@@ -20,7 +20,7 @@
             <div class="topo"></div>
 
             <h1 class="titulo">
-                MINHAS COMPRAS
+                MEUS PAGAMENTOS
             </h1>
 
             <div th:if="${erro}"
@@ -31,14 +31,14 @@
 
             </div>
 
-            <div th:if="${compras == null or compras.isEmpty()}"
+            <div th:if="${pagamentos == null or pagamentos.isEmpty()}"
                  class="mensagem-info">
 
-                Nenhuma compra encontrada.
+                Nenhum pagamento encontrado.
 
             </div>
 
-            <div th:if="${compras != null and !compras.isEmpty()}"
+            <div th:if="${pagamentos != null and !pagamentos.isEmpty()}"
                  class="tabela-container">
 
                 <table class="tabela">
@@ -47,41 +47,61 @@
                         <tr>
                             <th>ID</th>
                             <th>DATA</th>
-                            <th>TOTAL</th>
-                            <th>STATUS</th>
-                            <th>AÇÕES</th>
+                            <th>VALOR</th>
+                            <th>SALDO ANTERIOR</th>
+                            <th>SALDO ATUALIZADO</th>
+                            <th>FORMA</th>
+                            <th>OBSERVAÇÃO</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                        <tr th:each="compra : ${compras}">
+                        <tr th:each="pagamento : ${pagamentos}">
 
-                            <td th:text="${compra.id}">
+                            <td th:text="${pagamento.id}">
                                 1
                             </td>
 
                             <td th:text="${#temporals.format(
-                                compra.dataHora,
+                                pagamento.dataHora,
                                 'dd/MM/yyyy HH:mm')}">
                                 12/06/2026 20:30
                             </td>
 
                             <td th:text="${'R$ '
                                 + #numbers.formatDecimal(
-                                compra.valorTotal,
+                                pagamento.valor,
                                 1,
                                 2)}">
                                 R$ 0,00
                             </td>
 
-                            <td>
-                                <a th:href="@{/minha-conta/compras/{id}(id=${compra.id})}"
-                                   class="botao-mini botao-azul">
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                pagamento.saldoAnterior,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
 
-                                    VER DETALHES
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                pagamento.saldoAtualizado,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
 
-                                </a>
+                            <td th:text="${pagamento.formaPagamento}">
+                                PIX
+                            </td>
+
+                            <td th:text="${pagamento.observacao != null
+                                and !pagamento.observacao.isBlank()
+                                ? pagamento.observacao
+                                : '-'}">
+                                -
                             </td>
 
                         </tr>

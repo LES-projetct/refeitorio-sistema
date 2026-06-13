@@ -16,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.wanessa.refeitorio.repository.ContaSistemaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+
 /**
  *
  * @author wanes
@@ -25,6 +27,7 @@ public class UsuarioService {
 
     private final UsuarioRepository repository;
     private final ContaSistemaRepository contaSistemaRepository;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public UsuarioService(
             UsuarioRepository repository,
@@ -43,6 +46,21 @@ public class UsuarioService {
 
         repository.findByCodigoRfid(usuario.getCodigoRfid())
                 .ifPresent(usuarioExistente -> {
+
+                    if (usuario.getId() == null
+                            && (usuario.getCodigoRfid() == null
+                            || usuario.getCodigoRfid().isBlank())) {
+
+                        usuario.setCodigoRfid(
+                                gerarCodigoRfidAutomatico()
+                        );
+                    }
+
+                    if (usuario.getCodigoRfid() != null) {
+                        usuario.setCodigoRfid(
+                                usuario.getCodigoRfid().trim().toUpperCase()
+                        );
+                    }
 
                     if (usuario.getId() == null
                             || !usuarioExistente.getId().equals(usuario.getId())) {
@@ -111,6 +129,8 @@ public class UsuarioService {
      * Desativa o usuário e sua conta de acesso.
      *
      * Os registros de compras, acessos e pagamentos permanecem preservados.
+     *
+     * @param id
      */
     @Transactional
     public void desativar(Long id) {
@@ -161,6 +181,23 @@ public class UsuarioService {
                         "Usuário não encontrado"
                 )
                 );
+    }
+
+    /**
+     * Gera automaticamente um código RFID no padrão RFID + 4 dígitos. Exemplo:
+     * RFID4827.
+     */
+    public String gerarCodigoRfidAutomatico() {
+
+        String codigo;
+
+        do {
+            int numero = 1000 + RANDOM.nextInt(9000);
+            codigo = "RFID" + numero;
+
+        } while (repository.existsByCodigoRfidIgnoreCase(codigo));
+
+        return codigo;
     }
 
 }

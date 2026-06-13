@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Pagamentos</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                PAGAMENTOS E RECARGAS
+            </h1>
+
+            <div th:if="${sucesso}"
+                 class="mensagem-sucesso"
+                 role="status">
+
+                <span th:text="${sucesso}"></span>
+
+            </div>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <!-- Formulário de pagamento -->
+            <form th:action="@{/pagamentos/registrar}"
+                  method="post"
+                  class="formulario pagamento-formulario">
+
+                <label for="usuarioId">
+                    Usuário
+                </label>
+
+                <select id="usuarioId"
+                        name="usuarioId"
+                        class="input-arredondado"
+                        required>
+
+                    <option value="">
+                        Selecione um usuário
+                    </option>
+
+                    <option th:each="usuario : ${usuarios}"
+                            th:value="${usuario.id}"
+                            th:text="${usuario.nome + ' - ' + usuario.codigoRfid}">
+                        Nome - RFID
+                    </option>
+
+                </select>
+
+                <label for="valor">
+                    Valor pago
+                </label>
+
+                <input type="number"
+                       id="valor"
+                       name="valor"
+                       class="input-arredondado"
+                       min="0.01"
+                       step="0.01"
+                       placeholder="Exemplo: 50.00"
+                       required>
+
+                <small class="texto-ajuda">
+                    Use ponto para centavos. Exemplo: 25.50
+                </small>
+
+                <label for="formaPagamento">
+                    Forma de pagamento
+                </label>
+
+                <select id="formaPagamento"
+                        name="formaPagamento"
+                        class="input-arredondado"
+                        required>
+
+                    <option value="">
+                        Selecione
+                    </option>
+
+                    <option th:each="forma : ${formasPagamento}"
+                            th:value="${forma}"
+                            th:text="${forma}">
+                        PIX
+                    </option>
+
+                </select>
+
+                <label for="observacao">
+                    Observação
+                </label>
+
+                <input type="text"
+                       id="observacao"
+                       name="observacao"
+                       class="input-arredondado"
+                       placeholder="Opcional">
+
+                <div class="acoes">
+
+                    <button type="submit"
+                            class="botao botao-verde">
+
+                        REGISTRAR PAGAMENTO
+
+                    </button>
+
+                </div>
+
+            </form>
+
+            <h2 class="subtitulo">
+                HISTÓRICO DE PAGAMENTOS
+            </h2>
+
+            <div th:if="${pagamentos == null or pagamentos.isEmpty()}"
+                 class="mensagem-info">
+
+                Nenhum pagamento registrado.
+
+            </div>
+
+            <div th:if="${pagamentos != null and !pagamentos.isEmpty()}"
+                 class="tabela-container">
+
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>DATA</th>
+                            <th>USUÁRIO</th>
+                            <th>VALOR</th>
+                            <th>SALDO ANTERIOR</th>
+                            <th>SALDO ATUALIZADO</th>
+                            <th>FORMA</th>
+                            <th>OBSERVAÇÃO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="pagamento : ${pagamentos}">
+
+                            <td th:text="${pagamento.id}">
+                                1
+                            </td>
+
+                            <td th:text="${#temporals.format(
+                                pagamento.dataHora,
+                                'dd/MM/yyyy HH:mm')}">
+                                12/06/2026 20:30
+                            </td>
+
+                            <td th:text="${pagamento.usuario.nome}">
+                                Nome
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                pagamento.valor,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                pagamento.saldoAnterior,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                pagamento.saldoAtualizado,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${pagamento.formaPagamento}">
+                                PIX
+                            </td>
+
+                            <td th:text="${pagamento.observacao != null
+                                and !pagamento.observacao.isBlank()
+                                ? pagamento.observacao
+                                : '-'}">
+                                -
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuPagamentos =
+                        document.getElementById("menu-pagamentos");
+
+                if (menuPagamentos) {
+                    menuPagamentos.classList.add("ativo");
+                }
+            });
+        </script>
+
+    </body>
+</html>

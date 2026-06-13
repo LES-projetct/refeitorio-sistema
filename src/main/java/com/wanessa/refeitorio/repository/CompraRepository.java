@@ -38,4 +38,9 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
            WHERE c.id = :id
            """)
     Optional<Compra> buscarDetalhesPorId(@Param("id") Long id);
+
+    Optional<Compra> findByIdAndUsuarioId(
+            Long id,
+            Long usuarioId
+    );
 }
