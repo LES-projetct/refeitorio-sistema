@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <title>Contas do Sistema</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <!-- Faixa superior -->
+            <div class="topo"></div>
+
+            <!-- Menu principal -->
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                CONTAS DO SISTEMA
+            </h1>
+
+            <!-- Mensagem de sucesso -->
+            <div th:if="${sucesso}"
+                 class="mensagem-sucesso"
+                 role="status">
+
+                <span th:text="${sucesso}"></span>
+
+            </div>
+
+            <!-- Mensagem de erro -->
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <!-- Pesquisa -->
+            <div class="barra-superior">
+
+                <input type="text"
+                       id="pesquisaConta"
+                       class="input-arredondado"
+                       placeholder="Pesquisar conta...">
+
+            </div>
+
+            <!-- Tabela de contas -->
+            <div class="tabela-container">
+
+                <table class="tabela"
+                       id="tabelaContas">
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>NOME</th>
+                            <th>LOGIN</th>
+                            <th>PERFIL</th>
+                            <th>USUÁRIO VINCULADO</th>
+                            <th>STATUS</th>
+                            <th>AÇÕES</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="conta : ${contas}">
+
+                            <td th:text="${conta.id}"></td>
+
+                            <td th:text="${conta.nome}"></td>
+
+                            <td th:text="${conta.login}"></td>
+
+                            <td>
+
+                                <span class="status status-info"
+                                      th:text="${conta.perfil}">
+                                </span>
+
+                            </td>
+
+                            <td th:text="${conta.usuarioRelacionado != null
+                                ? conta.usuarioRelacionado.nome
+                                : '-'}">
+                            </td>
+
+                            <td class="coluna-status">
+
+                                <span th:if="${conta.ativo}"
+                                      class="status-ativo">
+                                    ATIVA
+                                </span>
+
+                                <span th:unless="${conta.ativo}"
+                                      class="status-bloqueado">
+                                    DESATIVADA
+                                </span>
+
+                            </td>
+
+                            <td class="acoes-tabela">
+
+                                <!-- Editar -->
+                                <a th:href="@{/contas/editar/{id}(id=${conta.id})}"
+                                   class="botao-mini botao-azul">
+
+                                    EDITAR
+
+                                </a>
+
+                                <!-- Desativar -->
+                                <form th:if="${conta.ativo}"
+                                      th:action="@{/contas/desativar/{id}(id=${conta.id})}"
+                                      method="post"
+                                      class="form-acao-inline">
+
+                                    <button th:if="${conta.ativo}"
+                                            type="button"
+                                            class="botao-mini botao-vermelho btn-desativar-conta"
+                                            th:attr="data-url=@{/contas/desativar/{id}(id=${conta.id})},
+                                            data-nome=${conta.nome}">
+
+                                        DESATIVAR
+
+                                    </button>
+
+                                </form>
+
+                                <!-- Reativar -->
+                                <form th:unless="${conta.ativo}"
+                                      th:action="@{/contas/reativar/{id}(id=${conta.id})}"
+                                      method="post"
+                                      class="form-acao-inline">
+
+                                    <button type="submit"
+                                            class="botao-mini botao-verde">
+
+                                        REATIVAR
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        <!-- Lista vazia -->
+                        <tr th:if="${contas == null or contas.isEmpty()}">
+
+                            <td colspan="7">
+                                Nenhuma conta cadastrada.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Ações inferiores -->
+            <div class="acoes">
+
+                <a th:href="@{/}"
+                   class="botao botao-azul">
+
+                    VOLTAR
+
+                </a>
+
+                <a th:href="@{/contas/nova}"
+                   class="botao botao-verde">
+
+                    NOVA CONTA
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- Modal de confirmação de desativação -->
+        <div id="modalDesativarConta"
+             class="modal">
+
+            <div class="modal-conteudo">
+
+                <h2>DESATIVAR CONTA</h2>
+
+                <p>
+                    Deseja desativar a conta de
+                    <strong id="nomeContaDesativar"></strong>?
+                </p>
+
+                <p class="texto-ajuda">
+                    A conta não poderá acessar o sistema, mas os dados
+                    permanecerão registrados.
+                </p>
+
+                <div class="acoes">
+
+                    <button type="button"
+                            id="cancelarDesativacaoConta"
+                            class="botao botao-azul">
+
+                        CANCELAR
+
+                    </button>
+
+                    <form id="formDesativarConta"
+                          method="post"
+                          class="form-acao-inline">
+
+                        <button type="submit"
+                                class="botao botao-vermelho">
+
+                            DESATIVAR
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                /* Marca o menu Contas como ativo, caso já exista */
+                const menuContas =
+                        document.getElementById("menu-contas");
+
+                if (menuContas) {
+                    menuContas.classList.add("ativo");
+                }
+
+                /* Pesquisa na tabela */
+                const pesquisa =
+                        document.getElementById("pesquisaConta");
+
+                const linhas =
+                        document.querySelectorAll(
+                                "#tabelaContas tbody tr"
+                                );
+
+                pesquisa.addEventListener("input", function () {
+
+                    const termo =
+                            pesquisa.value
+                            .toLowerCase()
+                            .trim();
+
+                    linhas.forEach(function (linha) {
+
+                        const texto =
+                                linha.textContent.toLowerCase();
+
+                        linha.style.display =
+                                texto.includes(termo)
+                                ? ""
+                                : "none";
+                    });
+                });
+            });
+
+            /* =========================================================
+             MODAL DE DESATIVAÇÃO DE CONTA
+             ========================================================= */
+
+            const modalDesativarConta =
+                    document.getElementById("modalDesativarConta");
+
+            const formDesativarConta =
+                    document.getElementById("formDesativarConta");
+
+            const nomeContaDesativar =
+                    document.getElementById("nomeContaDesativar");
+
+            const cancelarDesativacaoConta =
+                    document.getElementById("cancelarDesativacaoConta");
+
+            const botoesDesativarConta =
+                    document.querySelectorAll(".btn-desativar-conta");
+
+
+            function fecharModalDesativarConta() {
+
+                modalDesativarConta.style.display = "none";
+
+                formDesativarConta.removeAttribute("action");
+
+                nomeContaDesativar.textContent = "";
+            }
+
+
+            botoesDesativarConta.forEach(function (botao) {
+
+                botao.addEventListener("click", function () {
+
+                    const url = botao.getAttribute("data-url");
+                    const nome = botao.getAttribute("data-nome");
+
+                    formDesativarConta.setAttribute(
+                            "action",
+                            url
+                            );
+
+                    nomeContaDesativar.textContent =
+                            nome || "esta conta";
+
+                    modalDesativarConta.style.display = "flex";
+                });
+            });
+
+
+            cancelarDesativacaoConta.addEventListener(
+                    "click",
+                    fecharModalDesativarConta
+                    );
+
+
+            window.addEventListener("click", function (event) {
+
+                if (event.target === modalDesativarConta) {
+                    fecharModalDesativarConta();
+                }
+            });
+        </script>
+
+    </body>
+</html>

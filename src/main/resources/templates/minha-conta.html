@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Minha Conta</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <!-- Faixa superior -->
+            <div class="topo"></div>
+
+            <h1 class="titulo">
+                MINHA CONTA
+            </h1>
+
+            <!-- Mensagem de erro -->
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <!-- Conteúdo exibido quando os dados foram encontrados -->
+            <div th:if="${dados != null}">
+
+                <!-- Identificação do cliente -->
+                <div class="cliente-identificacao">
+
+                    <div class="cliente-dados">
+
+                        <span>CLIENTE</span>
+
+                        <h2 th:text="${dados.nome}">
+                            Nome do cliente
+                        </h2>
+
+                        <p th:text="${dados.email != null
+                           and !dados.email.isBlank()
+                           ? dados.email
+                           : 'E-mail não cadastrado'}">
+                            E-mail
+                        </p>
+
+                    </div>
+
+                    <div class="cliente-rfid">
+
+                        <span>RFID</span>
+
+                        <strong th:text="${dados.codigoRfid}">
+                            RFID0000
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <!-- Resumo financeiro -->
+                <div class="minha-conta-grid">
+
+                    <div class="card-resumo">
+
+                        <p>SALDO ATUAL</p>
+
+                        <h2 th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            dados.saldo,
+                            1,
+                            2)}">
+                            R$ 0,00
+                        </h2>
+
+                    </div>
+
+                    <div class="card-resumo">
+
+                        <p>LIMITE DE CRÉDITO</p>
+
+                        <h2 th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            dados.limiteCredito,
+                            1,
+                            2)}">
+                            R$ 0,00
+                        </h2>
+
+                    </div>
+
+                    <div class="card-resumo">
+
+                        <p>CRÉDITO DISPONÍVEL</p>
+
+                        <h2 th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            dados.creditoDisponivel,
+                            1,
+                            2)}">
+                            R$ 0,00
+                        </h2>
+
+                    </div>
+
+                    <div class="card-resumo">
+
+                        <p>TOTAL DISPONÍVEL</p>
+
+                        <h2 th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            dados.totalDisponivel,
+                            1,
+                            2)}">
+                            R$ 0,00
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <!-- Situação da conta -->
+                <div class="situacao-cliente-card">
+
+                    <span>SITUAÇÃO DA CONTA</span>
+
+                    <strong th:if="${dados.situacao == 'REGULAR'}"
+                            class="situacao-cliente-regular">
+                        REGULAR
+                    </strong>
+
+                    <strong th:if="${dados.situacao == 'SALDO DEVEDOR'}"
+                            class="situacao-cliente-aviso">
+                        SALDO DEVEDOR
+                    </strong>
+
+                    <strong th:if="${dados.situacao == 'BLOQUEADO'}"
+                            class="situacao-cliente-bloqueado">
+                        BLOQUEADO
+                    </strong>
+
+                    <p th:if="${dados.situacao == 'REGULAR'}">
+                        Sua conta está regular.
+                    </p>
+
+                    <p th:if="${dados.situacao == 'SALDO DEVEDOR'}">
+                        Parte do limite de crédito está sendo utilizada.
+                    </p>
+
+                    <p th:if="${dados.situacao == 'BLOQUEADO'}">
+                        Sua conta está bloqueada. Procure o responsável pelo sistema.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Ações do cliente -->
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/minha-conta/compras}"
+                   class="botao botao-azul">
+
+                    MINHAS COMPRAS
+
+                </a>
+
+            </div>
+
+            <!-- Encerrar sessão -->
+            <div class="acoes">
+
+                <form th:action="@{/logout}"
+                      method="post">
+
+                    <button type="submit"
+                            class="botao botao-vermelho">
+
+                        SAIR
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </body>
+</html>

@@ -10,12 +10,17 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 /**
  *
  * @author wanes
  */
 public interface CompraRepository extends JpaRepository<Compra, Long> {
+
+    List<Compra> findByUsuarioIdOrderByDataHoraDesc(
+            Long usuarioId
+    );
 
     @Query("SELECT COALESCE(SUM(c.valorTotal), 0) FROM Compra c")
     BigDecimal calcularFaturamentoTotal();
@@ -33,6 +38,4 @@ public interface CompraRepository extends JpaRepository<Compra, Long> {
            WHERE c.id = :id
            """)
     Optional<Compra> buscarDetalhesPorId(@Param("id") Long id);
-
-
 }

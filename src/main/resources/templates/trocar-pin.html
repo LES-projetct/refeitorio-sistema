@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Alterar PIN</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+</head>
+
+<body class="pagina-login">
+
+    <main class="login-container">
+
+        <section class="login-card">
+
+            <div class="login-faixa"></div>
+
+            <h1>CRIAR NOVO PIN</h1>
+
+            <p class="login-subtitulo">
+                Por segurança, substitua o PIN temporário.
+            </p>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro login-mensagem"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <form th:action="@{/trocar-pin}"
+                  method="post"
+                  class="login-formulario">
+
+                <div class="login-campo">
+
+                    <label for="novoPin">
+                        Novo PIN
+                    </label>
+
+                    <input type="password"
+                           id="novoPin"
+                           name="novoPin"
+                           class="input-arredondado"
+                           inputmode="numeric"
+                           pattern="[0-9]{4}"
+                           minlength="4"
+                           maxlength="4"
+                           autocomplete="new-password"
+                           placeholder="Digite 4 números"
+                           required>
+
+                </div>
+
+                <div class="login-campo">
+
+                    <label for="confirmarPin">
+                        Confirmar novo PIN
+                    </label>
+
+                    <input type="password"
+                           id="confirmarPin"
+                           name="confirmarPin"
+                           class="input-arredondado"
+                           inputmode="numeric"
+                           pattern="[0-9]{4}"
+                           minlength="4"
+                           maxlength="4"
+                           autocomplete="new-password"
+                           placeholder="Digite novamente"
+                           required>
+
+                </div>
+
+                <button type="submit"
+                        class="botao botao-verde login-botao">
+
+                    SALVAR NOVO PIN
+
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Minhas Compras</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <h1 class="titulo">
+                MINHAS COMPRAS
+            </h1>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <div th:if="${compras == null or compras.isEmpty()}"
+                 class="mensagem-info">
+
+                Nenhuma compra encontrada.
+
+            </div>
+
+            <div th:if="${compras != null and !compras.isEmpty()}"
+                 class="tabela-container">
+
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>DATA</th>
+                            <th>TOTAL</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="compra : ${compras}">
+
+                            <td th:text="${compra.id}">
+                                1
+                            </td>
+
+                            <td th:text="${#temporals.format(
+                                compra.dataHora,
+                                'dd/MM/yyyy HH:mm')}">
+                                12/06/2026 20:30
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                compra.valorTotal,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td>
+                                FINALIZADA
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/minha-conta}"
+                   class="botao botao-azul">
+
+                    VOLTAR
+
+                </a>
+
+                <form th:action="@{/logout}"
+                      method="post">
+
+                    <button type="submit"
+                            class="botao botao-vermelho">
+
+                        SAIR
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </body>
+</html>

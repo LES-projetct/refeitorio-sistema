@@ -5,7 +5,6 @@
 package com.wanessa.refeitorio.service;
 
 import com.wanessa.refeitorio.model.Usuario;
-import com.wanessa.refeitorio.repository.CompraRepository;
 import com.wanessa.refeitorio.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +12,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.wanessa.refeitorio.repository.ContaSistemaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -22,12 +24,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
-    private final CompraRepository compraRepository;
+    private final ContaSistemaRepository contaSistemaRepository;
 
-    public UsuarioService(UsuarioRepository repository,
-            CompraRepository compraRepository) {
+    public UsuarioService(
+            UsuarioRepository repository,
+            ContaSistemaRepository contaSistemaRepository) {
+
         this.repository = repository;
-        this.compraRepository = compraRepository;
+        this.contaSistemaRepository
+                = contaSistemaRepository;
     }
 
     public List<Usuario> listarTodos() {
@@ -102,19 +107,37 @@ public class UsuarioService {
                         -> new RuntimeException("Usuário não encontrado"));
     }
 
-    public void excluir(Long id) {
+    /**
+     * Desativa o usuário e sua conta de acesso.
+     *
+     * Os registros de compras, acessos e pagamentos permanecem preservados.
+     */
+    @Transactional
+    public void desativar(Long id) {
 
         Usuario usuario = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
+                        "Usuário não encontrado"
+                )
+                );
 
-        boolean possuiCompras = compraRepository.existsByUsuarioId(id);
+        usuario.setAtivo(false);
 
-        if (possuiCompras) {
-            usuario.setAtivo(false);
-            repository.save(usuario);
-        } else {
-            repository.deleteById(id);
-        }
+        repository.save(usuario);
+
+        /*
+     * Também desativa a conta CLIENTE ligada
+     * ao cadastro do usuário.
+         */
+        contaSistemaRepository
+                .findByUsuarioRelacionadoId(id)
+                .ifPresent(conta -> {
+
+                    conta.setAtivo(false);
+
+                    contaSistemaRepository.save(conta);
+                });
     }
 
     public List<Usuario> listarBloqueados() {

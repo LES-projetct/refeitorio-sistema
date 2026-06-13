@@ -16,6 +16,49 @@
             <div th:replace="~{fragments/menu :: menu}"></div>
 
             <h1 class="titulo">USUÁRIOS</h1>
+            <!-- Mensagem de sucesso -->
+            <div th:if="${sucesso}"
+                 class="mensagem-sucesso"
+                 role="status">
+
+                <span th:text="${sucesso}"></span>
+
+            </div>
+
+            <!-- Mensagem de erro -->
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <!-- Credenciais apresentadas somente após o cadastro -->
+            <div th:if="${credencialLogin}"
+                 class="credencial-inicial"
+                 role="status">
+
+                <h3>CREDENCIAIS INICIAIS DO CLIENTE</h3>
+
+                <p>
+                    <strong>Login RFID:</strong>
+
+                    <span th:text="${credencialLogin}"></span>
+                </p>
+
+                <p>
+                    <strong>PIN temporário:</strong>
+
+                    <span th:text="${credencialSenha}"></span>
+                </p>
+
+                <small>
+                    Entregue estas informações ao cliente.
+                    O PIN deverá ser alterado no primeiro acesso.
+                </small>
+
+            </div>
 
             <div class="barra-superior">
 
@@ -75,12 +118,15 @@
                                     EDITAR
                                 </a>
 
-                                <button type="button"
-                                        class="botao-mini botao-vermelho btn-excluir"
-                                        th:attr="data-url=@{/usuarios/excluir/{id}(id=${usuario.id})}">
-                                    EXCLUIR
-                                </button>
+                                <button th:if="${usuario.ativo}"
+                                        type="button"
+                                        class="botao-mini botao-vermelho btn-desativar-usuario"
+                                        th:attr="data-url=@{/usuarios/desativar/{id}(id=${usuario.id})},
+                                        data-nome=${usuario.nome}">
 
+                                    DESATIVAR
+
+                                </button>
                             </td>
 
                         </tr>
@@ -104,27 +150,45 @@
 
         </div>
 
-        <div id="modalExcluir" class="modal">
+        <div id="modalDesativarUsuario"
+             class="modal">
 
             <div class="modal-conteudo">
 
-                <h2>Confirmar exclusão</h2>
+                <h2>DESATIVAR USUÁRIO</h2>
 
-                <p>Deseja realmente excluir este usuário?</p>
+                <p>
+                    Deseja desativar
+                    <strong id="nomeUsuarioDesativar"></strong>?
+                </p>
+
+                <p class="texto-ajuda">
+                    O usuário não poderá realizar compras ou acessos.
+                    Sua conta de login também será desativada.
+                </p>
 
                 <div class="acoes">
 
                     <button type="button"
-                            id="cancelarModal"
+                            id="cancelarDesativacaoUsuario"
                             class="botao botao-azul">
+
                         CANCELAR
+
                     </button>
 
-                    <a href="#"
-                       id="confirmarExcluir"
-                       class="botao botao-vermelho">
-                        EXCLUIR
-                    </a>
+                    <form id="formDesativarUsuario"
+                          method="post"
+                          class="form-acao-inline">
+
+                        <button type="submit"
+                                class="botao botao-vermelho">
+
+                            DESATIVAR
+
+                        </button>
+
+                    </form>
 
                 </div>
 
@@ -174,49 +238,63 @@
                 });
 
 
-                /* =============================================
-                 MODAL DE EXCLUSÃO
-                 ============================================= */
+                /* =========================================================
+                 MODAL DE DESATIVAÇÃO DE USUÁRIO
+                 ========================================================= */
 
-                const modal =
-                        document.getElementById("modalExcluir");
+                const modalDesativarUsuario =
+                        document.getElementById("modalDesativarUsuario");
 
-                const confirmar =
-                        document.getElementById("confirmarExcluir");
+                const formDesativarUsuario =
+                        document.getElementById("formDesativarUsuario");
 
-                const cancelar =
-                        document.getElementById("cancelarModal");
+                const nomeUsuarioDesativar =
+                        document.getElementById("nomeUsuarioDesativar");
 
-                const botoesExcluir =
-                        document.querySelectorAll(".btn-excluir");
+                const cancelarDesativacaoUsuario =
+                        document.getElementById("cancelarDesativacaoUsuario");
 
-                botoesExcluir.forEach(function (botao) {
 
-                    botao.addEventListener("click", function () {
+                function fecharModalDesativarUsuario() {
 
-                        const url =
-                                botao.getAttribute("data-url");
+                    modalDesativarUsuario.style.display = "none";
 
-                        confirmar.setAttribute("href", url);
+                    formDesativarUsuario.removeAttribute("action");
 
-                        modal.style.display = "flex";
-                    });
-                });
+                    nomeUsuarioDesativar.textContent = "";
+                }
 
-                cancelar.addEventListener("click", function () {
 
-                    confirmar.setAttribute("href", "#");
+                document.querySelectorAll(".btn-desativar-usuario")
+                        .forEach(function (botao) {
 
-                    modal.style.display = "none";
-                });
+                            botao.addEventListener("click", function () {
+
+                                formDesativarUsuario.setAttribute(
+                                        "action",
+                                        botao.getAttribute("data-url")
+                                        );
+
+                                nomeUsuarioDesativar.textContent =
+                                        botao.getAttribute("data-nome")
+                                        || "este usuário";
+
+                                modalDesativarUsuario.style.display =
+                                        "flex";
+                            });
+                        });
+
+
+                cancelarDesativacaoUsuario.addEventListener(
+                        "click",
+                        fecharModalDesativarUsuario
+                        );
+
 
                 window.addEventListener("click", function (event) {
 
-                    if (event.target === modal) {
-
-                        confirmar.setAttribute("href", "#");
-
-                        modal.style.display = "none";
+                    if (event.target === modalDesativarUsuario) {
+                        fecharModalDesativarUsuario();
                     }
                 });
             });

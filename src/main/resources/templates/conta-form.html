@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Conta do Sistema</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo"
+                th:text="${conta.id == null
+                ? 'NOVA CONTA'
+                : 'EDITAR CONTA'}">
+                NOVA CONTA
+            </h1>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <form th:action="@{/contas/salvar}"
+                  th:object="${conta}"
+                  method="post"
+                  class="formulario conta-formulario">
+
+                <input type="hidden"
+                       th:field="*{id}">
+
+                <label for="nomeConta">
+                    Nome
+                </label>
+
+                <input type="text"
+                       id="nomeConta"
+                       th:field="*{nome}"
+                       class="input-arredondado"
+                       required>
+
+                <label for="loginConta">
+                    Login
+                </label>
+
+                <input type="text"
+                       id="loginConta"
+                       th:field="*{login}"
+                       class="input-arredondado"
+                       autocomplete="username"
+                       required>
+
+                <label for="senhaConta">
+                    Senha
+                </label>
+
+                <input type="password"
+                       id="senhaConta"
+                       th:field="*{senha}"
+                       class="input-arredondado"
+                       autocomplete="new-password"
+                       th:required="${conta.id == null}">
+
+                <small class="texto-ajuda"
+                       th:if="${conta.id != null}">
+                    Deixe a senha vazia para manter a senha atual.
+                </small>
+
+                <label for="perfilConta">
+                    Perfil de acesso
+                </label>
+
+                <select id="perfilConta"
+                        th:field="*{perfil}"
+                        class="input-arredondado"
+                        required>
+
+                    <option value="">
+                        Selecione um perfil
+                    </option>
+
+                    <option th:each="perfil : ${perfis}"
+                            th:value="${perfil}"
+                            th:text="${perfil}">
+                    </option>
+
+                </select>
+
+                <div id="campoUsuarioRelacionado"
+                     class="campo-usuario-relacionado">
+
+                    <label for="usuarioRelacionado">
+                        Usuário do refeitório
+                    </label>
+
+                    <select id="usuarioRelacionado"
+                            name="usuarioRelacionado.id"
+                            class="input-arredondado">
+
+                        <option value="">
+                            Selecione um usuário
+                        </option>
+
+                        <option th:each="usuario : ${usuarios}"
+                                th:value="${usuario.id}"
+                                th:text="${usuario.nome}"
+                                th:selected="${conta.usuarioRelacionado != null
+                                and conta.usuarioRelacionado.id == usuario.id}">
+                        </option>
+
+                    </select>
+
+                    <small class="texto-ajuda">
+                        Obrigatório apenas para contas com perfil CLIENTE.
+                    </small>
+
+                </div>
+
+                <label for="statusConta">
+                    Status
+                </label>
+
+                <select id="statusConta"
+                        th:field="*{ativo}"
+                        class="input-arredondado">
+
+                    <option th:value="true">
+                        ATIVA
+                    </option>
+
+                    <option th:value="false">
+                        DESATIVADA
+                    </option>
+
+                </select>
+
+                <div class="acoes">
+
+                    <button type="submit"
+                            class="botao botao-verde">
+                        SALVAR
+                    </button>
+
+                    <a th:href="@{/contas/tela}"
+                       class="botao botao-azul">
+                        CANCELAR
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuContas =
+                        document.getElementById("menu-contas");
+
+                const perfil =
+                        document.getElementById("perfilConta");
+
+                const campoUsuario =
+                        document.getElementById(
+                                "campoUsuarioRelacionado"
+                                );
+
+                const usuarioRelacionado =
+                        document.getElementById(
+                                "usuarioRelacionado"
+                                );
+
+                if (menuContas) {
+                    menuContas.classList.add("ativo");
+                }
+
+                function atualizarCampoUsuario() {
+
+                    const perfilCliente =
+                            perfil.value === "CLIENTE";
+
+                    campoUsuario.style.display =
+                            perfilCliente ? "flex" : "none";
+
+                    usuarioRelacionado.required =
+                            perfilCliente;
+
+                    if (!perfilCliente) {
+                        usuarioRelacionado.value = "";
+                    }
+                }
+
+                perfil.addEventListener(
+                        "change",
+                        atualizarCampoUsuario
+                        );
+
+                atualizarCampoUsuario();
+            });
+        </script>
+
+    </body>
+</html>

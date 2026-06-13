@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Entrar no sistema</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body class="pagina-login">
+
+        <main class="login-container">
+
+            <section class="login-card">
+
+                <div class="login-faixa"></div>
+
+                <h1>REFEITÓRIO</h1>
+
+                <p class="login-subtitulo">
+                    Acesso ao sistema
+                </p>
+
+                <!-- Login ou senha incorretos -->
+                <div th:if="${param.erro}"
+                     class="mensagem-validacao login-mensagem"
+                     role="alert">
+
+                    Login ou senha inválidos.
+
+                </div>
+
+                <!-- Usuário tentou acessar uma página sem permissão -->
+                <div th:if="${param.acessoNegado}"
+                     class="mensagem-validacao login-mensagem"
+                     role="alert">
+
+                    Sua conta não possui permissão para acessar essa área.
+                    Entre com uma conta autorizada.
+
+                </div>
+
+                <!-- Logout realizado -->
+                <div th:if="${param.sair}"
+                     class="mensagem-sucesso login-mensagem"
+                     role="status">
+
+                    Sessão encerrada com sucesso.
+
+                </div>
+
+                <!--
+                    O POST /login é processado pelo Spring Security.
+                    Os nomes username e password são os padrões.
+                -->
+                <form th:action="@{/login}"
+                      method="post"
+                      class="login-formulario">
+
+                    <div class="login-campo">
+
+                        <label for="username">
+                            RFID ou login
+                        </label>
+
+                        <input type="text"
+                               id="username"
+                               name="username"
+                               class="input-arredondado"
+                               placeholder="Digite ou aproxime o RFID"
+                               autocomplete="username"
+                               autofocus
+                               required>
+
+                    </div>
+
+                    <div class="login-campo">
+
+                        <label for="password">
+                            PIN ou senha
+                        </label>
+
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="input-arredondado"
+                               inputmode="numeric"
+                               autocomplete="current-password"
+                               required>
+
+                    </div>
+
+                    <button type="submit"
+                            class="botao botao-verde login-botao">
+
+                        ENTRAR
+
+                    </button>
+
+                </form>
+
+            </section>
+
+        </main>
+
+    </body>
+</html>
