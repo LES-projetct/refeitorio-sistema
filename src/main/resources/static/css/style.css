@@ -1675,3 +1675,157 @@ button.botao-mini,
     background-color: #ffe0e0;
     transform: translateY(-1px);
 }
+
+/* =========================================================
+   PADRONIZAÇÃO DOS BOTÕES PEQUENOS DAS TABELAS
+   ========================================================= */
+
+.acoes-tabela {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.form-acao-inline {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}
+
+.acoes-tabela .botao-mini,
+.acoes-tabela button.botao-mini,
+.acoes-tabela a.botao-mini {
+    width: 92px;
+    min-width: 92px;
+    height: 32px;
+    min-height: 32px;
+
+    padding: 0;
+
+    border: none !important;
+    outline: none !important;
+    border-radius: 999px;
+
+    box-sizing: border-box;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.acoes-tabela .botao-mini:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+/* =========================================================
+   CORREÇÃO FINAL - BOTÕES DE AÇÃO DAS TABELAS
+   ========================================================= */
+
+.tabela .acoes-tabela {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+}
+
+.tabela .acoes-tabela form,
+.tabela .acoes-tabela .form-acao-inline {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.tabela .acoes-tabela a.botao-mini,
+.tabela .acoes-tabela button.botao-mini {
+    width: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    outline: none !important;
+    border-radius: 999px !important;
+
+    box-sizing: border-box !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-family: Arial, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    line-height: 1 !important;
+
+    text-align: center !important;
+    text-decoration: none !important;
+
+    cursor: pointer !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+.tabela .acoes-tabela a.botao-mini:hover,
+.tabela .acoes-tabela button.botao-mini:hover {
+    opacity: 0.85 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* =========================================================
+   ALINHAMENTO DA TABELA DO COMPROVANTE
+   ========================================================= */
+
+.comprovante-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.comprovante-tabela th,
+.comprovante-tabela td {
+    padding: 6px 3px;
+    font-size: 12px;
+    vertical-align: top;
+}
+
+.comprovante-tabela .coluna-item {
+    width: 38%;
+    text-align: left;
+}
+
+.comprovante-tabela .coluna-qtd {
+    width: 20%;
+    text-align: center;
+}
+
+.comprovante-tabela .coluna-valor {
+    width: 20%;
+    text-align: right;
+}
+
+.comprovante-tabela .coluna-total {
+    width: 22%;
+    text-align: right;
+    font-weight: bold;
+}

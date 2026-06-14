@@ -73,9 +73,10 @@
 
                         <thead>
                             <tr>
-                                <th>ITEM</th>
-                                <th>QTD/PESO</th>
-                                <th>TOTAL</th>
+                                <th class="coluna-item">ITEM</th>
+                                <th class="coluna-qtd">QTD/PESO</th>
+                                <th class="coluna-valor">VALOR</th>
+                                <th class="coluna-total">TOTAL</th>
                             </tr>
                         </thead>
 
@@ -83,22 +84,52 @@
 
                             <tr th:each="item : ${compra.itens}">
 
-                                <td th:text="${item.produto.nome}">
+                                <td class="coluna-item"
+                                    th:text="${item.produto != null
+                                    ? item.produto.nome
+                                    : 'Produto não localizado'}">
                                     Produto
                                 </td>
 
-                                <td th:text="${#numbers.formatDecimal(
-                                    item.quantidade,
-                                    1,
-                                    3)}">
-                                    1
+                                <td class="coluna-qtd">
+                                    <span th:if="${item.peso != null}"
+                                          th:text="${#numbers.formatDecimal(
+                                          item.peso,
+                                          1,
+                                          3) + ' kg'}">
+                                        0,000 kg
+                                    </span>
+
+                                    <span th:if="${item.peso == null and item.quantidade != null}"
+                                          th:text="${#numbers.formatDecimal(
+                                          item.quantidade,
+                                          1,
+                                          0)}">
+                                        1
+                                    </span>
+
+                                    <span th:if="${item.peso == null and item.quantidade == null}">
+                                        Não informado
+                                    </span>
                                 </td>
 
-                                <td th:text="${'R$ '
-                                    + #numbers.formatDecimal(
+                                <td class="coluna-valor"
+                                    th:text="${item.valorUnitario != null
+                                    ? 'R$ ' + #numbers.formatDecimal(
+                                    item.valorUnitario,
+                                    1,
+                                    2)
+                                    : 'R$ 0,00'}">
+                                    R$ 0,00
+                                </td>
+
+                                <td class="coluna-total"
+                                    th:text="${item.valorTotal != null
+                                    ? 'R$ ' + #numbers.formatDecimal(
                                     item.valorTotal,
                                     1,
-                                    2)}">
+                                    2)
+                                    : 'R$ 0,00'}">
                                     R$ 0,00
                                 </td>
 
@@ -161,7 +192,7 @@
                 </div>
 
             </div>
-            
+
             <div class="acoes acoes-pagina area-nao-imprimir">
 
                 <button type="button"

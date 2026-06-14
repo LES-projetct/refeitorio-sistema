@@ -111,22 +111,24 @@
                                     BLOQUEADO
                                 </span>
                             </td>
-                            <td>
+                            <td class="acoes-tabela">
 
                                 <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}"
-                                   class="botao-mini botao-azul">
+                                   class="botao-mini botao-amarelo">
                                     EDITAR
                                 </a>
 
-                                <button th:if="${usuario.ativo}"
-                                        type="button"
-                                        class="botao-mini botao-vermelho btn-desativar-usuario"
-                                        th:attr="data-url=@{/usuarios/desativar/{id}(id=${usuario.id})},
-                                        data-nome=${usuario.nome}">
+                                <form th:action="@{/usuarios/desativar/{id}(id=${usuario.id})}"
+                                      method="post"
+                                      class="form-acao-inline">
 
-                                    DESATIVAR
+                                    <button type="submit"
+                                            class="botao-mini botao-vermelho">
+                                        DESATIVAR
+                                    </button>
 
-                                </button>
+                                </form>
+
                             </td>
 
                         </tr>

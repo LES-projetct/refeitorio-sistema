@@ -76,18 +76,23 @@
                                 </span>
                             </td>
 
-                            <td>
+                            <td class="acoes-tabela">
 
                                 <a th:href="@{/produtos/editar/{id}(id=${produto.id})}"
-                                   class="botao-mini botao-azul">
+                                   class="botao-mini botao-amarelo">
                                     EDITAR
                                 </a>
 
-                                <button type="button"
-                                        class="botao-mini botao-vermelho btn-excluir-produto"
-                                        th:attr="data-url=@{/produtos/excluir/{id}(id=${produto.id})}">
-                                    EXCLUIR
-                                </button>
+                                <form th:action="@{/produtos/desativar/{id}(id=${produto.id})}"
+                                      method="post"
+                                      class="form-acao-inline">
+
+                                    <button type="submit"
+                                            class="botao-mini botao-vermelho">
+                                        DESATIVAR
+                                    </button>
+
+                                </form>
 
                             </td>
                         </tr>
@@ -128,11 +133,16 @@
                         CANCELAR
                     </button>
 
-                    <a href="#"
-                       id="confirmarExclusaoProduto"
-                       class="botao botao-vermelho">
-                        EXCLUIR
-                    </a>
+                    <form th:action="@{/produtos/desativar/{id}(id=${produto.id})}"
+                          method="post"
+                          class="form-acao-inline">
+
+                        <button type="submit"
+                                class="botao-mini botao-vermelho">
+                            DESATIVAR
+                        </button>
+
+                    </form>
 
                 </div>
 
