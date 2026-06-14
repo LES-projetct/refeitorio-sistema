@@ -1,19 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.wanessa.refeitorio.service;
 
 import com.wanessa.refeitorio.model.Produto;
 import com.wanessa.refeitorio.repository.ProdutoRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author wanes
- */
 @Service
 public class ProdutoService {
 
@@ -23,27 +15,49 @@ public class ProdutoService {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<Produto> listarTodos() {
         return repository.findAll();
     }
 
+    @Transactional
     public Produto salvar(Produto produto) {
+
+        if (produto.getAtivo() == null) {
+            produto.setAtivo(true);
+        }
+
         return repository.save(produto);
     }
 
-    public void excluir(Long id) {
+    @Transactional(readOnly = true)
+    public Produto buscarPorId(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+    }
 
-        Produto produto = repository.findById(id)
-                .orElseThrow(()
-                        -> new RuntimeException("Produto não encontrado"));
+    @Transactional
+    public void desativar(Long id) {
+
+        Produto produto = buscarPorId(id);
 
         produto.setAtivo(false);
 
         repository.save(produto);
     }
 
-    public Produto buscarPorId(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+    @Transactional
+    public void reativar(Long id) {
+
+        Produto produto = buscarPorId(id);
+
+        produto.setAtivo(true);
+
+        repository.save(produto);
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        desativar(id);
     }
 }

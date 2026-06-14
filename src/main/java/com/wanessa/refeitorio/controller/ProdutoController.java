@@ -1,21 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.wanessa.refeitorio.controller;
 
 import com.wanessa.refeitorio.model.Produto;
 import com.wanessa.refeitorio.service.ProdutoService;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-/**
- *
- * @author wanes
- */
 @Controller
 @RequestMapping("/produtos")
 public class ProdutoController {
@@ -41,34 +32,20 @@ public class ProdutoController {
     @GetMapping("/tela")
     public String telaProdutos(Model model) {
 
-        model.addAttribute(
-                "produtos",
-                service.listarTodos());
+        model.addAttribute("produtos", service.listarTodos());
 
         return "produtos";
     }
 
     @GetMapping("/novo")
     public String novoProduto(Model model) {
-        model.addAttribute("produto", new Produto());
+
+        Produto produto = new Produto();
+        produto.setAtivo(true);
+
+        model.addAttribute("produto", produto);
+
         return "produto-form";
-    }
-
-    @PostMapping("/salvar")
-    public String salvarProdutoForm(@ModelAttribute Produto produto) {
-        if (produto.getAtivo() == null) {
-            produto.setAtivo(true);
-        }
-        service.salvar(produto);
-        return "redirect:/produtos/tela";
-    }
-
-    @GetMapping("/excluir/{id}")
-    public String excluirProduto(@PathVariable Long id) {
-
-        service.excluir(id);
-
-        return "redirect:/produtos/tela";
     }
 
     @GetMapping("/editar/{id}")
@@ -81,4 +58,39 @@ public class ProdutoController {
         return "produto-form";
     }
 
+    @PostMapping("/salvar")
+    public String salvarProdutoForm(@ModelAttribute Produto produto) {
+
+        if (produto.getAtivo() == null) {
+            produto.setAtivo(true);
+        }
+
+        service.salvar(produto);
+
+        return "redirect:/produtos/tela";
+    }
+
+    @PostMapping("/desativar/{id}")
+    public String desativarProduto(@PathVariable Long id) {
+
+        service.desativar(id);
+
+        return "redirect:/produtos/tela";
+    }
+
+    @PostMapping("/reativar/{id}")
+    public String reativarProduto(@PathVariable Long id) {
+
+        service.reativar(id);
+
+        return "redirect:/produtos/tela";
+    }
+
+    @GetMapping("/excluir/{id}")
+    public String excluirProdutoAntigo(@PathVariable Long id) {
+
+        service.desativar(id);
+
+        return "redirect:/produtos/tela";
+    }
 }

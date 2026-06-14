@@ -14,6 +14,7 @@
             <div class="topo"></div>
 
             <div th:replace="~{fragments/menu :: menu}"></div>
+
             <h1 class="titulo">PRODUTOS</h1>
 
             <div class="barra-superior">
@@ -23,12 +24,12 @@
                        placeholder="Pesquisar produto..."
                        class="input-arredondado">
 
-
-
             </div>
+
             <div class="tabela-container">
 
                 <table class="tabela" id="tabelaProdutos">
+
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -43,21 +44,27 @@
                     </thead>
 
                     <tbody>
+
                         <tr th:each="produto : ${produtos}">
+
                             <td th:text="${produto.id}"></td>
+
                             <td th:text="${produto.nome}"></td>
+
                             <td th:text="${produto.codigoBarras}"></td>
-                            <td th:text="${produto.precoVenda}"></td>
-                            <td th:text="${produto.precoCusto}"></td>
+
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(produto.precoVenda, 1, 2)}"></td>
+
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(produto.precoCusto, 1, 2)}"></td>
 
                             <td class="coluna-status">
 
-                                <span class="status status-ok"
+                                <span class="status-info"
                                       th:if="${produto.vendidoPorPeso}">
                                     POR PESO
                                 </span>
 
-                                <span class="status status-info"
+                                <span class="status-ativo"
                                       th:unless="${produto.vendidoPorPeso}">
                                     UNITÁRIO
                                 </span>
@@ -65,6 +72,7 @@
                             </td>
 
                             <td>
+
                                 <span th:if="${produto.ativo}"
                                       class="status-ativo">
                                     ATIVO
@@ -74,6 +82,7 @@
                                       class="status-bloqueado">
                                     INATIVO
                                 </span>
+
                             </td>
 
                             <td class="acoes-tabela">
@@ -83,21 +92,48 @@
                                     EDITAR
                                 </a>
 
-                                <form th:action="@{/produtos/desativar/{id}(id=${produto.id})}"
+                                <form th:if="${produto.ativo}"
+                                      th:action="@{/produtos/desativar/{id}(id=${produto.id})}"
                                       method="post"
                                       class="form-acao-inline">
 
                                     <button type="submit"
-                                            class="botao-mini botao-vermelho">
+                                            class="botao-mini botao-vermelho"
+                                            onclick="return abrirModalConfirmacao(
+                                                    this.form,
+                                                    'Desativar produto',
+                                                    'Deseja desativar este produto? Ele não ficará disponível para novas compras.'
+                                            )">
                                         DESATIVAR
                                     </button>
 
                                 </form>
 
+                                <form th:unless="${produto.ativo}"
+                                      th:action="@{/produtos/reativar/{id}(id=${produto.id})}"
+                                      method="post"
+                                      class="form-acao-inline">
+
+                                    <button type="submit"
+                                            class="botao-mini botao-verde"
+                                            onclick="return abrirModalConfirmacao(
+                                                    this.form,
+                                                    'Reativar produto',
+                                                    'Deseja reativar este produto? Ele voltará a ficar disponível para compras.'
+                                            )">
+                                        REATIVAR
+                                    </button>
+
+                                </form>
+
                             </td>
+
                         </tr>
+
                     </tbody>
+
                 </table>
+
             </div>
 
             <div class="acoes">
@@ -108,41 +144,40 @@
 
                 <a href="/produtos/novo"
                    class="botao botao-verde">
-
                     NOVO PRODUTO
-
                 </a>
 
             </div>
 
         </div>
 
-        <div id="modalExcluirProduto" class="modal">
+        <div id="modalConfirmacao"
+             class="modal-confirmacao"
+             hidden>
 
-            <div class="modal-conteudo">
+            <div class="modal-confirmacao-caixa">
 
-                <h2>Confirmar exclusão</h2>
+                <h2 id="modalConfirmacaoTitulo">
+                    Confirmar ação
+                </h2>
 
-                <p>Deseja realmente excluir este produto?</p>
+                <p id="modalConfirmacaoTexto">
+                    Deseja continuar?
+                </p>
 
                 <div class="acoes">
 
                     <button type="button"
-                            id="cancelarExclusaoProduto"
-                            class="botao botao-azul">
-                        CANCELAR
+                            id="btnConfirmarModal"
+                            class="botao botao-verde">
+                        CONFIRMAR
                     </button>
 
-                    <form th:action="@{/produtos/desativar/{id}(id=${produto.id})}"
-                          method="post"
-                          class="form-acao-inline">
-
-                        <button type="submit"
-                                class="botao-mini botao-vermelho">
-                            DESATIVAR
-                        </button>
-
-                    </form>
+                    <button type="button"
+                            id="btnCancelarModal"
+                            class="botao botao-vermelho">
+                        CANCELAR
+                    </button>
 
                 </div>
 
@@ -151,56 +186,43 @@
         </div>
 
         <script>
+            let formularioConfirmacao = null;
+
+            function abrirModalConfirmacao(formulario, titulo, texto) {
+
+                formularioConfirmacao = formulario;
+
+                document.getElementById("modalConfirmacaoTitulo").textContent = titulo;
+                document.getElementById("modalConfirmacaoTexto").textContent = texto;
+
+                document.getElementById("modalConfirmacao").hidden = false;
+
+                return false;
+            }
+
             document.addEventListener("DOMContentLoaded", function () {
 
-                const menuProdutos =
-                        document.getElementById("menu-produtos");
+                const menuProdutos = document.getElementById("menu-produtos");
 
                 if (menuProdutos) {
                     menuProdutos.classList.add("ativo");
                 }
 
-                const modal =
-                        document.getElementById("modalExcluirProduto");
+                document.getElementById("btnCancelarModal")
+                        .addEventListener("click", function () {
 
-                const confirmar =
-                        document.getElementById("confirmarExclusaoProduto");
+                            formularioConfirmacao = null;
 
-                const cancelar =
-                        document.getElementById("cancelarExclusaoProduto");
+                            document.getElementById("modalConfirmacao").hidden = true;
+                        });
 
-                const botoesExcluir =
-                        document.querySelectorAll(".btn-excluir-produto");
+                document.getElementById("btnConfirmarModal")
+                        .addEventListener("click", function () {
 
-                botoesExcluir.forEach(function (botao) {
-
-                    botao.addEventListener("click", function () {
-
-                        const url =
-                                botao.getAttribute("data-url");
-
-                        confirmar.setAttribute("href", url);
-
-                        modal.style.display = "flex";
-                    });
-                });
-
-                cancelar.addEventListener("click", function () {
-
-                    confirmar.setAttribute("href", "#");
-
-                    modal.style.display = "none";
-                });
-
-                window.addEventListener("click", function (event) {
-
-                    if (event.target === modal) {
-
-                        confirmar.setAttribute("href", "#");
-
-                        modal.style.display = "none";
-                    }
-                });
+                            if (formularioConfirmacao) {
+                                formularioConfirmacao.submit();
+                            }
+                        });
             });
         </script>
 
