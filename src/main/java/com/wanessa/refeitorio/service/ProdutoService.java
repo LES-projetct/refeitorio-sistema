@@ -17,7 +17,7 @@ public class ProdutoService {
 
     @Transactional(readOnly = true)
     public List<Produto> listarTodos() {
-        return repository.findAll();
+        return repository.findAllByOrderByNomeAsc();
     }
 
     @Transactional
@@ -59,5 +59,10 @@ public class ProdutoService {
     @Transactional
     public void excluir(Long id) {
         desativar(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Produto> listarAtivos() {
+        return repository.findByAtivoTrueOrderByNomeAsc();
     }
 }

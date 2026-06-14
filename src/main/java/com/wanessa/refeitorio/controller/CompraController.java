@@ -78,7 +78,7 @@ public class CompraController {
 
         model.addAttribute("compra", new Compra());
         model.addAttribute("usuarios", usuarioService.listarTodos());
-        model.addAttribute("produtos", produtoService.listarTodos());
+        model.addAttribute("produtos", produtoService.listarAtivos());
 
         return "compra-form";
     }

@@ -20,7 +20,7 @@ public class ProdutoController {
     @ResponseBody
     @GetMapping
     public List<Produto> listar() {
-        return service.listarTodos();
+        return service.listarAtivos();
     }
 
     @ResponseBody
