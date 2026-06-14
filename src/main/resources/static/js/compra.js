@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
      1. ELEMENTOS PRINCIPAIS DA PÁGINA
      ========================================================= */
 
-    const menuCompras = document.getElementById("menu-compras");
+    const menuCompras = document.getElementById("menu-nova-compra");
     const form = document.querySelector(".form-pdv");
 
     const produto = document.getElementById("produto");
@@ -138,25 +138,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /**
-     * Exibe uma mensagem de validação no campo Produto.
-     */
-    function mostrarErroProduto(mensagem) {
-
-        erroProduto.textContent = mensagem;
-        erroProduto.hidden = false;
-
-        produto.classList.add("campo-invalido");
-        produto.focus();
-    }
-
-    function limparErroProduto() {
-
-        erroProduto.textContent = "";
-        erroProduto.hidden = true;
-
-        produto.classList.remove("campo-invalido");
-    }
 
     /**
      * Mostra uma mensagem geral na tela de compra.
@@ -209,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             quantidade.min = "0.001";
             quantidade.step = "0.001";
-            quantidade.value = "1.000";
+            quantidade.value = "1,000";
 
         } else {
 
@@ -448,6 +429,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         limparErroProduto();
+        limparErroCompra();
 
         const produtoId = produto.value;
 
@@ -460,37 +442,42 @@ document.addEventListener("DOMContentLoaded", function () {
         const valor =
                 obterPrecoProduto();
 
-        const quantidadeInformada =
-                Number(quantidade.value);
+        const valorDigitado =
+                quantidade.value
+                .trim()
+                .replace(",", ".");
 
-        if (!Number.isFinite(quantidadeInformada)
+        const quantidadeInformada =
+                Number(valorDigitado);
+
+        if (isNaN(quantidadeInformada)
                 || quantidadeInformada <= 0) {
 
-            alert("Informe uma quantidade ou peso válido.");
+            if (vendidoPorPeso) {
+
+                mostrarErroCompra(
+                        "Informe um peso válido. Exemplo: 0,500 kg."
+                        );
+
+            } else {
+
+                mostrarErroCompra(
+                        "Informe uma quantidade válida."
+                        );
+            }
 
             quantidade.focus();
-
             return;
         }
 
-        if (valor <= 0) {
-
-            alert("O produto selecionado não possui preço válido.");
-
-            return;
-        }
-
-        /*
-         * Produto vendido por unidade deve receber
-         * somente quantidade inteira.
-         */
         if (!vendidoPorPeso
                 && !Number.isInteger(quantidadeInformada)) {
 
-            alert("A quantidade deve ser um número inteiro.");
+            mostrarErroCompra(
+                    "Produto vendido por unidade. Informe uma quantidade inteira, como 1, 2 ou 3."
+                    );
 
             quantidade.focus();
-
             return;
         }
 
@@ -521,7 +508,7 @@ document.addEventListener("DOMContentLoaded", function () {
         limparErroCompra();
 
         quantidade.value =
-                vendidoPorPeso ? "1.000" : "1";
+                vendidoPorPeso ? "1,000" : "1";
     }
 
 
@@ -705,6 +692,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         rfidInput.classList.remove("campo-invalido");
     }
+
+
 
 
     /* =========================================================

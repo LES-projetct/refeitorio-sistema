@@ -796,54 +796,35 @@ public class ContaSistemaService {
             String login,
             Long compraId) {
 
-        if (login == null || login.isBlank()) {
+        ContaSistema conta
+                = repository.findByLoginIgnoreCase(login)
+                        .orElseThrow(()
+                                -> new IllegalArgumentException("Conta não encontrada.")
+                        );
+
+        if (conta.getUsuarioRelacionado() == null) {
             throw new IllegalArgumentException(
-                    "Conta autenticada não encontrada"
+                    "Esta conta não possui cliente vinculado."
             );
         }
 
-        if (compraId == null) {
-            throw new IllegalArgumentException(
-                    "Compra não informada"
-            );
-        }
+        Long usuarioId
+                = conta.getUsuarioRelacionado().getId();
 
-        ContaSistema conta = repository
-                .findByLoginIgnoreCase(login.trim())
+        return compraRepository.buscarDetalhesDoCliente(
+                compraId,
+                usuarioId
+        )
                 .orElseThrow(()
                         -> new IllegalArgumentException(
-                        "Conta do sistema não encontrada"
-                )
-                );
-
-        if (conta.getPerfil() != PerfilAcesso.CLIENTE) {
-            throw new IllegalArgumentException(
-                    "Esta conta não pertence a um cliente"
-            );
-        }
-
-        Usuario usuario = conta.getUsuarioRelacionado();
-
-        if (usuario == null || usuario.getId() == null) {
-            throw new IllegalArgumentException(
-                    "A conta não possui usuário vinculado"
-            );
-        }
-
-        return compraRepository
-                .findByIdAndUsuarioId(
-                        compraId,
-                        usuario.getId()
-                )
-                .orElseThrow(()
-                        -> new IllegalArgumentException(
-                        "Compra não encontrada para este cliente"
+                        "Compra não encontrada para este cliente."
                 )
                 );
     }
 
     /**
      * Permite que o cliente altere o próprio PIN dentro da área Minha Conta.
+     *
      * @param login
      * @param pinAtual
      * @param novoPin
@@ -930,8 +911,9 @@ public class ContaSistemaService {
     /**
      * Retorna somente os pagamentos pertencentes ao cliente atualmente
      * autenticado.
+     *
      * @param login
-     * @return 
+     * @return
      */
     @Transactional(readOnly = true)
     public List<Pagamento> listarMeusPagamentos(String login) {

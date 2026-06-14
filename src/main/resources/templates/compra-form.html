@@ -137,10 +137,12 @@
                                     Quantidade
                                 </label>
 
-                                <input type="number"
+                                <input type="text"
                                        id="quantidade"
                                        class="input-pdv"
                                        value="1"
+                                       inputmode="decimal"
+                                       autocomplete="off"
                                        required>
 
                             </div>
@@ -296,7 +298,7 @@
 
         </div>
 
-        <script th:src="@{/js/compra.js}"></script>
+        <script th:src="@{/js/compra.js(v=${#dates.createNow().time})}"></script>
 
     </body>
 </html>

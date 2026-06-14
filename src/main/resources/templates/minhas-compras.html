@@ -75,11 +75,20 @@
                                 R$ 0,00
                             </td>
 
-                            <td>
+                            <td class="acoes-tabela">
+
                                 <a th:href="@{/minha-conta/compras/{id}(id=${compra.id})}"
                                    class="botao-mini botao-azul">
-
                                     VER DETALHES
+                                </a>                             
+
+                            </td>
+
+                            <td>
+                                <a th:href="@{/minha-conta/compras/{id}/comprovante(id=${compra.id})}"
+                                   class="botao-mini botao-verde">
+
+                                    COMPROVANTE
 
                                 </a>
                             </td>
@@ -101,21 +110,7 @@
 
                 </a>
 
-                <form th:action="@{/logout}"
-                      method="post">
-
-                    <button type="submit"
-                            class="botao botao-vermelho">
-
-                        SAIR
-
-                    </button>
-
-                </form>
-
             </div>
-
         </div>
-
     </body>
 </html>

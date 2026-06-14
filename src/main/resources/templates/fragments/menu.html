@@ -7,29 +7,84 @@
 
             <div class="menu-sistema">
 
-                <a href="/" id="menu-dashboard">Dashboard</a>
-                <a href="/usuarios/tela" id="menu-usuarios">Usuários</a>
-                <a href="/produtos/tela" id="menu-produtos">Produtos</a>
-                <a href="/compras/tela" id="menu-compras">Compras</a>
-                <a href="/acessos/tela" id="menu-acessos">Acessos</a>
-                <a id="menu-pagamentos"
-                   th:href="@{/pagamentos/tela}">
-
-                    Pagamentos
-
+                <!-- ADMINISTRADOR -->
+                <a id="menu-dashboard"
+                   th:href="@{/}"
+                   sec:authorize="hasRole('ADMINISTRADOR')">
+                    Dashboard
                 </a>
+
+                <a id="menu-usuarios"
+                   th:href="@{/usuarios/tela}"
+                   sec:authorize="hasRole('ADMINISTRADOR')">
+                    Usuários
+                </a>
+
+                <!-- ADMINISTRADOR E OPERADOR -->
+                <a id="menu-produtos"
+                   th:href="@{/produtos/tela}"
+                   sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERADOR')">
+                    Produtos
+                </a>
+
+                <a id="menu-compras"
+                   th:href="@{/compras/tela}"
+                   sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERADOR')">
+                    Compras
+                </a>
+
+                <a id="menu-nova-compra"
+                   th:href="@{/compras/nova}"
+                   sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERADOR')">
+                    Nova Compra
+                </a>
+
+                <a id="menu-acessos"
+                   th:href="@{/acessos/tela}"
+                   sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERADOR')">
+                    Acessos
+                </a>
+
+                <a id="menu-pagamentos"
+                   th:href="@{/pagamentos/tela}"
+                   sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERADOR')">
+                    Pagamentos
+                </a>
+
+                <!-- SOMENTE ADMINISTRADOR -->
+                <a id="menu-relatorios"
+                   th:href="@{/relatorios/devedores}"
+                   sec:authorize="hasRole('ADMINISTRADOR')">
+                    Relatórios
+                </a>
+
                 <a id="menu-contas"
                    th:href="@{/contas/tela}"
                    sec:authorize="hasRole('ADMINISTRADOR')">
-
                     Contas
-
                 </a>
 
 
             </div>
+            <div class="area-sair-menu"
+                 sec:authorize="isAuthenticated()">
 
+                <form th:action="@{/logout}"
+                      method="post"
+                      class="form-sair-menu">
+
+                    <button type="submit"
+                            class="botao-sair-discreto">
+
+                        Sair
+
+                    </button>
+
+                </form>
+
+            </div>
         </div>
+
     </body>
 
 </html>

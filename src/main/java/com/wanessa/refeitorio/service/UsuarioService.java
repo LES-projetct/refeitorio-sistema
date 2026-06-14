@@ -17,6 +17,8 @@ import com.wanessa.refeitorio.repository.ContaSistemaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 /**
  *
@@ -200,4 +202,33 @@ public class UsuarioService {
         return codigo;
     }
 
+    /**
+     * Lista usuários devedores há mais de 30 dias.
+     *
+     * Regra: - saldo negativo; - último pagamento anterior a 30 dias; - ou
+     * nenhum pagamento registrado.
+     */
+    @Transactional(readOnly = true)
+    public List<Usuario> listarDevedoresMaisDe30Dias() {
+
+        LocalDate dataLimite = LocalDate.now().minusDays(30);
+
+        List<Usuario> devedoresComPagamentoAntigo
+                = repository.findBySaldoLessThanAndDataUltimoPagamentoBeforeOrderBySaldoAsc(
+                        BigDecimal.ZERO,
+                        dataLimite
+                );
+
+        List<Usuario> devedoresSemPagamento
+                = repository.findBySaldoLessThanAndDataUltimoPagamentoIsNullOrderBySaldoAsc(
+                        BigDecimal.ZERO
+                );
+
+        List<Usuario> resultado = new ArrayList<>();
+
+        resultado.addAll(devedoresComPagamentoAntigo);
+        resultado.addAll(devedoresSemPagamento);
+
+        return resultado;
+    }
 }

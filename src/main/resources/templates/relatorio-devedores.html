@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Relatório de Devedores</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                RELATÓRIO DE DEVEDORES
+            </h1>
+
+            <p class="texto-relatorio">
+                Clientes com saldo negativo e sem pagamento nos últimos 30 dias.
+            </p>
+
+            <div th:if="${devedores == null or devedores.isEmpty()}"
+                 class="mensagem-info">
+
+                Nenhum cliente devedor há mais de 30 dias encontrado.
+
+            </div>
+
+            <div th:if="${devedores != null and !devedores.isEmpty()}"
+                 class="tabela-container">
+
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOME</th>
+                            <th>RFID</th>
+                            <th>SALDO</th>
+                            <th>LIMITE</th>
+                            <th>ÚLTIMO PAGAMENTO</th>
+                            <th>SITUAÇÃO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="usuario : ${devedores}">
+
+                            <td th:text="${usuario.id}">
+                                1
+                            </td>
+
+                            <td th:text="${usuario.nome}">
+                                Nome
+                            </td>
+
+                            <td th:text="${usuario.codigoRfid}">
+                                RFID0000
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                usuario.saldo,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                usuario.limiteCredito,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${usuario.dataUltimoPagamento != null
+                                ? #temporals.format(
+                                usuario.dataUltimoPagamento,
+                                'dd/MM/yyyy')
+                                : 'Nunca pagou'}">
+                                Nunca pagou
+                            </td>
+
+                            <td>
+                                <span class="situacao-cliente-bloqueado">
+                                    DEVEDOR
+                                </span>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/}"
+                   class="botao botao-azul">
+
+                    VOLTAR
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuRelatorios =
+                        document.getElementById("menu-relatorios");
+
+                if (menuRelatorios) {
+                    menuRelatorios.classList.add("ativo");
+                }
+            });
+        </script>
+
+    </body>
+</html>

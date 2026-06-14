@@ -1302,3 +1302,376 @@ body {
     height: 44px;
     box-sizing: border-box;
 }
+
+/* =========================================================
+   RELATÓRIOS
+   ========================================================= */
+
+.texto-relatorio {
+    margin: -10px 0 25px;
+    text-align: center;
+    color: #555;
+    font-size: 15px;
+}
+
+.mensagem-info {
+    width: 100%;
+    margin: 20px 0;
+    padding: 14px 18px;
+    box-sizing: border-box;
+
+    background-color: #f3fbff;
+    border: 1px solid #bde8ff;
+    border-radius: 12px;
+
+    color: #24566b;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* =========================================================
+   COMPROVANTE DA COMPRA
+   ========================================================= */
+
+.comprovante-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 15px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: #f2f2f2;
+}
+
+.comprovante {
+    width: 360px;
+    max-width: 100%;
+    padding: 22px;
+    box-sizing: border-box;
+
+    background-color: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 14px;
+
+    font-family: Arial, sans-serif;
+}
+
+.comprovante h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 19px;
+}
+
+.comprovante-subtitulo {
+    margin: 6px 0 18px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.comprovante-info p {
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.comprovante hr {
+    margin: 16px 0;
+    border: none;
+    border-top: 1px dashed #999;
+}
+
+.comprovante-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.comprovante-tabela th,
+.comprovante-tabela td {
+    padding: 6px 4px;
+    text-align: left;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.comprovante-tabela th:nth-child(2),
+.comprovante-tabela td:nth-child(2),
+.comprovante-tabela th:nth-child(3),
+.comprovante-tabela td:nth-child(3) {
+    text-align: right;
+}
+
+.comprovante-total {
+    text-align: right;
+}
+
+.comprovante-total p {
+    margin: 0;
+}
+
+.comprovante-total h2 {
+    margin: 6px 0 0;
+    color: #111;
+}
+
+.comprovante-rodape {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+}
+
+@media print {
+
+    body {
+        background-color: white;
+    }
+
+    .area-nao-imprimir {
+        display: none !important;
+    }
+
+    .comprovante-container {
+        padding: 0;
+        min-height: auto;
+        background-color: white;
+    }
+
+    .comprovante {
+        width: 80mm;
+        border: none;
+        border-radius: 0;
+        padding: 10px;
+    }
+}
+.comprovante-saldo p {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin: 7px 0;
+    font-size: 13px;
+}
+
+.comprovante-saldo span {
+    font-weight: bold;
+}
+
+/* =========================================================
+   PADRONIZAÇÃO FINAL DE BOTÕES E STATUS
+   ========================================================= */
+
+/* Botões gerais */
+.botao,
+.botao-mini,
+.botao-pdv-grande,
+.botao-sair-dashboard,
+.botao-sair-menu {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #111;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.2s;
+}
+
+/* Botão normal */
+.botao {
+    min-height: 38px;
+    padding: 9px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+}
+
+/* Botão pequeno usado em tabelas */
+.botao-mini {
+    min-height: 30px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1;
+}
+
+/* Remove borda preta de botões dentro de forms */
+button.botao,
+button.botao-mini,
+.form-acao-inline button {
+    border: none !important;
+    outline: none !important;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Hover padrão */
+.botao:hover,
+.botao-mini:hover,
+.botao-pdv-grande:hover,
+.botao-sair-dashboard:hover,
+.botao-sair-menu:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+/* Cores dos botões */
+.botao-azul {
+    background-color: #4da6ff;
+    color: #07345f;
+}
+
+.botao-verde {
+    background-color: #6dd66d;
+    color: #145c14;
+}
+
+.botao-amarelo {
+    background-color: #f0ea65;
+    color: #5f5700;
+}
+
+.botao-vermelho {
+    background-color: #ff9d9d;
+    color: #7a0000;
+}
+
+/* Botão de sair mais forte */
+.botao-sair-dashboard,
+.botao-sair-menu {
+    background-color: #d62828;
+    color: white;
+}
+
+/* Ações dentro das tabelas */
+.acoes-tabela {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.form-acao-inline {
+    display: inline-flex;
+    margin: 0;
+}
+
+/* =========================================================
+   STATUS / SITUAÇÕES PADRONIZADAS
+   ========================================================= */
+
+/* Base para qualquer status */
+.status,
+.status-ativo,
+.status-bloqueado,
+.status-ok,
+.status-info,
+.situacao-cliente-regular,
+.situacao-cliente-aviso,
+.situacao-cliente-bloqueado,
+.situacao-aberta,
+.situacao-finalizada,
+.situacao-negada {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 88px;
+    padding: 7px 14px;
+    box-sizing: border-box;
+
+    border-radius: 999px;
+    border: none;
+
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Verde: ativo, liberado, regular, finalizado */
+.status-ativo,
+.status-ok,
+.situacao-cliente-regular,
+.situacao-finalizada {
+    background-color: #d8ffe3;
+    color: #176b35;
+}
+
+/* Amarelo: aviso, em aberto, saldo devedor */
+.status-info,
+.situacao-cliente-aviso,
+.situacao-aberta {
+    background-color: #fff4cc;
+    color: #745500;
+}
+
+/* Vermelho: bloqueado, negado, inativo */
+.status-bloqueado,
+.situacao-cliente-bloqueado,
+.situacao-negada {
+    background-color: #ffe0e0;
+    color: #a00000;
+}
+
+/* Status dentro de tabelas */
+.tabela td .status,
+.tabela td .status-ativo,
+.tabela td .status-bloqueado,
+.tabela td .status-ok,
+.tabela td .status-info,
+.tabela td .situacao-cliente-regular,
+.tabela td .situacao-cliente-aviso,
+.tabela td .situacao-cliente-bloqueado,
+.tabela td .situacao-aberta,
+.tabela td .situacao-finalizada,
+.tabela td .situacao-negada {
+    margin: 0 auto;
+}
+
+/* =========================================================
+   SAIR DISCRETO ABAIXO DO MENU
+   ========================================================= */
+
+.area-sair-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: -10px;
+    margin-bottom: 25px;
+}
+
+.form-sair-menu {
+    margin: 0;
+}
+
+.botao-sair-discreto {
+    padding: 7px 22px;
+
+    border: 1px solid #ffb3b3;
+    border-radius: 999px;
+
+    background-color: #fff5f5;
+    color: #a00000;
+
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.botao-sair-discreto:hover {
+    background-color: #ffe0e0;
+    transform: translateY(-1px);
+}

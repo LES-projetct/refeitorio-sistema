@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Comprovante da Compra</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="comprovante-container">
+
+            <div class="comprovante">
+
+                <h1>SISTEMA DE REFEITÓRIO</h1>
+
+                <p class="comprovante-subtitulo">
+                    COMPROVANTE DE COMPRA
+                </p>
+
+                <div th:if="${erro}"
+                     class="mensagem-erro"
+                     role="alert">
+
+                    <span th:text="${erro}"></span>
+
+                </div>
+
+                <div th:if="${compra != null}">
+
+                    <div class="comprovante-info">
+
+                        <p>
+                            <strong>Compra:</strong>
+                            <span th:text="${compra.id}">1</span>
+                        </p>
+
+                        <p>
+                            <strong>Data:</strong>
+                            <span th:text="${#temporals.format(
+                                  compra.dataHora,
+                                  'dd/MM/yyyy HH:mm')}">
+                                12/06/2026 20:30
+                            </span>
+                        </p>
+
+                        <p>
+                            <strong>Cliente:</strong>
+                            <span th:text="${compra.usuario.nome}">
+                                Nome do cliente
+                            </span>
+                        </p>
+
+                        <p>
+                            <strong>RFID:</strong>
+                            <span th:text="${compra.usuario.codigoRfid}">
+                                RFID0000
+                            </span>
+                        </p>
+
+                    </div>
+
+                    <hr>
+
+                    <table class="comprovante-tabela">
+
+                        <thead>
+                            <tr>
+                                <th>ITEM</th>
+                                <th>QTD/PESO</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="item : ${compra.itens}">
+
+                                <td th:text="${item.produto.nome}">
+                                    Produto
+                                </td>
+
+                                <td th:text="${#numbers.formatDecimal(
+                                    item.quantidade,
+                                    1,
+                                    3)}">
+                                    1
+                                </td>
+
+                                <td th:text="${'R$ '
+                                    + #numbers.formatDecimal(
+                                    item.valorTotal,
+                                    1,
+                                    2)}">
+                                    R$ 0,00
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                    <hr>
+
+                    <div class="comprovante-total">
+
+                        <p>
+                            <strong>Total da compra:</strong>
+                        </p>
+
+                        <h2 th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            compra.valorTotal,
+                            1,
+                            2)}">
+                            R$ 0,00
+                        </h2>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="comprovante-saldo">
+
+                        <p>
+                            <strong>Saldo anterior:</strong>
+                            <span th:text="${'R$ '
+                                  + #numbers.formatDecimal(
+                                  compra.saldoAnterior,
+                                  1,
+                                  2)}">
+                                R$ 0,00
+                            </span>
+                        </p>
+
+                        <p>
+                            <strong>Saldo atualizado:</strong>
+                            <span th:text="${'R$ '
+                                  + #numbers.formatDecimal(
+                                  compra.saldoAtualizado,
+                                  1,
+                                  2)}">
+                                R$ 0,00
+                            </span>
+                        </p>
+
+                    </div>
+
+                    <p class="comprovante-rodape">
+                        Obrigado pela preferência.
+                    </p>
+
+                </div>
+
+            </div>
+            
+            <div class="acoes acoes-pagina area-nao-imprimir">
+
+                <button type="button"
+                        class="botao botao-verde"
+                        onclick="window.print()">
+
+                    IMPRIMIR
+
+                </button>
+            </div>
+
+            <div class="acoes acoes-pagina area-nao-imprimir">
+
+                <a th:href="@{/minha-conta/compras}"
+                   class="botao botao-azul">
+
+                    VOLTAR
+
+                </a>
+
+                <a th:href="@{/minha-conta}"
+                   class="botao botao-azul">
+
+                    MINHA CONTA
+
+                </a>
+            </div>
+    </body>
+</html>

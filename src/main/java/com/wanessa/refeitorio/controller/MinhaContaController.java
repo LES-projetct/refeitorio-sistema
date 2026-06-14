@@ -167,6 +167,8 @@ public class MinhaContaController {
 
     /**
      * Lista somente os pagamentos do cliente autenticado.
+     *
+     * @return
      */
     @GetMapping("/minha-conta/pagamentos")
     public String meusPagamentos(
@@ -194,5 +196,42 @@ public class MinhaContaController {
         }
 
         return "meus-pagamentos";
+    }
+
+    /**
+     * Exibe o comprovante de uma compra do cliente autenticado.
+     * @param id
+     * @param authentication
+     * @param model
+     * @return 
+     */
+    @GetMapping("/minha-conta/compras/{id}/comprovante")
+    public String comprovanteMinhaCompra(
+            @PathVariable Long id,
+            Authentication authentication,
+            Model model) {
+
+        try {
+
+            Compra compra
+                    = contaSistemaService.buscarMinhaCompraPorId(
+                            authentication.getName(),
+                            id
+                    );
+
+            model.addAttribute(
+                    "compra",
+                    compra
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            model.addAttribute(
+                    "erro",
+                    e.getMessage()
+            );
+        }
+
+        return "minha-compra-comprovante";
     }
 }

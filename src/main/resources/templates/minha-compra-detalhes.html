@@ -31,58 +31,180 @@
 
             </div>
 
-            <div th:if="${compras == null or compras.isEmpty()}"
+            <div th:if="${compra == null and erro == null}"
                  class="mensagem-info">
 
-                Nenhuma compra encontrada.
+                Compra não encontrada.
 
             </div>
 
-            <div th:if="${compras != null and !compras.isEmpty()}"
-                 class="tabela-container">
+            <div th:if="${compra != null}">
 
-                <table class="tabela">
+                <div class="detalhes-compra-grid">
 
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>DATA</th>
-                            <th>TOTAL</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
+                    <div class="card-detalhe">
 
-                    <tbody>
+                        <span>Compra</span>
 
-                        <tr th:each="compra : ${compras}">
+                        <strong th:text="${'#' + compra.id}">
+                            #1
+                        </strong>
 
-                            <td th:text="${compra.id}">
-                                1
-                            </td>
+                    </div>
 
-                            <td th:text="${#temporals.format(
-                                compra.dataHora,
-                                'dd/MM/yyyy HH:mm')}">
-                                12/06/2026 20:30
-                            </td>
+                    <div class="card-detalhe">
 
-                            <td th:text="${'R$ '
+                        <span>Cliente</span>
+
+                        <strong th:text="${compra.usuario.nome}">
+                            Cliente
+                        </strong>
+
+                    </div>
+
+                    <div class="card-detalhe">
+
+                        <span>Data e Hora</span>
+
+                        <strong th:text="${compra.dataHora != null
+                                ? #temporals.format(compra.dataHora, 'dd/MM/yyyy')
+                                + ' às '
+                                + #temporals.format(compra.dataHora, 'HH:mm')
+                                : 'Data não informada'}">
+                            00/00/0000
+                        </strong>
+
+                    </div>
+
+                    <div class="card-detalhe">
+
+                        <span>Total</span>
+
+                        <strong th:text="${'R$ '
                                 + #numbers.formatDecimal(
-                                compra.valorTotal,
-                                1,
-                                2)}">
-                                R$ 0,00
-                            </td>
+                                    compra.valorTotal,
+                                    1,
+                                    2)}">
+                            R$ 0,00
+                        </strong>
 
-                            <td>
-                                FINALIZADA
-                            </td>
+                    </div>
 
-                        </tr>
+                    <div class="card-detalhe">
 
-                    </tbody>
+                        <span>Saldo anterior</span>
 
-                </table>
+                        <strong th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                    compra.saldoAnterior,
+                                    1,
+                                    2)}">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+                    <div class="card-detalhe">
+
+                        <span>Saldo atualizado</span>
+
+                        <strong th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                    compra.saldoAtualizado,
+                                    1,
+                                    2)}">
+                            R$ 0,00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <h2 class="subtitulo">
+                    ITENS DA COMPRA
+                </h2>
+
+                <div class="tabela-container">
+
+                    <table class="tabela">
+
+                        <thead>
+                            <tr>
+                                <th>PRODUTO</th>
+                                <th>QUANTIDADE/PESO</th>
+                                <th>VALOR UNITÁRIO</th>
+                                <th>VALOR TOTAL</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="item : ${compra.itens}">
+
+                                <td th:text="${item.produto != null
+                                        ? item.produto.nome
+                                        : 'Produto não localizado'}">
+                                    Produto
+                                </td>
+
+                                <td>
+                                    <span th:if="${item.peso != null}"
+                                          th:text="${#numbers.formatDecimal(
+                                                item.peso,
+                                                1,
+                                                3) + ' kg'}">
+                                        0,000 kg
+                                    </span>
+
+                                    <span th:if="${item.peso == null
+                                            and item.quantidade != null}"
+                                          th:text="${#numbers.formatDecimal(
+                                                item.quantidade,
+                                                1,
+                                                0)}">
+                                        1
+                                    </span>
+
+                                    <span th:if="${item.peso == null
+                                            and item.quantidade == null}">
+                                        Não informado
+                                    </span>
+                                </td>
+
+                                <td th:text="${item.valorUnitario != null
+                                        ? 'R$ ' + #numbers.formatDecimal(
+                                            item.valorUnitario,
+                                            1,
+                                            2)
+                                        : 'R$ 0,00'}">
+                                    R$ 0,00
+                                </td>
+
+                                <td th:text="${item.valorTotal != null
+                                        ? 'R$ ' + #numbers.formatDecimal(
+                                            item.valorTotal,
+                                            1,
+                                            2)
+                                        : 'R$ 0,00'}">
+                                    R$ 0,00
+                                </td>
+
+                            </tr>
+
+                            <tr th:if="${compra.itens == null
+                                    or compra.itens.isEmpty()}">
+
+                                <td colspan="4">
+                                    Nenhum item registrado nesta compra.
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
@@ -95,17 +217,21 @@
 
                 </a>
 
-                <form th:action="@{/logout}"
-                      method="post">
+                <a th:if="${compra != null}"
+                   th:href="@{/minha-conta/compras/{id}/comprovante(id=${compra.id})}"
+                   class="botao botao-verde">
 
-                    <button type="submit"
-                            class="botao botao-vermelho">
+                    COMPROVANTE
 
-                        SAIR
+                </a>
 
-                    </button>
+                <a th:href="@{/minha-conta}"
+                   class="botao botao-azul">
 
-                </form>
+                    MINHA CONTA
+
+                </a>
+
 
             </div>
 

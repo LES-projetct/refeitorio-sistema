@@ -16,6 +16,15 @@
             <div th:replace="~{fragments/menu :: menu}"></div>
             <h1 class="titulo">COMPRAS</h1>
 
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/compras/nova}"
+                   class="botao botao-verde">
+                    NOVA COMPRA
+                </a>
+
+            </div>
+
             <!-- Mensagem apresentada após uma compra concluída -->
             <div th:if="${sucesso}"
                  class="mensagem-sucesso"
@@ -69,13 +78,18 @@
                                 : '-'}">
                             </td>
 
-                            <td>
+                            <td class="acoes-tabela">
+
                                 <a th:href="@{/compras/detalhes/{id}(id=${compra.id})}"
                                    class="botao-mini botao-azul">
-
                                     DETALHES
-
                                 </a>
+
+                                <a th:href="@{/compras/comprovante/{id}(id=${compra.id})}"
+                                   class="botao-mini botao-verde">
+                                    COMPROVANTE
+                                </a>
+
                             </td>
 
                         </tr>
@@ -89,13 +103,6 @@
 
                 <a href="/" class="botao botao-azul">
                     VOLTAR
-                </a>
-
-                <a href="/compras/nova"
-                   class="botao botao-verde">
-
-                    NOVA COMPRA
-
                 </a>
 
             </div>

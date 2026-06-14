@@ -4,16 +4,18 @@
  */
 package com.wanessa.refeitorio.controller;
 
-import com.wanessa.refeitorio.model.Compra;
 import com.wanessa.refeitorio.service.CompraService;
 import com.wanessa.refeitorio.service.ProdutoService;
 import com.wanessa.refeitorio.service.UsuarioService;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.wanessa.refeitorio.model.Compra;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -92,17 +94,14 @@ public class CompraController {
             Compra compraSalva
                     = service.salvarCompra(compra);
 
-            /*
-         * A mensagem permanece disponível
-         * depois do redirecionamento.
-             */
             redirectAttributes.addFlashAttribute(
                     "sucesso",
                     "Compra nº " + compraSalva.getId()
                     + " registrada com sucesso."
             );
 
-            return "redirect:/compras/tela";
+            return "redirect:/compras/comprovante/"
+                    + compraSalva.getId();
 
         } catch (IllegalArgumentException e) {
 
@@ -121,10 +120,6 @@ public class CompraController {
                     usuarioService.listarTodos()
             );
 
-            /*
-         * Esta lista também precisa ser carregada novamente,
-         * pois a página possui o campo de produtos.
-             */
             model.addAttribute(
                     "produtos",
                     produtoService.listarTodos()
@@ -181,5 +176,37 @@ public class CompraController {
 
             return "redirect:/compras/tela";
         }
+    }
+
+    /**
+     * Exibe o comprovante da compra, simulando a impressão térmica.
+     *
+     * @param id
+     * @param model
+     * @return
+     */
+    @GetMapping("/comprovante/{id}")
+    public String comprovanteCompra(
+            @PathVariable Long id,
+            Model model) {
+
+        try {
+
+            Compra compra = service.buscarPorId(id);
+
+            model.addAttribute(
+                    "compra",
+                    compra
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            model.addAttribute(
+                    "erro",
+                    e.getMessage()
+            );
+        }
+
+        return "compra-comprovante";
     }
 }

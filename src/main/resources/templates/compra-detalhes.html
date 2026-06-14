@@ -157,12 +157,19 @@
 
             </div>
 
-            <div class="acoes">
+            <div class="acoes acoes-pagina">
 
                 <a th:href="@{/compras/tela}"
                    class="botao botao-azul">
 
                     VOLTAR
+
+                </a>
+
+                <a th:href="@{/compras/comprovante/{id}(id=${compra.id})}"
+                   class="botao botao-verde">
+
+                    COMPROVANTE
 
                 </a>
 
