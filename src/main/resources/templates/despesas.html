@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Despesas</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                DESPESAS
+            </h1>
+
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/despesas/nova}"
+                   class="botao botao-verde">
+
+                    NOVA DESPESA
+
+                </a>
+
+            </div>
+
+            <div th:if="${despesas == null or despesas.isEmpty()}"
+                 class="mensagem-info">
+
+                Nenhuma despesa cadastrada.
+
+            </div>
+
+            <div th:if="${despesas != null and !despesas.isEmpty()}"
+                 class="tabela-container">
+
+                <table class="tabela tabela-despesas">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>FORNECEDOR</th>
+                            <th>DESCRIÇÃO</th>
+                            <th>VALOR</th>
+                            <th>VENCIMENTO</th>
+                            <th>PAGAMENTO</th>
+                            <th>STATUS</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="despesa : ${despesas}"
+                            th:classappend="${despesa.ativo == false} ? 'linha-desativada' : ''">
+                            <td th:text="${despesa.id}">
+                                1
+                            </td>
+
+                            <td th:text="${despesa.fornecedor}">
+                                Fornecedor
+                            </td>
+
+                            <td th:text="${despesa.descricao}">
+                                Descrição
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                despesa.valor,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${despesa.dataVencimento != null
+                                ? #temporals.format(
+                                despesa.dataVencimento,
+                                'dd/MM/yyyy')
+                                : 'Não informado'}">
+                                00/00/0000
+                            </td>
+
+                            <td th:text="${despesa.dataPagamento != null
+                                ? #temporals.format(
+                                despesa.dataPagamento,
+                                'dd/MM/yyyy')
+                                : '-'}">
+                                -
+                            </td>
+
+                            <td>
+                                <span th:if="${despesa.status.name() == 'PAGA'}"
+                                      class="status-ativo">
+                                    PAGA
+                                </span>
+
+                                <span th:if="${despesa.status.name() == 'PENDENTE'}"
+                                      class="status-info">
+                                    PENDENTE
+                                </span>
+                            </td>
+
+                            <td class="acoes-tabela">
+
+                                <div class="grupo-acoes-despesas">
+
+                                    <a th:href="@{/despesas/editar/{id}(id=${despesa.id})}"
+                                       class="botao-mini botao-amarelo">
+                                        EDITAR
+                                    </a>
+
+                                    <form th:if="${despesa.status.name() == 'PENDENTE' and despesa.ativo == true}"
+                                          th:action="@{/despesas/pagar/{id}(id=${despesa.id})}"
+                                          method="post"
+                                          class="form-acao-inline">
+
+                                        <button type="submit"
+                                                class="botao-mini botao-verde"
+                                                onclick="return abrirModalConfirmacao(
+                                    this.form,
+                                    'Confirmar pagamento',
+                                    'Deseja marcar esta despesa como paga?'
+                                    )">
+                                            PAGAR
+                                        </button>
+
+                                    </form>
+
+                                    <form th:if="${despesa.status.name() == 'PAGA' and despesa.ativo == true}"
+                                          th:action="@{/despesas/pendente/{id}(id=${despesa.id})}"
+                                          method="post"
+                                          class="form-acao-inline">
+
+                                        <button type="submit"
+                                                class="botao-mini botao-azul"
+                                                onclick="return abrirModalConfirmacao(
+                                    this.form,
+                                    'Retornar para pendente',
+                                    'Deseja retornar esta despesa para pendente?'
+                                    )">
+                                            PENDENTE
+                                        </button>
+
+                                    </form>
+
+                                    <form th:if="${despesa.ativo == true}"
+                                          th:action="@{/despesas/desativar/{id}(id=${despesa.id})}"
+                                          method="post"
+                                          class="form-acao-inline">
+
+                                        <button type="submit"
+                                                class="botao-mini botao-vermelho"
+                                                onclick="return abrirModalConfirmacao(
+                                    this.form,
+                                    'Desativar despesa',
+                                    'Deseja desativar esta despesa? Ela ficará fora dos cálculos do dashboard.'
+                                    )">
+                                            DESATIVAR
+                                        </button>
+
+                                    </form>
+
+                                    <form th:if="${despesa.ativo == false}"
+                                          th:action="@{/despesas/reativar/{id}(id=${despesa.id})}"
+                                          method="post"
+                                          class="form-acao-inline">
+
+                                        <button type="submit"
+                                                class="botao-mini botao-verde"
+                                                onclick="return abrirModalConfirmacao(
+                                    this.form,
+                                    'Reativar despesa',
+                                    'Deseja reativar esta despesa? Ela voltará a entrar nos cálculos.'
+                                    )">
+                                            REATIVAR
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+        <div id="modalConfirmacao"
+             class="modal-confirmacao"
+             hidden>
+
+            <div class="modal-confirmacao-caixa">
+
+                <h2 id="modalConfirmacaoTitulo">
+                    Confirmar ação
+                </h2>
+
+                <p id="modalConfirmacaoTexto">
+                    Deseja continuar?
+                </p>
+
+                <div class="acoes acoes-pagina">
+
+                    <button type="button"
+                            id="btnConfirmarModal"
+                            class="botao botao-verde">
+                        CONFIRMAR
+                    </button>
+
+                    <button type="button"
+                            id="btnCancelarModal"
+                            class="botao botao-vermelho">
+                        CANCELAR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            const menuDespesas =
+                    document.getElementById("menu-despesas");
+
+            let formularioConfirmacao = null;
+
+            if (menuDespesas) {
+                menuDespesas.classList.add("ativo");
+            }
+
+            function abrirModalConfirmacao(formulario, titulo, texto) {
+
+                formularioConfirmacao = formulario;
+
+                document.getElementById("modalConfirmacaoTitulo").textContent = titulo;
+                document.getElementById("modalConfirmacaoTexto").textContent = texto;
+
+                document.getElementById("modalConfirmacao").hidden = false;
+
+                return false;
+            }
+
+            document.getElementById("btnCancelarModal")
+                    .addEventListener("click", function () {
+
+                        formularioConfirmacao = null;
+
+                        document.getElementById("modalConfirmacao").hidden = true;
+                    });
+
+            document.getElementById("btnConfirmarModal")
+                    .addEventListener("click", function () {
+
+                        if (formularioConfirmacao) {
+                            formularioConfirmacao.submit();
+                        }
+                    });
+        </script>
+
+    </body>
+</html>

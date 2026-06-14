@@ -25,55 +25,59 @@
             <div class="grid-resumo">
 
                 <div class="card-resumo card-usuarios">
-
                     <p>TOTAL DE USUÁRIOS</p>
-
-                    <h2 th:text="${resumo.totalUsuarios != null
-                        ? resumo.totalUsuarios
-                        : 0}">
-                        0
-                    </h2>
-
+                    <h2 th:text="${resumo.totalUsuarios != null ? resumo.totalUsuarios : 0}">0</h2>
                 </div>
 
                 <div class="card-resumo card-compras">
-
                     <p>TOTAL DE COMPRAS</p>
-
-                    <h2 th:text="${resumo.totalCompras != null
-                        ? resumo.totalCompras
-                        : 0}">
-                        0
-                    </h2>
-
+                    <h2 th:text="${resumo.totalCompras != null ? resumo.totalCompras : 0}">0</h2>
                 </div>
 
                 <div class="card-resumo card-faturamento">
-
                     <p>FATURAMENTO TOTAL</p>
-
                     <h2 th:text="${resumo.faturamentoTotal != null
-                        ? 'R$ ' + #numbers.formatDecimal(
-                        resumo.faturamentoTotal, 1, 2)
+                        ? 'R$ ' + #numbers.formatDecimal(resumo.faturamentoTotal, 1, 2)
                         : 'R$ 0,00'}">
                         R$ 0,00
                     </h2>
-
                 </div>
 
                 <div class="card-resumo card-bloqueios">
-
                     <p>TENTATIVAS DE ENTRADA NEGADAS</p>
-
-                    <h2 th:text="${resumo.acessosBloqueados != null
-                        ? resumo.acessosBloqueados
-                        : 0}">
-                        0
-                    </h2>
-
+                    <h2 th:text="${resumo.acessosBloqueados != null ? resumo.acessosBloqueados : 0}">0</h2>
                 </div>
 
-            </div> 
+                <div class="card-resumo card-despesas-pagas">
+                    <p>DESPESAS PAGAS</p>
+                    <h2 th:text="${resumo.despesasPagas != null
+                        ? 'R$ ' + #numbers.formatDecimal(resumo.despesasPagas, 1, 2)
+                        : 'R$ 0,00'}">
+                        R$ 0,00
+                    </h2>
+                </div>
+
+                <div class="card-resumo card-despesas-pendentes">
+                    <p>DESPESAS PENDENTES</p>
+                    <h2 th:text="${resumo.despesasPendentes != null
+                        ? 'R$ ' + #numbers.formatDecimal(resumo.despesasPendentes, 1, 2)
+                        : 'R$ 0,00'}">
+                        R$ 0,00
+                    </h2>
+                </div>
+
+                <div class="card-resumo card-lucro">
+                    <p>LUCRO ESTIMADO</p>
+                    <h2 th:text="${resumo.lucroEstimado != null
+                        ? 'R$ ' + #numbers.formatDecimal(resumo.lucroEstimado, 1, 2)
+                        : 'R$ 0,00'}">
+                        R$ 0,00
+                    </h2>
+                </div>
+
+            </div>
+
+
         </div>
 
         <script>

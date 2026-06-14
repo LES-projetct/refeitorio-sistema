@@ -1829,3 +1829,325 @@ button.botao-mini,
     text-align: right;
     font-weight: bold;
 }
+
+/* =========================================================
+   AJUSTES DA TELA DE DESPESAS
+   ========================================================= */
+
+.acoes-pagina {
+    margin-top: 18px;
+    margin-bottom: 24px;
+}
+
+.tabela-despesas {
+    min-width: 1080px;
+    table-layout: fixed;
+}
+
+.tabela-despesas th,
+.tabela-despesas td {
+    vertical-align: middle;
+}
+
+.tabela-despesas th:nth-child(1),
+.tabela-despesas td:nth-child(1) {
+    width: 50px;
+}
+
+.tabela-despesas th:nth-child(2),
+.tabela-despesas td:nth-child(2) {
+    width: 180px;
+}
+
+.tabela-despesas th:nth-child(3),
+.tabela-despesas td:nth-child(3) {
+    width: 220px;
+}
+
+.tabela-despesas th:nth-child(4),
+.tabela-despesas td:nth-child(4) {
+    width: 100px;
+}
+
+.tabela-despesas th:nth-child(5),
+.tabela-despesas td:nth-child(5),
+.tabela-despesas th:nth-child(6),
+.tabela-despesas td:nth-child(6) {
+    width: 120px;
+}
+
+.tabela-despesas th:nth-child(7),
+.tabela-despesas td:nth-child(7) {
+    width: 130px;
+}
+
+.tabela-despesas th:nth-child(8),
+.tabela-despesas td:nth-child(8) {
+    width: 320px;
+}
+
+.tabela-despesas .acoes-tabela {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    min-width: 300px;
+}
+
+.tabela-despesas .form-acao-inline {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.tabela-despesas .botao-mini {
+    width: 92px !important;
+    min-width: 92px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+}
+
+/* =========================================================
+   TABELA DE DESPESAS - VERSÃO LIMPA
+   ========================================================= */
+
+.tabela-despesas {
+    width: 100%;
+    min-width: 980px;
+    table-layout: fixed;
+}
+
+.tabela-despesas th,
+.tabela-despesas td {
+    padding: 12px 10px;
+    vertical-align: middle;
+    text-align: center;
+    word-break: normal;
+}
+
+.tabela-despesas th:nth-child(1),
+.tabela-despesas td:nth-child(1) {
+    width: 50px;
+}
+
+.tabela-despesas th:nth-child(2),
+.tabela-despesas td:nth-child(2) {
+    width: 190px;
+}
+
+.tabela-despesas th:nth-child(3),
+.tabela-despesas td:nth-child(3) {
+    width: 240px;
+}
+
+.tabela-despesas th:nth-child(4),
+.tabela-despesas td:nth-child(4) {
+    width: 105px;
+}
+
+.tabela-despesas th:nth-child(5),
+.tabela-despesas td:nth-child(5),
+.tabela-despesas th:nth-child(6),
+.tabela-despesas td:nth-child(6) {
+    width: 120px;
+}
+
+.tabela-despesas th:nth-child(7),
+.tabela-despesas td:nth-child(7) {
+    width: 130px;
+}
+
+.tabela-despesas th:nth-child(8),
+.tabela-despesas td:nth-child(8) {
+    width: 320px;
+}
+
+.tabela-despesas td:nth-child(2),
+.tabela-despesas td:nth-child(3) {
+    line-height: 1.25;
+}
+
+.grupo-acoes-despesas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.grupo-acoes-despesas .form-acao-inline {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}
+
+.grupo-acoes-despesas .botao-mini {
+    width: 92px !important;
+    min-width: 92px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+}
+
+.linha-desativada {
+    opacity: 0.6;
+}
+
+.linha-desativada td {
+    background-color: #f3f3f3 !important;
+}
+.modal-confirmacao {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.modal-confirmacao[hidden] {
+    display: none !important;
+}
+
+.modal-confirmacao-caixa {
+    width: 90%;
+    max-width: 420px;
+
+    background-color: white;
+    border-radius: 18px;
+    padding: 26px;
+
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.modal-confirmacao-caixa h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+
+    font-size: 22px;
+}
+
+.modal-confirmacao-caixa p {
+    margin-bottom: 24px;
+    font-size: 15px;
+}
+
+/* =========================================================
+   CARDS DO DASHBOARD
+   ========================================================= */
+
+.grid-resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    margin-top: 30px;
+}
+
+.card-resumo {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    border: 1px solid #dcdcdc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: 0.2s;
+    min-height: 135px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-resumo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+}
+
+.card-resumo p {
+    margin: 0 0 16px;
+    font-weight: bold;
+    font-size: 15px;
+    color: #222;
+}
+
+.card-resumo h2 {
+    margin: 0;
+    font-size: 34px;
+    font-weight: bold;
+    color: #ff1f1f;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+/* Faixas laterais coloridas */
+.card-usuarios {
+    border-left: 8px solid #58d8f5;
+}
+
+.card-compras {
+    border-left: 8px solid #6dd66d;
+}
+
+.card-faturamento {
+    border-left: 8px solid #f0c14b;
+}
+
+.card-bloqueios {
+    border-left: 8px solid #ff8f8f;
+}
+
+.card-despesas-pagas {
+    border-left: 8px solid #8dd7a8;
+}
+
+.card-despesas-pendentes {
+    border-left: 8px solid #f3d47a;
+}
+
+.card-lucro {
+    border-left: 8px solid #7ea7ff;
+}
+
+/* Área do botão sair */
+.area-sair-dashboard {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.area-sair-dashboard form {
+    margin: 0;
+}
+
+.botao-sair-dashboard {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 999px;
+    background: #e53935;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.botao-sair-dashboard:hover {
+    opacity: 0.88;
+}
+
+@media (max-width: 700px) {
+    .card-resumo h2 {
+        font-size: 28px;
+    }
+
+    .card-resumo p {
+        font-size: 14px;
+    }
+}

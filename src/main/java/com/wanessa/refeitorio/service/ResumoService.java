@@ -7,6 +7,7 @@ import com.wanessa.refeitorio.repository.UsuarioRepository;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.wanessa.refeitorio.repository.DespesaRepository;
 
 @Service
 public class ResumoService {
@@ -14,15 +15,18 @@ public class ResumoService {
     private final UsuarioRepository usuarioRepository;
     private final CompraRepository compraRepository;
     private final RegistroAcessoRepository registroAcessoRepository;
+    private final DespesaRepository despesaRepository;
 
     public ResumoService(
             UsuarioRepository usuarioRepository,
             CompraRepository compraRepository,
-            RegistroAcessoRepository registroAcessoRepository) {
+            RegistroAcessoRepository registroAcessoRepository,
+            DespesaRepository despesaRepository) {
 
         this.usuarioRepository = usuarioRepository;
         this.compraRepository = compraRepository;
         this.registroAcessoRepository = registroAcessoRepository;
+        this.despesaRepository = despesaRepository;
     }
 
     /**
@@ -44,13 +48,13 @@ public class ResumoService {
         );
 
         /* Soma dos valores de todas as compras */
-        BigDecimal faturamento =
-                compraRepository.calcularFaturamentoTotal();
+        BigDecimal faturamento
+                = compraRepository.calcularFaturamentoTotal();
 
         dto.setFaturamentoTotal(
                 faturamento != null
-                ? faturamento
-                : BigDecimal.ZERO
+                        ? faturamento
+                        : BigDecimal.ZERO
         );
 
         /*
@@ -61,6 +65,27 @@ public class ResumoService {
                 registroAcessoRepository
                         .countByAcessoPermitidoFalse()
         );
+
+        BigDecimal despesasPagas
+                = despesaRepository.calcularTotalDespesasPagas();
+
+        BigDecimal despesasPendentes
+                = despesaRepository.calcularTotalDespesasPendentes();
+
+        if (despesasPagas == null) {
+            despesasPagas = BigDecimal.ZERO;
+        }
+
+        if (despesasPendentes == null) {
+            despesasPendentes = BigDecimal.ZERO;
+        }
+
+        BigDecimal lucroEstimado
+                = faturamento.subtract(despesasPagas);
+
+        dto.setDespesasPagas(despesasPagas);
+        dto.setDespesasPendentes(despesasPendentes);
+        dto.setLucroEstimado(lucroEstimado);
 
         return dto;
     }

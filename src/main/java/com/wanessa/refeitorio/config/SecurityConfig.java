@@ -92,9 +92,9 @@ public class SecurityConfig {
                          */
                         .requestMatchers("/inicio")
                         .authenticated()
-                           /*
+                        /*
                  * Trocar PIN.
-                         */     
+                         */
                         .requestMatchers("/trocar-pin/**")
                         .authenticated()
                         /*
@@ -108,7 +108,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/usuarios/**",
                                 "/contas/**",
-                                "/relatorios/**"
+                                "/relatorios/**",
+                                "/despesas/**"
                         )
                         .hasRole("ADMINISTRADOR")
                         /*

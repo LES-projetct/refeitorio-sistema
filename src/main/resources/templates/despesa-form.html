@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Cadastro de Despesa</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                CADASTRO DE DESPESA
+            </h1>
+
+            <div th:if="${erro}"
+                 class="mensagem-erro"
+                 role="alert">
+
+                <span th:text="${erro}"></span>
+
+            </div>
+
+            <form th:action="@{/despesas/salvar}"
+                  th:object="${despesa}"
+                  method="post"
+                  class="formulario">
+
+                <input type="hidden"
+                       th:field="*{id}">
+
+                <div class="campo-formulario">
+
+                    <label for="fornecedor">
+                        Fornecedor
+                    </label>
+
+                    <input type="text"
+                           id="fornecedor"
+                           th:field="*{fornecedor}"
+                           class="input-arredondado"
+                           placeholder="Ex.: Distribuidora de Alimentos"
+                           required>
+
+                </div>
+
+                <div class="campo-formulario">
+
+                    <label for="descricao">
+                        Descrição
+                    </label>
+
+                    <input type="text"
+                           id="descricao"
+                           th:field="*{descricao}"
+                           class="input-arredondado"
+                           placeholder="Ex.: Compra de alimentos"
+                           required>
+
+                </div>
+
+                <div class="campo-formulario">
+
+                    <label for="valor">
+                        Valor
+                    </label>
+
+                    <input type="number"
+                           id="valor"
+                           th:field="*{valor}"
+                           class="input-arredondado"
+                           min="0.01"
+                           step="0.01"
+                           placeholder="0.00"
+                           required>
+
+                </div>
+
+                <div class="campo-formulario">
+
+                    <label for="dataVencimento">
+                        Data de vencimento
+                    </label>
+
+                    <input type="date"
+                           id="dataVencimento"
+                           th:field="*{dataVencimento}"
+                           class="input-arredondado"
+                           required>
+
+                </div>
+
+                <div class="campo-formulario">
+
+                    <label for="dataPagamento">
+                        Data de pagamento
+                    </label>
+
+                    <input type="date"
+                           id="dataPagamento"
+                           th:field="*{dataPagamento}"
+                           class="input-arredondado">
+
+                </div>
+
+                <div class="campo-formulario">
+
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select id="status"
+                            th:field="*{status}"
+                            class="input-arredondado"
+                            required>
+
+                        <option th:each="status : ${statusDespesa}"
+                                th:value="${status}"
+                                th:text="${status}">
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="campo-formulario">
+
+                    <label for="observacao">
+                        Observação
+                    </label>
+
+                    <textarea id="observacao"
+                              th:field="*{observacao}"
+                              class="input-arredondado"
+                              rows="3"
+                              placeholder="Observações sobre a despesa">
+                    </textarea>
+
+                </div>
+
+                <div class="acoes acoes-pagina">
+
+                    <button type="submit"
+                            class="botao botao-verde">
+
+                        SALVAR
+
+                    </button>
+
+                    <a th:href="@{/despesas/tela}"
+                       class="botao botao-vermelho">
+
+                        CANCELAR
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <script>
+            const menuDespesas =
+                    document.getElementById("menu-despesas");
+
+            if (menuDespesas) {
+                menuDespesas.classList.add("ativo");
+            }
+        </script>
+
+    </body>
+</html>

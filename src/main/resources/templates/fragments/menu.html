@@ -58,6 +58,12 @@
                     Relatórios
                 </a>
 
+                <a id="menu-despesas"
+                   th:href="@{/despesas/tela}"
+                   sec:authorize="hasRole('ADMINISTRADOR')">
+                    Despesas
+                </a>
+
                 <a id="menu-contas"
                    th:href="@{/contas/tela}"
                    sec:authorize="hasRole('ADMINISTRADOR')">
