@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 /**
  * Configura autenticação, perfis de acesso, login, logout e tratamento de
@@ -102,6 +103,15 @@ public class SecurityConfig {
                          */
                         .requestMatchers("/")
                         .hasRole("ADMINISTRADOR")
+                        /*
+                * Rota usada pelo caixa/operador para identificar cliente por RFID
+                * durante a compra.
+                         */
+                        .requestMatchers(HttpMethod.GET, "/usuarios/rfid/**")
+                        .hasAnyRole(
+                                "ADMINISTRADOR",
+                                "OPERADOR"
+                        )
                         /*
                  * Rotas exclusivas do administrador.
                          */

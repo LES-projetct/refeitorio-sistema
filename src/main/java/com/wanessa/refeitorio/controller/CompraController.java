@@ -17,6 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.wanessa.refeitorio.model.Usuario;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
+
 /**
  *
  * @author wanes
@@ -208,5 +214,48 @@ public class CompraController {
         }
 
         return "compra-comprovante";
+    }
+
+    @ResponseBody
+    @GetMapping("/cliente/{codigoRfid}")
+    public ResponseEntity<Map<String, Object>> buscarClientePorRfid(
+            @PathVariable String codigoRfid) {
+
+        Map<String, Object> resposta = new HashMap<>();
+
+        try {
+            Usuario usuario = usuarioService.buscarPorRfid(codigoRfid);
+
+            if (usuario.getAtivo() == null || !usuario.getAtivo()) {
+                resposta.put("erro", true);
+                resposta.put("mensagem", "Cliente inativo. Não é possível realizar compra.");
+                return ResponseEntity.badRequest().body(resposta);
+            }
+
+            BigDecimal saldo = usuario.getSaldo() != null
+                    ? usuario.getSaldo()
+                    : BigDecimal.ZERO;
+
+            BigDecimal limiteCredito = usuario.getLimiteCredito() != null
+                    ? usuario.getLimiteCredito()
+                    : BigDecimal.ZERO;
+
+            resposta.put("erro", false);
+            resposta.put("id", usuario.getId());
+            resposta.put("nome", usuario.getNome());
+            resposta.put("email", usuario.getEmail());
+            resposta.put("codigoRfid", usuario.getCodigoRfid());
+            resposta.put("saldo", saldo);
+            resposta.put("limiteCredito", limiteCredito);
+            resposta.put("totalDisponivel", saldo.add(limiteCredito));
+
+            return ResponseEntity.ok(resposta);
+
+        } catch (RuntimeException e) {
+            resposta.put("erro", true);
+            resposta.put("mensagem", e.getMessage());
+
+            return ResponseEntity.badRequest().body(resposta);
+        }
     }
 }
