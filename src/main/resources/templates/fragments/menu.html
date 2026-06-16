@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
     <body>
 
-        <div th:fragment="menu">
+        <aside th:fragment="menu" class="menu-lateral">
 
-            <div class="menu-sistema">
+            <div class="menu-logo">
 
-                <!-- ADMINISTRADOR -->
+                <div class="menu-logo-icone">
+                    R
+                </div>
+
+                <div>
+                    <h2>RefeCard</h2>
+                    <p>Sistema de Refeitório</p>
+                </div>
+
+            </div>
+
+            <nav class="menu-links">
+
                 <a id="menu-dashboard"
                    th:href="@{/}"
                    sec:authorize="hasRole('ADMINISTRADOR')">
@@ -20,7 +33,6 @@
                     Usuários
                 </a>
 
-                <!-- ADMINISTRADOR E OPERADOR -->
                 <a id="menu-produtos"
                    th:href="@{/produtos/tela}"
                    sec:authorize="hasAnyRole('ADMINISTRADOR', 'OPERADOR')">
@@ -51,17 +63,16 @@
                     Pagamentos
                 </a>
 
-                <!-- SOMENTE ADMINISTRADOR -->
-                <a id="menu-relatorios"
-                   th:href="@{/relatorios/devedores}"
-                   sec:authorize="hasRole('ADMINISTRADOR')">
-                    Relatórios
-                </a>
-
                 <a id="menu-despesas"
                    th:href="@{/despesas/tela}"
                    sec:authorize="hasRole('ADMINISTRADOR')">
                     Despesas
+                </a>
+
+                <a id="menu-relatorios"
+                   th:href="@{/relatorios/devedores}"
+                   sec:authorize="hasRole('ADMINISTRADOR')">
+                    Relatórios
                 </a>
 
                 <a id="menu-contas"
@@ -70,28 +81,19 @@
                     Contas
                 </a>
 
+            </nav>
 
-            </div>
-            <div class="area-sair-menu"
-                 sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}"
+                  method="post"
+                  class="menu-sair-form">
 
-                <form th:action="@{/logout}"
-                      method="post"
-                      class="form-sair-menu">
+                <button type="submit" class="menu-sair">
+                    Sair
+                </button>
 
-                    <button type="submit"
-                            class="botao-sair-discreto">
+            </form>
 
-                        Sair
-
-                    </button>
-
-                </form>
-
-            </div>
-        </div>
+        </aside>
 
     </body>
-
 </html>
-

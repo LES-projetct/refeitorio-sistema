@@ -2151,3 +2151,175 @@ button.botao-mini,
         font-size: 14px;
     }
 }
+
+/* =========================================================
+   MENU LATERAL
+   ========================================================= */
+
+body {
+    margin: 0;
+    background-color: #f4f6f9;
+}
+
+.menu-lateral {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 245px;
+    height: 100vh;
+
+    background-color: #ffffff;
+    border-right: 1px solid #e2e2e2;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06);
+
+    padding: 24px 18px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 1000;
+}
+
+.menu-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 34px;
+}
+
+.menu-logo-icone {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 14px;
+    background-color: #58d8f53e;
+
+    color: #111;
+    font-size: 26px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-logo h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #111;
+}
+
+.menu-logo p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: #777;
+}
+
+.menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.menu-links a {
+    min-height: 42px;
+    padding: 0 16px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+
+    transition: 0.2s;
+}
+
+.menu-links a:hover {
+    background-color: #eaf2ff;
+    color: #111;
+}
+
+.menu-links a.ativo {
+    background-color: #58d8f5;
+    color: #111;
+}
+
+.menu-sair-form {
+    margin-top: auto;
+    padding-top: 18px;
+}
+
+.menu-sair {
+    width: 100%;
+    height: 42px;
+
+    border: none;
+    border-radius: 12px;
+
+    background-color: #e53935;
+    color: white;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.menu-sair:hover {
+    opacity: 0.9;
+}
+
+/* Aplica o deslocamento apenas nas páginas que possuem menu lateral */
+.painel:has(.menu-lateral) {
+    margin-left: 245px !important;
+    width: calc(100% - 245px) !important;
+    max-width: none !important;
+
+    min-height: 100vh;
+
+    box-sizing: border-box;
+    padding: 28px 34px !important;
+}
+
+/* Remove a faixa superior antiga apenas nas telas com menu */
+.painel:has(.menu-lateral) .topo {
+    display: none;
+}
+
+/* Ajusta os títulos */
+.painel:has(.menu-lateral) .titulo {
+    margin-top: 0;
+    margin-bottom: 26px;
+}
+
+/* Responsivo */
+@media (max-width: 850px) {
+
+    .menu-lateral {
+        position: relative;
+
+        width: 100%;
+        height: auto;
+
+        border-right: none;
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    .menu-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .painel:has(.menu-lateral) {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 22px !important;
+    }
+}
