@@ -100,10 +100,10 @@
                                     <button type="submit"
                                             class="botao-mini botao-vermelho"
                                             onclick="return abrirModalConfirmacao(
-                                                    this.form,
-                                                    'Desativar produto',
-                                                    'Deseja desativar este produto? Ele não ficará disponível para novas compras.'
-                                            )">
+                                                            this.form,
+                                                            'Desativar produto',
+                                                            'Deseja desativar este produto? Ele não ficará disponível para novas compras.'
+                                                            )">
                                         DESATIVAR
                                     </button>
 
@@ -117,10 +117,10 @@
                                     <button type="submit"
                                             class="botao-mini botao-verde"
                                             onclick="return abrirModalConfirmacao(
-                                                    this.form,
-                                                    'Reativar produto',
-                                                    'Deseja reativar este produto? Ele voltará a ficar disponível para compras.'
-                                            )">
+                                                            this.form,
+                                                            'Reativar produto',
+                                                            'Deseja reativar este produto? Ele voltará a ficar disponível para compras.'
+                                                            )">
                                         REATIVAR
                                     </button>
 
@@ -224,6 +224,39 @@
                             }
                         });
             });
+
+            const pesquisaProdutos = document.getElementById("pesquisaProdutos");
+            const tabelaProdutos = document.getElementById("tabelaProdutos");
+
+            function normalizarTexto(texto) {
+                return texto
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "");
+            }
+
+            if (pesquisaProdutos && tabelaProdutos) {
+
+                pesquisaProdutos.addEventListener("input", function () {
+
+                    const termoPesquisado = normalizarTexto(
+                            pesquisaProdutos.value.trim()
+                            );
+
+                    const linhas = tabelaProdutos.querySelectorAll("tbody tr");
+
+                    linhas.forEach(function (linha) {
+
+                        const textoLinha = normalizarTexto(linha.textContent);
+
+                        if (textoLinha.includes(termoPesquisado)) {
+                            linha.style.display = "";
+                        } else {
+                            linha.style.display = "none";
+                        }
+                    });
+                });
+            }
         </script>
 
     </body>

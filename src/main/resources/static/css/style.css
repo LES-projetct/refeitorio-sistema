@@ -2195,7 +2195,7 @@ body {
     height: 46px;
 
     border-radius: 14px;
-    background-color: #58d8f53e;
+    background-color: #1f6fd6;
 
     color: #111;
     font-size: 26px;
@@ -2247,7 +2247,7 @@ body {
 }
 
 .menu-links a.ativo {
-    background-color: #58d8f5;
+    background-color: #58d8f53e;
     color: #111;
 }
 

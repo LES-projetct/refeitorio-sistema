@@ -77,8 +77,130 @@
 
             </div>
 
+            <section class="dashboard-graficos">
+
+                <div class="grafico-card">
+
+                    <h2>RESUMO FINANCEIRO</h2>
+
+                    <div id="graficoFinanceiro"
+                         class="grafico-barras"
+                         th:data-faturamento="${resumo.faturamentoTotal != null ? resumo.faturamentoTotal : 0}"
+                         th:data-despesas-pagas="${resumo.despesasPagas != null ? resumo.despesasPagas : 0}"
+                         th:data-despesas-pendentes="${resumo.despesasPendentes != null ? resumo.despesasPendentes : 0}"
+                         th:data-lucro="${resumo.lucroEstimado != null ? resumo.lucroEstimado : 0}">
+
+                        <div class="grafico-linha">
+                            <span>Faturamento</span>
+
+                            <div class="grafico-barra-fundo">
+                                <div id="barraFaturamento"
+                                     class="grafico-barra grafico-azul"></div>
+                            </div>
+
+                            <strong id="valorFaturamento">R$ 0,00</strong>
+                        </div>
+
+                        <div class="grafico-linha">
+                            <span>Despesas pagas</span>
+
+                            <div class="grafico-barra-fundo">
+                                <div id="barraDespesasPagas"
+                                     class="grafico-barra grafico-vermelho"></div>
+                            </div>
+
+                            <strong id="valorDespesasPagas">R$ 0,00</strong>
+                        </div>
+
+                        <div class="grafico-linha">
+                            <span>Despesas pendentes</span>
+
+                            <div class="grafico-barra-fundo">
+                                <div id="barraDespesasPendentes"
+                                     class="grafico-barra grafico-amarelo"></div>
+                            </div>
+
+                            <strong id="valorDespesasPendentes">R$ 0,00</strong>
+                        </div>
+
+                        <div class="grafico-linha">
+                            <span>Lucro estimado</span>
+
+                            <div class="grafico-barra-fundo">
+                                <div id="barraLucro"
+                                     class="grafico-barra grafico-verde"></div>
+                            </div>
+
+                            <strong id="valorLucro">R$ 0,00</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
 
         </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const grafico = document.getElementById("graficoFinanceiro");
+
+                if (!grafico) {
+                    return;
+                }
+
+                function converterValor(valor) {
+                    return Number(String(valor).replace(",", ".")) || 0;
+                }
+
+                function formatarDinheiro(valor) {
+                    return valor.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL"
+                    });
+                }
+
+                const faturamento = converterValor(grafico.dataset.faturamento);
+                const despesasPagas = converterValor(grafico.dataset.despesasPagas);
+                const despesasPendentes = converterValor(grafico.dataset.despesasPendentes);
+                const lucro = converterValor(grafico.dataset.lucro);
+
+                const maiorValor = Math.max(
+                        Math.abs(faturamento),
+                        Math.abs(despesasPagas),
+                        Math.abs(despesasPendentes),
+                        Math.abs(lucro),
+                        1
+                        );
+
+                function aplicarBarra(idBarra, idValor, valor) {
+
+                    const barra = document.getElementById(idBarra);
+                    const campoValor = document.getElementById(idValor);
+
+                    const porcentagem = Math.max(
+                            Math.abs(valor) / maiorValor * 100,
+                            4
+                            );
+
+                    barra.style.width = porcentagem + "%";
+                    campoValor.textContent = formatarDinheiro(valor);
+
+                    if (valor < 0) {
+                        barra.classList.add("grafico-negativo");
+                        campoValor.classList.add("valor-negativo");
+                    }
+                }
+
+                aplicarBarra("barraFaturamento", "valorFaturamento", faturamento);
+                aplicarBarra("barraDespesasPagas", "valorDespesasPagas", despesasPagas);
+                aplicarBarra("barraDespesasPendentes", "valorDespesasPendentes", despesasPendentes);
+                aplicarBarra("barraLucro", "valorLucro", lucro);
+            });
+        </script>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {

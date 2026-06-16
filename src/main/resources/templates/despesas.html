@@ -42,6 +42,7 @@
                 Nenhuma despesa cadastrada.
 
             </div>
+            <div class="barra-superior"></div>
 
             <div th:if="${despesas != null and !despesas.isEmpty()}"
                  class="tabela-container">
@@ -201,6 +202,17 @@
                 </table>
 
             </div>
+            
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/}"
+                   class="botao botao-azul">
+
+                    VOLTAR
+
+                </a>
+
+            </div>
 
         </div>
         <div id="modalConfirmacao"
@@ -235,9 +247,11 @@
 
             </div>
 
-        </div>
+        </div>       
+        
 
         <script>
+            
             const menuDespesas =
                     document.getElementById("menu-despesas");
 
