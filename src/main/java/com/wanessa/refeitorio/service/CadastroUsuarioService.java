@@ -26,38 +26,41 @@ public class CadastroUsuarioService {
     /**
      * Cadastra ou atualiza um usuário.
      *
-     * Quando for um novo cadastro, também cria
-     * automaticamente uma conta com perfil CLIENTE.
+     * Quando for um novo cadastro, também cria automaticamente uma conta com
+     * perfil CLIENTE.
      */
     @Transactional
-    public ResultadoCadastroUsuarioDTO salvar(
-            Usuario usuario) {
+    public ResultadoCadastroUsuarioDTO salvar(Usuario usuario) {
 
         if (usuario == null) {
-            throw new IllegalArgumentException(
-                    "Usuário não informado"
+            throw new IllegalArgumentException("Usuário não informado");
+        }
+
+        boolean novoCadastro = usuario.getId() == null;
+
+        /*
+     * Se for um novo cadastro e o RFID não tiver sido informado,
+     * o sistema gera automaticamente.
+         */
+        if (novoCadastro
+                && (usuario.getCodigoRfid() == null
+                || usuario.getCodigoRfid().isBlank())) {
+
+            usuario.setCodigoRfid(
+                    usuarioService.gerarCodigoRfidAutomatico()
             );
         }
 
-        boolean novoCadastro =
-                usuario.getId() == null;
+        if (usuario.getAtivo() == null) {
+            usuario.setAtivo(true);
+        }
 
-        Usuario usuarioSalvo =
-                usuarioService.salvar(usuario);
+        Usuario usuarioSalvo = usuarioService.salvar(usuario);
 
         CredencialInicialDTO credencial = null;
 
-        /*
-         * A conta cliente é criada somente
-         * no primeiro cadastro.
-         */
         if (novoCadastro) {
-
-            credencial =
-                    contaSistemaService
-                            .criarContaCliente(
-                                    usuarioSalvo
-                            );
+            credencial = contaSistemaService.criarContaCliente(usuarioSalvo);
         }
 
         return new ResultadoCadastroUsuarioDTO(

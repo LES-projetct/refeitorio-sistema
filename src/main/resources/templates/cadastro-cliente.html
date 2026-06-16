@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Cadastro de Cliente</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body class="pagina-login">
+
+        <div class="login-container">
+
+            <div class="login-card">
+
+                <div class="login-faixa"></div>
+
+                <h1>Cadastro de Cliente</h1>
+
+                <p class="login-subtitulo">
+                    Preencha seus dados para criar sua conta.
+                </p>
+
+                <div th:if="${erro}"
+                     class="mensagem-erro login-mensagem"
+                     th:text="${erro}">
+                    Erro
+                </div>
+
+                <form th:action="@{/cadastro-cliente/salvar}"
+                      th:object="${usuario}"
+                      method="post"
+                      class="login-formulario">
+
+                    <div class="login-campo">
+                        <label for="nome">Nome completo</label>
+
+                        <input type="text"
+                               id="nome"
+                               th:field="*{nome}"
+                               class="input-arredondado"
+                               required>
+                    </div>
+
+                    <div class="login-campo">
+                        <label for="email">E-mail</label>
+
+                        <input type="email"
+                               id="email"
+                               th:field="*{email}"
+                               class="input-arredondado"
+                               required>
+                    </div>
+
+                    <button type="submit"
+                            class="botao botao-azul login-botao">
+                        CADASTRAR
+                    </button>
+
+                </form>
+
+                <div class="acoes-pagina">
+                    <a th:href="@{/login}"
+                       class="botao botao-vermelho">
+                        VOLTAR PARA LOGIN
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </body>
+</html>

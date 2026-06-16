@@ -88,6 +88,11 @@ public class SecurityConfig {
                                 "/images/**",
                                 "/favicon.ico"
                         ).permitAll()
+                                
+                        .requestMatchers(
+                                "/cadastro-cliente/**"
+                        )
+                        .permitAll()
                         /*
                  * Redirecionamento após o login.
                          */

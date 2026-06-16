@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Cadastro realizado</title>
+
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+
+    <body class="pagina-login">
+
+        <div class="login-container">
+
+            <div class="login-card">
+
+                <div class="login-faixa"></div>
+
+                <h1>Cadastro realizado</h1>
+
+                <p class="login-subtitulo">
+                    Sua conta de cliente foi criada com sucesso.
+                </p>
+
+                <div class="credencial-inicial">
+
+                    <h3>Dados de acesso</h3>
+
+                    <p>
+                        <strong>Nome:</strong>
+                        <span th:text="${usuario.nome}">Cliente</span>
+                    </p>
+
+                    <p>
+                        <strong>RFID/Login:</strong>
+                        <span th:text="${credencial.login}">RFID0000</span>
+                    </p>
+
+                    <p>
+                        <strong>PIN temporário:</strong>
+                        <span th:text="${credencial.senhaTemporaria}">0000</span>
+                    </p>
+
+                    <small>
+                        No primeiro acesso, será necessário trocar o PIN temporário.
+                    </small>
+
+                </div>
+
+                <div class="acoes-pagina">
+
+                    <a th:href="@{/login}"
+                       class="botao botao-azul">
+                        IR PARA LOGIN
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </body>
+</html>
