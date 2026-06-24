@@ -56,13 +56,21 @@
 
                     </div>
 
-                    <div class="cliente-rfid">
+                    <div class="cliente-rfid cliente-qrcode-card">
 
-                        <span>RFID</span>
+                        <span>QR CODE DE ACESSO</span>
+
+                        <img th:src="@{/minha-conta/qrcode}"
+                             alt="QR Code de acesso"
+                             class="cliente-qrcode">
 
                         <strong th:text="${dados.codigoRfid}">
                             RFID0000
                         </strong>
+
+                        <small>
+                            Apresente este QR Code na entrada do refeitório.
+                        </small>
 
                     </div>
 

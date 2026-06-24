@@ -22,44 +22,30 @@
                 CONTROLE DE ACESSOS
             </h1>
 
-            <!-- Registro por RFID -->
-            <div class="acesso-registro-card">
+            <!-- Simulador de catraca -->
+            <div class="acesso-registro-card acesso-catraca-card">
 
-                <label for="rfidAcesso">
-                    Código RFID
-                </label>
+                <div class="acesso-catraca-texto">
 
-                <div class="acesso-controles">
+                    <h2>
+                        Catraca de Acesso
+                    </h2>
 
-                    <input type="text"
-                           id="rfidAcesso"
-                           class="input-pdv"
-                           placeholder="Aproxime o cartão ou digite o RFID"
-                           autocomplete="off">
-
-                    <button type="button"
-                            id="btnEntrada"
-                            class="botao botao-verde">
-
-                        REGISTRAR ENTRADA
-
-                    </button>
-
-                    <button type="button"
-                            id="btnSaida"
-                            class="botao botao-azul">
-
-                        REGISTRAR SAÍDA
-
-                    </button>
+                    <p>
+                        Utilize o simulador de catraca para registrar entradas e saídas
+                        por leitura de QR Code ou RFID. Os registros realizados aparecem
+                        automaticamente no histórico abaixo.
+                    </p>
 
                 </div>
 
-                <div id="mensagemAcesso"
-                     class="mensagem-acesso"
-                     role="status"
-                     aria-live="polite"
-                     hidden>
+                <div class="acoes-pagina">
+
+                    <a th:href="@{/simulador-acesso}"
+                       class="botao botao-verde">
+                        ABRIR CATRACA
+                    </a>
+
                 </div>
 
             </div>
@@ -175,7 +161,27 @@
 
         </div>
 
-        <script th:src="@{/js/acesso.js}"></script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+        const menuAcessos = document.getElementById("menu-acessos");
+
+        if (menuAcessos) {
+        menuAcessos.classList.add("ativo");
+        }
+
+        });
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuAcessos = document.getElementById("menu-acessos");
+
+                if (menuAcessos) {
+                    menuAcessos.classList.add("ativo");
+                }
+
+            });
+        </script>
 
     </body>
 </html>

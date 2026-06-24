@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Simulador de Acesso</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+
+        <script src="https://unpkg.com/html5-qrcode"></script>
+    </head>
+
+    <body class="pagina-login">
+
+        <main class="login-container">
+
+            <section class="login-card simulador-acesso-card">
+
+                <div class="login-faixa"></div>
+
+                <h1>ACESSO AO REFEITÓRIO</h1>
+
+                <p class="login-subtitulo">
+                    Simulação de catraca com leitura por QR Code
+                </p>
+
+                <div class="catraca-instrucao">
+
+                    <strong>CATRACA DIGITAL</strong>
+
+                    <p>
+                        Escolha se deseja registrar entrada ou saída e aponte a câmera para o QR Code do cliente.
+                    </p>
+
+                </div>
+
+                <div id="grupoLeituraQr"
+                     class="catraca-acoes-principais">
+
+                    <button type="button"
+                            id="btnLerEntradaQr"
+                            class="botao botao-verde">
+                        LER QR PARA ENTRADA
+                    </button>
+
+                    <button type="button"
+                            id="btnLerSaidaQr"
+                            class="botao botao-azul">
+                        LER QR PARA SAÍDA
+                    </button>
+
+                </div>
+
+                <div id="cameraArea"
+                     class="catraca-camera-area"
+                     hidden>
+
+                    <div id="leitorQrCode"
+                         class="leitor-qrcode">
+                    </div>
+
+                    <button type="button"
+                            id="btnPararCamera"
+                            class="botao botao-vermelho catraca-botao-parar">
+                        PARAR CÂMERA
+                    </button>
+
+                </div>
+
+                <details class="catraca-manual">
+
+                    <summary>
+                        Inserir código manualmente
+                    </summary>
+
+                    <div class="catraca-manual-conteudo">
+
+                        <label for="codigoRfid">
+                            Código RFID ou QR Code
+                        </label>
+
+                        <input type="text"
+                               id="codigoRfid"
+                               class="input-arredondado"
+                               placeholder="Exemplo: RFID4586"
+                               autocomplete="off">
+
+                        <div class="catraca-manual-botoes">
+
+                            <button type="button"
+                                    id="btnEntrada"
+                                    class="botao botao-verde">
+                                REGISTRAR ENTRADA
+                            </button>
+
+                            <button type="button"
+                                    id="btnSaida"
+                                    class="botao botao-azul">
+                                REGISTRAR SAÍDA
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </details>
+
+                <div id="resultadoAcesso"
+                     class="mensagem-info login-mensagem catraca-resultado">
+                    Aguardando leitura do QR Code do cliente.
+                </div>
+
+                <div class="cadastro-login">
+
+                    <a th:href="@{/login}">
+                        Encerrar
+                    </a>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const codigoRfid = document.getElementById("codigoRfid");
+                const resultadoAcesso = document.getElementById("resultadoAcesso");
+
+                const btnEntrada = document.getElementById("btnEntrada");
+                const btnSaida = document.getElementById("btnSaida");
+
+                const btnLerEntradaQr = document.getElementById("btnLerEntradaQr");
+                const btnLerSaidaQr = document.getElementById("btnLerSaidaQr");
+                const btnPararCamera = document.getElementById("btnPararCamera");
+
+                const cameraArea = document.getElementById("cameraArea");
+                const grupoLeituraQr = document.getElementById("grupoLeituraQr");
+
+                let leitorQrCode = null;
+                let cameraAtiva = false;
+                let leituraEmProcessamento = false;
+
+                function mostrarProcessando(tipo, codigo) {
+                    resultadoAcesso.className = "mensagem-info login-mensagem catraca-resultado";
+                    resultadoAcesso.innerHTML =
+                            "<strong>ENTRADA DE DADOS RECEBIDA:</strong><br>" +
+                            codigo + "<br><br>" +
+                            "Processando " + tipo + "...";
+                }
+
+                function mostrarSucesso(mensagem) {
+                    resultadoAcesso.className = "mensagem-sucesso login-mensagem catraca-resultado";
+                    resultadoAcesso.innerHTML = mensagem;
+                }
+
+                function mostrarErro(mensagem) {
+                    resultadoAcesso.className = "mensagem-erro login-mensagem catraca-resultado";
+                    resultadoAcesso.innerHTML = mensagem;
+                }
+
+                function registrarEntradaComCodigo(codigo) {
+
+                    if (!codigo) {
+                        mostrarErro("Informe ou simule a leitura de um RFID/QR Code.");
+                        return;
+                    }
+
+                    codigoRfid.value = codigo;
+
+                    mostrarProcessando("entrada", codigo);
+
+                    fetch("/simulador-acesso/entrada/" + encodeURIComponent(codigo), {
+                        method: "POST"
+                    })
+                            .then(function (resposta) {
+                                return resposta.json();
+                            })
+                            .then(function (dados) {
+
+                                if (dados.permitido) {
+                                    mostrarSucesso(
+                                            "<strong>SAÍDA DO SISTEMA:</strong><br>" +
+                                            dados.mensagem + "<br><br>" +
+                                            "<strong>Cliente:</strong> " + dados.nome + "<br>" +
+                                            "<strong>RFID/QR:</strong> " + dados.codigoRfid + "<br>" +
+                                            "<strong>Registro salvo no banco:</strong> #" + dados.registroId
+                                            );
+                                } else {
+                                    mostrarErro(
+                                            "<strong>SAÍDA DO SISTEMA:</strong><br>" +
+                                            dados.mensagem
+                                            );
+                                }
+                            })
+                            .catch(function () {
+                                mostrarErro("Erro ao processar o acesso.");
+                            });
+                }
+
+                function registrarSaidaComCodigo(codigo) {
+
+                    if (!codigo) {
+                        mostrarErro("Informe ou simule a leitura de um RFID/QR Code.");
+                        return;
+                    }
+
+                    codigoRfid.value = codigo;
+
+                    mostrarProcessando("saída", codigo);
+
+                    fetch("/simulador-acesso/saida/" + encodeURIComponent(codigo), {
+                        method: "POST"
+                    })
+                            .then(function (resposta) {
+                                return resposta.json();
+                            })
+                            .then(function (dados) {
+
+                                if (dados.sucesso) {
+                                    mostrarSucesso(
+                                            "<strong>SAÍDA DO SISTEMA:</strong><br>" +
+                                            dados.mensagem + "<br><br>" +
+                                            "<strong>Cliente:</strong> " + dados.nome + "<br>" +
+                                            "<strong>RFID/QR:</strong> " + dados.codigoRfid + "<br>" +
+                                            "<strong>Registro atualizado no banco:</strong> #" + dados.registroId
+                                            );
+                                } else {
+                                    mostrarErro(
+                                            "<strong>SAÍDA DO SISTEMA:</strong><br>" +
+                                            dados.mensagem
+                                            );
+                                }
+                            })
+                            .catch(function () {
+                                mostrarErro("Erro ao processar a saída.");
+                            });
+                }
+
+                function registrarEntradaManual() {
+                    registrarEntradaComCodigo(codigoRfid.value.trim());
+                }
+
+                function registrarSaidaManual() {
+                    registrarSaidaComCodigo(codigoRfid.value.trim());
+                }
+
+                function iniciarCamera(tipoLeitura) {
+
+                    if (cameraAtiva) {
+                        return;
+                    }
+
+                    if (typeof Html5Qrcode === "undefined") {
+                        mostrarErro("Leitor QR Code não carregado. Use o campo manual.");
+                        return;
+                    }
+
+                    leituraEmProcessamento = false;
+
+                    cameraArea.hidden = false;
+                    grupoLeituraQr.style.display = "none";
+
+                    leitorQrCode = new Html5Qrcode("leitorQrCode");
+
+                    const configuracao = {
+                        fps: 10,
+                        qrbox: {
+                            width: 220,
+                            height: 220
+                        }
+                    };
+
+                    leitorQrCode.start(
+                            {facingMode: "environment"},
+                            configuracao,
+                            function (codigoLido) {
+
+                                if (!codigoLido || leituraEmProcessamento) {
+                                    return;
+                                }
+
+                                leituraEmProcessamento = true;
+
+                                const codigo = codigoLido.trim();
+
+                                if (tipoLeitura === "entrada") {
+                                    registrarEntradaComCodigo(codigo);
+                                } else {
+                                    registrarSaidaComCodigo(codigo);
+                                }
+
+                                pararCamera();
+                            },
+                            function () {
+                                /*
+                                 * Erros de leitura contínua são normais enquanto
+                                 * a câmera ainda não encontrou um QR Code.
+                                 */
+                            }
+                    ).then(function () {
+
+                        cameraAtiva = true;
+
+                        resultadoAcesso.className = "mensagem-info login-mensagem catraca-resultado";
+
+                        if (tipoLeitura === "entrada") {
+                            resultadoAcesso.innerHTML =
+                                    "Câmera ativa. Aponte para o QR Code do cliente para registrar ENTRADA.";
+                        } else {
+                            resultadoAcesso.innerHTML =
+                                    "Câmera ativa. Aponte para o QR Code do cliente para registrar SAÍDA.";
+                        }
+
+                    }).catch(function () {
+
+                        cameraArea.hidden = true;
+                        grupoLeituraQr.style.display = "flex";
+
+                        mostrarErro("Não foi possível acessar a câmera. Use localhost, HTTPS ou o campo manual.");
+                    });
+                }
+
+                function pararCamera() {
+
+                    if (!leitorQrCode || !cameraAtiva) {
+                        cameraArea.hidden = true;
+                        grupoLeituraQr.style.display = "flex";
+                        return;
+                    }
+
+                    leitorQrCode.stop().then(function () {
+
+                        cameraAtiva = false;
+                        leituraEmProcessamento = false;
+
+                        cameraArea.hidden = true;
+                        grupoLeituraQr.style.display = "flex";
+
+                        leitorQrCode.clear();
+
+                    }).catch(function () {
+
+                        cameraAtiva = false;
+                        leituraEmProcessamento = false;
+
+                        cameraArea.hidden = true;
+                        grupoLeituraQr.style.display = "flex";
+                    });
+                }
+
+                btnEntrada.addEventListener("click", registrarEntradaManual);
+                btnSaida.addEventListener("click", registrarSaidaManual);
+
+                btnLerEntradaQr.addEventListener("click", function () {
+                    iniciarCamera("entrada");
+                });
+
+                btnLerSaidaQr.addEventListener("click", function () {
+                    iniciarCamera("saida");
+                });
+
+                btnPararCamera.addEventListener("click", pararCamera);
+
+                codigoRfid.addEventListener("keydown", function (event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        registrarEntradaManual();
+                    }
+                });
+
+            });
+        </script>
+
+    </body>
+</html>
