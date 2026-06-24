@@ -951,4 +951,19 @@ public class ContaSistemaService {
                         usuario.getId()
                 );
     }
+
+    @Transactional(readOnly = true)
+    public Usuario buscarUsuarioClientePorLogin(String login) {
+
+        ContaSistema conta = repository.findByLoginIgnoreCase(login)
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada."));
+
+        Usuario usuario = conta.getUsuarioRelacionado();
+
+        if (usuario == null) {
+            throw new RuntimeException("Conta não está vinculada a um cliente.");
+        }
+
+        return usuario;
+    }
 }

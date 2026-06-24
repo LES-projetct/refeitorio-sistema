@@ -19,9 +19,15 @@
 
             <div class="topo"></div>
 
+
             <h1 class="titulo">
                 MEUS PAGAMENTOS
             </h1>
+
+            <div th:if="${param.recargaSucesso}"
+                 class="mensagem-sucesso">
+                Recarga realizada com sucesso.
+            </div>
 
             <div th:if="${erro}"
                  class="mensagem-erro"
@@ -35,6 +41,15 @@
                  class="mensagem-info">
 
                 Nenhum pagamento encontrado.
+
+            </div>
+
+            <div class="acoes-pagina">
+
+                <a th:href="@{/minha-conta/recarregar}"
+                   class="botao botao-verde">
+                    RECARREGAR SALDO
+                </a>
 
             </div>
 

@@ -11,6 +11,7 @@ import com.wanessa.refeitorio.repository.PagamentoRepository;
 import com.wanessa.refeitorio.repository.UsuarioRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,8 @@ public class PagamentoService {
 
     /**
      * Lista todos os pagamentos registrados.
-     * @return 
+     *
+     * @return
      */
     @Transactional(readOnly = true)
     public List<Pagamento> listarTodos() {
@@ -46,11 +48,12 @@ public class PagamentoService {
 
     /**
      * Registra um pagamento e atualiza o saldo do usuário.
+     *
      * @param usuarioId
      * @param valor
      * @param formaPagamento
      * @param observacao
-     * @return 
+     * @return
      */
     @Transactional
     public Pagamento registrarPagamento(
@@ -113,6 +116,52 @@ public class PagamentoService {
         pagamento.setSaldoAtualizado(saldoAtualizado);
         pagamento.setFormaPagamento(formaPagamento);
         pagamento.setObservacao(observacao);
+
+        return pagamentoRepository.save(pagamento);
+    }
+
+    @Transactional
+    public Pagamento recarregarCliente(
+            Usuario usuario,
+            BigDecimal valor,
+            FormaPagamento formaPagamento) {
+
+        if (usuario == null) {
+            throw new RuntimeException("Usuário não informado.");
+        }
+
+        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Informe um valor de recarga válido.");
+        }
+
+        if (formaPagamento == null) {
+            throw new RuntimeException("Informe a forma de pagamento.");
+        }
+
+        if (formaPagamento == FormaPagamento.DINHEIRO) {
+            throw new RuntimeException("Recarga pelo cliente não pode ser feita em dinheiro.");
+        }
+
+        BigDecimal saldoAnterior = usuario.getSaldo() != null
+                ? usuario.getSaldo()
+                : BigDecimal.ZERO;
+
+        BigDecimal saldoAtualizado = saldoAnterior.add(valor);
+
+        usuario.setSaldo(saldoAtualizado);
+        usuario.setDataUltimoPagamento(LocalDate.now());
+
+        usuarioRepository.save(usuario);
+
+        Pagamento pagamento = new Pagamento();
+
+        pagamento.setUsuario(usuario);
+        pagamento.setValor(valor);
+        pagamento.setFormaPagamento(formaPagamento);
+        pagamento.setSaldoAnterior(saldoAnterior);
+        pagamento.setSaldoAtualizado(saldoAtualizado);
+        pagamento.setDataHora(LocalDateTime.now());
+        pagamento.setObservacao("Recarga realizada pelo cliente.");
 
         return pagamentoRepository.save(pagamento);
     }

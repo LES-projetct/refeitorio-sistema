@@ -8,9 +8,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import com.wanessa.refeitorio.model.RegistroAcesso;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.wanessa.refeitorio.model.Pagamento;
+
+import com.wanessa.refeitorio.enums.FormaPagamento;
+import com.wanessa.refeitorio.model.Usuario;
+import com.wanessa.refeitorio.service.PagamentoService;
+import java.math.BigDecimal;
+import java.security.Principal;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controla a área pessoal do cliente autenticado.
@@ -19,11 +27,14 @@ import com.wanessa.refeitorio.model.Pagamento;
 public class MinhaContaController {
 
     private final ContaSistemaService contaSistemaService;
+    private final PagamentoService pagamentoService;
 
     public MinhaContaController(
-            ContaSistemaService contaSistemaService) {
+            ContaSistemaService contaSistemaService,
+            PagamentoService pagamentoService) {
 
         this.contaSistemaService = contaSistemaService;
+        this.pagamentoService = pagamentoService;
     }
 
     /**
@@ -200,10 +211,11 @@ public class MinhaContaController {
 
     /**
      * Exibe o comprovante de uma compra do cliente autenticado.
+     *
      * @param id
      * @param authentication
      * @param model
-     * @return 
+     * @return
      */
     @GetMapping("/minha-conta/compras/{id}/comprovante")
     public String comprovanteMinhaCompra(
@@ -233,5 +245,52 @@ public class MinhaContaController {
         }
 
         return "minha-compra-comprovante";
+    }
+
+    @GetMapping("/minha-conta/recarregar")
+    public String abrirRecargaCliente(Model model) {
+
+        model.addAttribute("formasPagamento", new FormaPagamento[]{
+            FormaPagamento.PIX,
+            FormaPagamento.CARTAO_CREDITO,
+            FormaPagamento.CARTAO_DEBITO
+        });
+
+        return "minha-conta-recarregar";
+    }
+
+    @PostMapping("/minha-conta/recarregar")
+    public String recarregarCliente(
+            @RequestParam BigDecimal valor,
+            @RequestParam FormaPagamento formaPagamento,
+            Principal principal,
+            Model model) {
+
+        try {
+            Usuario usuario
+                    = contaSistemaService.buscarUsuarioClientePorLogin(
+                            principal.getName()
+                    );
+
+            pagamentoService.recarregarCliente(
+                    usuario,
+                    valor,
+                    formaPagamento
+            );
+
+            return "redirect:/minha-conta/pagamentos?recargaSucesso";
+
+        } catch (RuntimeException e) {
+
+            model.addAttribute("erro", e.getMessage());
+
+            model.addAttribute("formasPagamento", new FormaPagamento[]{
+                FormaPagamento.PIX,
+                FormaPagamento.CARTAO_CREDITO,
+                FormaPagamento.CARTAO_DEBITO
+            });
+
+            return "minha-conta-recarregar";
+        }
     }
 }
