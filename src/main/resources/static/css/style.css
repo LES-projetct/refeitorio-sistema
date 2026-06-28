@@ -2262,3 +2262,84 @@ textarea:focus {
         width: 100%;
     }
 }
+
+/* =========================================================
+   SIMULADOR DE BALANÇA - NOVA COMPRA
+   ========================================================= */
+
+.modal-balanca-conteudo {
+    max-width: 460px;
+}
+
+.texto-balanca {
+    margin: 0 0 18px;
+
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.balanca-produto-info {
+    margin: 18px 0;
+    padding: 16px;
+
+    border-radius: 16px;
+    border: 1px solid #d7dde6;
+    background-color: #f8fbff;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    text-align: center;
+}
+
+.balanca-produto-info span {
+    color: #666;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.balanca-produto-info strong {
+    color: #1f2d3d;
+    font-size: 18px;
+}
+
+.balanca-produto-info small {
+    color: #555;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.label-balanca {
+    display: block;
+    margin-bottom: 8px;
+
+    font-weight: bold;
+    text-align: left;
+}
+
+.balanca-total-preview {
+    margin: 16px 0;
+    padding: 14px;
+
+    border-radius: 16px;
+    border: 1px solid #cceeff;
+    background-color: #f3fbff;
+
+    text-align: center;
+}
+
+.balanca-total-preview span {
+    display: block;
+    margin-bottom: 6px;
+
+    color: #555;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.balanca-total-preview strong {
+    color: #0b9ed9;
+    font-size: 28px;
+}

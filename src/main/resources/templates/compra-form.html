@@ -297,6 +297,81 @@
             </div>
 
         </div>
+        <!-- =============================================
+     MODAL DE SIMULAÇÃO DA BALANÇA
+     ============================================= -->
+        <div id="modalBalanca" class="modal">
+
+            <div class="modal-conteudo modal-balanca-conteudo">
+
+                <h2>SIMULAÇÃO DA BALANÇA</h2>
+
+                <p class="texto-balanca">
+                    Aguardando envio do peso pela balança conectada.
+                    Como não há periférico físico, informe o peso manualmente.
+                </p>
+
+                <div class="balanca-produto-info">
+
+                    <span>Produto selecionado</span>
+
+                    <strong id="produtoBalanca">
+                        Produto
+                    </strong>
+
+                    <small id="precoBalanca">
+                        R$ 0,00 / kg
+                    </small>
+
+                </div>
+
+                <label for="pesoBalancaInput" class="label-balanca">
+                    Peso informado pela balança kg
+                </label>
+
+                <input type="text"
+                       id="pesoBalancaInput"
+                       class="input-pdv"
+                       placeholder="Exemplo: 0,500"
+                       inputmode="decimal"
+                       autocomplete="off">
+
+                <div class="balanca-total-preview">
+
+                    <span>Total calculado</span>
+
+                    <strong id="totalBalanca">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+                <p id="erroBalanca"
+                   class="mensagem-validacao"
+                   aria-live="polite"
+                   hidden>
+                </p>
+
+                <div class="acoes">
+
+                    <button type="button"
+                            id="confirmarPesoBalanca"
+                            class="botao botao-verde">
+                        CONFIRMAR PESO
+                    </button>
+
+                    <button type="button"
+                            id="cancelarBalanca"
+                            class="botao botao-vermelho">
+                        CANCELAR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
 
         <script th:src="@{/js/compra.js(v=${#dates.createNow().time})}"></script>
 

@@ -68,12 +68,40 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("erroCliente");
 
     /* =========================================================
+     3.1 ELEMENTOS DO MODAL DA BALANÇA
+     ========================================================= */
+
+    const modalBalanca =
+            document.getElementById("modalBalanca");
+
+    const produtoBalanca =
+            document.getElementById("produtoBalanca");
+
+    const precoBalanca =
+            document.getElementById("precoBalanca");
+
+    const pesoBalancaInput =
+            document.getElementById("pesoBalancaInput");
+
+    const totalBalanca =
+            document.getElementById("totalBalanca");
+
+    const erroBalanca =
+            document.getElementById("erroBalanca");
+
+    const confirmarPesoBalanca =
+            document.getElementById("confirmarPesoBalanca");
+
+    const cancelarBalanca =
+            document.getElementById("cancelarBalanca");
+
+    /* =========================================================
      4. DADOS DO CLIENTE IDENTIFICADO
      ========================================================= */
 
     let saldoAtualCliente = 0;
     let limiteCreditoCliente = 0;
-
+    let adicaoLiberadaPelaBalanca = false;
 
     /* =========================================================
      5. CONFIGURAÇÃO INICIAL
@@ -136,6 +164,145 @@ document.addEventListener("DOMContentLoaded", function () {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
+    }
+
+    /* =========================================================
+     6.1 FUNÇÕES DO SIMULADOR DE BALANÇA
+     ========================================================= */
+
+    function obterPesoDigitadoBalanca() {
+
+        if (!pesoBalancaInput) {
+            return 0;
+        }
+
+        const textoPeso =
+                pesoBalancaInput.value
+                .trim()
+                .replace(",", ".");
+
+        return Number(textoPeso) || 0;
+    }
+
+    function limparErroBalanca() {
+
+        if (!erroBalanca || !pesoBalancaInput) {
+            return;
+        }
+
+        erroBalanca.textContent = "";
+        erroBalanca.hidden = true;
+
+        pesoBalancaInput.classList.remove("campo-invalido");
+    }
+
+    function mostrarErroBalanca(mensagem) {
+
+        if (!erroBalanca || !pesoBalancaInput) {
+            return;
+        }
+
+        erroBalanca.textContent = mensagem;
+        erroBalanca.hidden = false;
+
+        pesoBalancaInput.classList.add("campo-invalido");
+        pesoBalancaInput.focus();
+    }
+
+    function atualizarPreviaBalanca() {
+
+        if (!totalBalanca) {
+            return;
+        }
+
+        const peso = obterPesoDigitadoBalanca();
+        const preco = obterPrecoProduto();
+
+        const total = peso * preco;
+
+        totalBalanca.textContent =
+                "R$ " + formatarDinheiro(total);
+    }
+
+    function abrirModalBalanca() {
+
+        if (!modalBalanca) {
+            return;
+        }
+
+        const opcaoSelecionada = obterOpcaoSelecionada();
+
+        if (!opcaoSelecionada || !produto.value) {
+
+            mostrarErroProduto(
+                    "Selecione um produto antes de acionar a balança."
+                    );
+
+            return;
+        }
+
+        limparErroBalanca();
+
+        const nomeProduto =
+                opcaoSelecionada.textContent.trim();
+
+        const preco =
+                obterPrecoProduto();
+
+        produtoBalanca.textContent =
+                nomeProduto;
+
+        precoBalanca.textContent =
+                "R$ " + formatarDinheiro(preco) + " / kg";
+
+        pesoBalancaInput.value = "";
+        totalBalanca.textContent = "R$ 0,00";
+
+        modalBalanca.style.display = "flex";
+
+        setTimeout(function () {
+            pesoBalancaInput.focus();
+        }, 100);
+    }
+
+    function fecharModalBalanca() {
+
+        if (!modalBalanca) {
+            return;
+        }
+
+        limparErroBalanca();
+
+        modalBalanca.style.display = "none";
+    }
+
+    function confirmarPesoDaBalanca() {
+
+        const peso = obterPesoDigitadoBalanca();
+
+        if (isNaN(peso) || peso <= 0) {
+
+            mostrarErroBalanca(
+                    "Informe um peso válido. Exemplo: 0,500 kg."
+                    );
+
+            return;
+        }
+
+        /*
+         * A balança simulada envia o peso para o campo já usado
+         * pela lógica atual da compra.
+         */
+        quantidade.value =
+                peso.toFixed(3).replace(".", ",");
+
+        fecharModalBalanca();
+
+        adicaoLiberadaPelaBalanca = true;
+
+        adicionarItem();
+
+        adicaoLiberadaPelaBalanca = false;
     }
 
 
@@ -441,6 +608,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const valor =
                 obterPrecoProduto();
+
+        /*
+         * Se o produto é vendido por peso, o sistema simula a leitura da balança.
+         * A compra só segue depois que o peso for confirmado no modal.
+         */
+        if (vendidoPorPeso && !adicaoLiberadaPelaBalanca) {
+
+            abrirModalBalanca();
+
+            return;
+        }
 
         const valorDigitado =
                 quantidade.value
@@ -989,6 +1167,51 @@ document.addEventListener("DOMContentLoaded", function () {
             adicionarItem
             );
 
+    /* =========================================================
+     21.1 EVENTOS DO SIMULADOR DE BALANÇA
+     ========================================================= */
+
+    if (pesoBalancaInput) {
+
+        pesoBalancaInput.addEventListener("input", function () {
+            limparErroBalanca();
+            atualizarPreviaBalanca();
+        });
+
+        pesoBalancaInput.addEventListener("keydown", function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                confirmarPesoDaBalanca();
+            }
+        });
+    }
+
+    if (confirmarPesoBalanca) {
+
+        confirmarPesoBalanca.addEventListener("click", function () {
+            confirmarPesoDaBalanca();
+        });
+    }
+
+    if (cancelarBalanca) {
+
+        cancelarBalanca.addEventListener("click", function () {
+            fecharModalBalanca();
+        });
+    }
+
+    if (modalBalanca) {
+
+        modalBalanca.addEventListener("click", function (event) {
+
+            if (event.target === modalBalanca) {
+                fecharModalBalanca();
+            }
+        });
+    }
 
     /* =========================================================
      22. INICIALIZAÇÃO DA TELA
