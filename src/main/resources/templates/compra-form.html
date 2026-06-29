@@ -93,70 +93,130 @@
                         </div>
 
                         <!-- Seleção do produto -->
-                        <div class="pdv-produto">
+                        <div class="pdv-produto pdv-produto-organizado">
 
-                            <!-- Produto -->
-                            <div class="campo-pdv">
+                            <div class="pdv-produto-topo-novo">
 
-                                <label for="produto">
-                                    Produto
-                                </label>
+                                <h2>
+                                    PRODUTO
+                                </h2>
 
-                                <select id="produto"
-                                        class="input-pdv"
-                                        required>
-
-                                    <option value=""
-                                            disabled
-                                            selected>
-                                        Selecione um produto
-                                    </option>
-
-                                    <option th:each="produto : ${produtos}"
-                                            th:value="${produto.id}"
-                                            th:data-preco="${produto.precoVenda}"
-                                            th:data-peso="${produto.vendidoPorPeso}"
-                                            th:text="${produto.nome}">
-                                    </option>
-
-                                </select>
-
-                                <p id="erroProduto"
-                                   class="mensagem-validacao"
-                                   aria-live="polite"
-                                   hidden>
+                                <p>
+                                    Escolha o produto e informe a quantidade ou utilize a balança quando for produto por peso.
                                 </p>
 
                             </div>
 
-                            <!-- Quantidade ou peso -->
-                            <div class="campo-pdv">
+                            <div class="pdv-produto-corpo">
 
-                                <label id="labelQuantidade"
-                                       for="quantidade">
-                                    Quantidade
-                                </label>
+                                <!-- Produto selecionado -->
+                                <div class="pdv-produto-principal">
 
-                                <input type="text"
-                                       id="quantidade"
-                                       class="input-pdv"
-                                       value="1"
-                                       inputmode="decimal"
-                                       autocomplete="off"
-                                       required>
+                                    <!--
+                                        Select mantido para o JavaScript da compra.
+                                        Ele fica oculto, mas continua sendo usado internamente.
+                                    -->
+                                    <select id="produto"
+                                            class="produto-select-oculto">
 
-                            </div>
+                                        <option value=""
+                                                disabled
+                                                selected>
+                                            Selecione um produto
+                                        </option>
 
-                            <!-- Adicionar ao carrinho -->
-                            <div class="campo-pdv campo-botao">
+                                        <option th:each="produto : ${produtos}"
+                                                th:value="${produto.id}"
+                                                th:data-preco="${produto.precoVenda}"
+                                                th:data-peso="${produto.vendidoPorPeso}"
+                                                th:data-codigo-barras="${produto.codigoBarras}"
+                                                th:text="${produto.nome}">
+                                        </option>
 
-                                <button type="button"
-                                        id="btnAdicionar"
-                                        class="botao botao-verde botao-pdv">
+                                    </select>
 
-                                    ADICIONAR ITEM
+                                    <div class="produto-selecionado-card produto-card-maior">
 
-                                </button>
+                                        <span>
+                                            Produto selecionado
+                                        </span>
+
+                                        <strong id="produtoSelecionadoTexto">
+                                            Nenhum produto selecionado
+                                        </strong>
+
+                                        <small id="produtoSelecionadoDetalhes">
+                                            Clique no botão abaixo para escolher.
+                                        </small>
+
+                                    </div>
+
+                                    <button type="button"
+                                            id="abrirModalProduto"
+                                            class="botao botao-azul botao-pdv btn-selecionar-produto-card">
+                                        SELECIONAR PRODUTO
+                                    </button>
+
+                                    <p id="erroProduto"
+                                       class="mensagem-validacao"
+                                       aria-live="polite"
+                                       hidden>
+                                    </p>
+
+                                </div>
+
+                                <!-- Ação da venda -->
+                                <div class="pdv-produto-acao"
+                                     id="areaAcaoProduto"
+                                     hidden>
+
+                                    <!-- Quantidade para produto unitário -->
+                                    <div class="campo-pdv campo-quantidade-card"
+                                         id="campoQuantidadePdv"
+                                         hidden>
+
+                                        <label id="labelQuantidade"
+                                               for="quantidade">
+                                            Quantidade
+                                        </label>
+
+                                        <input type="text"
+                                               id="quantidade"
+                                               class="input-pdv"
+                                               value="1"
+                                               inputmode="decimal"
+                                               autocomplete="off"
+                                               required>
+
+                                    </div>
+
+                                    <!-- Aviso para produto vendido por peso -->
+                                    <div class="aviso-balanca-pdv"
+                                         id="avisoBalancaPdv"
+                                         hidden>
+
+                                        <span>
+                                            Produto vendido por peso
+                                        </span>
+
+                                        <strong>
+                                            Peso informado pela balança
+                                        </strong>
+
+                                        <small>
+                                            Ao adicionar, o sistema abrirá a simulação da balança.
+                                        </small>
+
+                                    </div>
+
+                                    <button type="button"
+                                            id="btnAdicionar"
+                                            class="botao botao-verde botao-pdv btn-adicionar-produto"
+                                            disabled>
+                                        ADICIONAR ITEM
+                                    </button>
+
+                                </div>
 
                             </div>
 
@@ -297,6 +357,109 @@
             </div>
 
         </div>
+
+        <!-- =============================================
+     MODAL DE SELEÇÃO DE PRODUTO
+     ============================================= -->
+        <div id="modalProduto" class="modal">
+
+            <div class="modal-conteudo modal-produto-conteudo">
+
+                <h2>SELECIONAR PRODUTO</h2>
+
+                <p class="texto-modal-produto">
+                    Pesquise ou escolha um produto para adicionar à compra.
+                </p>
+
+                <input type="text"
+                       id="pesquisaProdutoModal"
+                       class="input-arredondado modal-produto-pesquisa"
+                       placeholder="Pesquisar por nome ou código"
+                       autocomplete="off">
+
+                <div class="tabela-container tabela-produtos-modal-container">
+
+                    <table class="tabela tabela-produtos-modal">
+
+                        <thead>
+                            <tr>
+                                <th>PRODUTO</th>
+                                <th>CÓDIGO</th>
+                                <th>PREÇO</th>
+                                <th>TIPO</th>
+                                <th>AÇÃO</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabelaProdutosModal">
+
+                            <tr th:each="produto : ${produtos}"
+                                th:data-produto-id="${produto.id}"
+                                th:data-produto-nome="${produto.nome}"
+                                th:data-produto-preco="${produto.precoVenda}"
+                                th:data-produto-peso="${produto.vendidoPorPeso}"
+                                th:data-produto-codigo="${produto.codigoBarras}">
+
+                                <td th:text="${produto.nome}">
+                                    Produto
+                                </td>
+
+                                <td th:text="${produto.codigoBarras != null
+                                    and !produto.codigoBarras.isBlank()
+                                    ? produto.codigoBarras
+                                    : '-'}">
+                                    -
+                                </td>
+
+                                <td th:text="${'R$ '
+                                    + #numbers.formatDecimal(
+                                    produto.precoVenda,
+                                    1,
+                                    2)}">
+                                    R$ 0,00
+                                </td>
+
+                                <td>
+                                    <span th:if="${produto.vendidoPorPeso}"
+                                          class="status status-info">
+                                        PESO
+                                    </span>
+
+                                    <span th:unless="${produto.vendidoPorPeso}"
+                                          class="status status-ok">
+                                        UNITÁRIO
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button type="button"
+                                            class="botao-mini botao-azul btn-selecionar-produto-modal">
+                                        USAR
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="acoes">
+
+                    <button type="button"
+                            id="fecharModalProduto"
+                            class="botao botao-vermelho">
+                        CANCELAR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
         <!-- =============================================
      MODAL DE SIMULAÇÃO DA BALANÇA
      ============================================= -->
@@ -371,7 +534,6 @@
             </div>
 
         </div>
-
 
         <script th:src="@{/js/compra.js(v=${#dates.createNow().time})}"></script>
 

@@ -7,10 +7,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuCompras = document.getElementById("menu-nova-compra");
     const form = document.querySelector(".form-pdv");
 
+    const pdvProduto = document.querySelector(".pdv-produto");
+
     const produto = document.getElementById("produto");
     const quantidade = document.getElementById("quantidade");
     const labelQuantidade = document.getElementById("labelQuantidade");
     const btnAdicionar = document.getElementById("btnAdicionar");
+
+    const areaAcaoProduto = document.getElementById("areaAcaoProduto");
+    const campoQuantidadePdv = document.getElementById("campoQuantidadePdv");
+    const avisoBalancaPdv = document.getElementById("avisoBalancaPdv");
 
     const tabelaItens = document.querySelector("#tabelaItens tbody");
     const itensHidden = document.getElementById("itensHidden");
@@ -95,6 +101,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelarBalanca =
             document.getElementById("cancelarBalanca");
 
+    /* =========================================================
+     3.2 ELEMENTOS DO MODAL DE PRODUTOS
+     ========================================================= */
+
+    const modalProduto =
+            document.getElementById("modalProduto");
+
+    const abrirModalProduto =
+            document.getElementById("abrirModalProduto");
+
+    const fecharModalProduto =
+            document.getElementById("fecharModalProduto");
+
+    const pesquisaProdutoModal =
+            document.getElementById("pesquisaProdutoModal");
+
+    const tabelaProdutosModal =
+            document.getElementById("tabelaProdutosModal");
+
+    const produtoSelecionadoTexto =
+            document.getElementById("produtoSelecionadoTexto");
+
+    const produtoSelecionadoDetalhes =
+            document.getElementById("produtoSelecionadoDetalhes");
     /* =========================================================
      4. DADOS DO CLIENTE IDENTIFICADO
      ========================================================= */
@@ -329,6 +359,159 @@ document.addEventListener("DOMContentLoaded", function () {
         erroCompra.hidden = true;
     }
 
+    /* =========================================================
+     6.2 FUNÇÕES DO MODAL DE PRODUTOS
+     ========================================================= */
+
+    function normalizarTexto(texto) {
+
+        return String(texto || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function abrirModalSelecaoProduto() {
+
+        if (!modalProduto) {
+            return;
+        }
+
+        limparErroProduto();
+
+        modalProduto.style.display = "flex";
+
+        if (pesquisaProdutoModal) {
+            pesquisaProdutoModal.value = "";
+            filtrarProdutosModal();
+
+            setTimeout(function () {
+                pesquisaProdutoModal.focus();
+            }, 100);
+        }
+    }
+
+    function fecharModalSelecaoProduto() {
+
+        if (!modalProduto) {
+            return;
+        }
+
+        modalProduto.style.display = "none";
+    }
+
+    function atualizarProdutoSelecionadoVisual() {
+
+        if (!produtoSelecionadoTexto || !produtoSelecionadoDetalhes) {
+            return;
+        }
+
+        if (!produto.value) {
+
+            produtoSelecionadoTexto.textContent =
+                    "Nenhum produto selecionado";
+
+            produtoSelecionadoDetalhes.textContent =
+                    "Clique no botão abaixo para escolher.";
+
+            return;
+        }
+
+        const opcaoSelecionada =
+                obterOpcaoSelecionada();
+
+        if (!opcaoSelecionada) {
+            return;
+        }
+
+        const nome =
+                opcaoSelecionada.textContent.trim();
+
+        const codigo =
+                opcaoSelecionada.getAttribute("data-codigo-barras") || "-";
+
+        const preco =
+                obterPrecoProduto();
+
+        const tipo =
+                produtoVendidoPorPeso()
+                ? "Vendido por peso"
+                : "Vendido por unidade";
+
+        produtoSelecionadoTexto.textContent =
+                nome;
+
+        produtoSelecionadoDetalhes.textContent =
+                "Código: " + codigo
+                + " | R$ " + formatarDinheiro(preco)
+                + " | " + tipo;
+    }
+
+    function selecionarProdutoPeloModal(linha) {
+
+        if (!linha) {
+            return;
+        }
+
+        const produtoId =
+                linha.getAttribute("data-produto-id");
+
+        if (!produtoId) {
+            return;
+        }
+
+        produto.value = produtoId;
+
+        produto.dispatchEvent(
+                new Event("change")
+                );
+
+        atualizarProdutoSelecionadoVisual();
+        fecharModalSelecaoProduto();
+    }
+
+    function filtrarProdutosModal() {
+
+        if (!pesquisaProdutoModal || !tabelaProdutosModal) {
+            return;
+        }
+
+        const termo =
+                normalizarTexto(
+                        pesquisaProdutoModal.value.trim()
+                        );
+
+        const linhas =
+                tabelaProdutosModal.querySelectorAll("tr");
+
+        linhas.forEach(function (linha) {
+
+            const textoLinha =
+                    normalizarTexto(linha.textContent);
+
+            const codigo =
+                    normalizarTexto(
+                            linha.getAttribute("data-produto-codigo")
+                            );
+
+            const nome =
+                    normalizarTexto(
+                            linha.getAttribute("data-produto-nome")
+                            );
+
+            if (textoLinha.includes(termo)
+                    || codigo.includes(termo)
+                    || nome.includes(termo)) {
+
+                linha.style.display = "";
+
+            } else {
+
+                linha.style.display = "none";
+            }
+        });
+    }
+
 
     /* =========================================================
      7. CONFIGURAÇÃO DO CAMPO QUANTIDADE/PESO
@@ -338,6 +521,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const opcao = obterOpcaoSelecionada();
 
+        /*
+         * Nenhum produto selecionado:
+         * esconde toda a área de ação.
+         */
         if (!opcao || !produto.value) {
 
             labelQuantidade.textContent = "Quantidade";
@@ -346,26 +533,92 @@ document.addEventListener("DOMContentLoaded", function () {
             quantidade.min = "1";
             quantidade.step = "1";
 
+            if (pdvProduto) {
+                pdvProduto.classList.remove("com-produto");
+            }
+
+            if (areaAcaoProduto) {
+                areaAcaoProduto.hidden = true;
+            }
+
+            if (campoQuantidadePdv) {
+                campoQuantidadePdv.hidden = true;
+            }
+
+            if (avisoBalancaPdv) {
+                avisoBalancaPdv.hidden = true;
+            }
+
+            if (btnAdicionar) {
+                btnAdicionar.disabled = true;
+                btnAdicionar.textContent = "ADICIONAR ITEM";
+            }
+
             return;
         }
 
         const vendidoPorPeso = produtoVendidoPorPeso();
 
+        if (pdvProduto) {
+            pdvProduto.classList.add("com-produto");
+        }
+
+        if (areaAcaoProduto) {
+            areaAcaoProduto.hidden = false;
+        }
+
+        if (btnAdicionar) {
+            btnAdicionar.disabled = false;
+        }
+
         if (vendidoPorPeso) {
 
+            /*
+             * Produto vendido por peso:
+             * não mostra campo manual de peso.
+             * O peso entra somente pelo modal da balança.
+             */
             labelQuantidade.textContent = "Peso (kg)";
 
             quantidade.min = "0.001";
             quantidade.step = "0.001";
             quantidade.value = "1,000";
 
+            if (campoQuantidadePdv) {
+                campoQuantidadePdv.hidden = true;
+            }
+
+            if (avisoBalancaPdv) {
+                avisoBalancaPdv.hidden = false;
+            }
+
+            if (btnAdicionar) {
+                btnAdicionar.textContent = "ABRIR BALANÇA";
+            }
+
         } else {
 
+            /*
+             * Produto vendido por unidade:
+             * mostra campo de quantidade.
+             */
             labelQuantidade.textContent = "Quantidade";
 
             quantidade.min = "1";
             quantidade.step = "1";
             quantidade.value = "1";
+
+            if (campoQuantidadePdv) {
+                campoQuantidadePdv.hidden = false;
+            }
+
+            if (avisoBalancaPdv) {
+                avisoBalancaPdv.hidden = true;
+            }
+
+            if (btnAdicionar) {
+                btnAdicionar.textContent = "ADICIONAR ITEM";
+            }
         }
     }
 
@@ -1150,6 +1403,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         limparErroProduto();
         configurarCampoQuantidade();
+        atualizarProdutoSelecionadoVisual();
     });
 
     quantidade.addEventListener("keydown", function (event) {
@@ -1212,11 +1466,63 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+    /* =========================================================
+     21.2 EVENTOS DO MODAL DE PRODUTOS
+     ========================================================= */
+
+    if (abrirModalProduto) {
+
+        abrirModalProduto.addEventListener("click", function () {
+            abrirModalSelecaoProduto();
+        });
+    }
+
+    if (fecharModalProduto) {
+
+        fecharModalProduto.addEventListener("click", function () {
+            fecharModalSelecaoProduto();
+        });
+    }
+
+    if (pesquisaProdutoModal) {
+
+        pesquisaProdutoModal.addEventListener("input", function () {
+            filtrarProdutosModal();
+        });
+    }
+
+    if (tabelaProdutosModal) {
+
+        tabelaProdutosModal.addEventListener("click", function (event) {
+
+            const botao =
+                    event.target.closest(".btn-selecionar-produto-modal");
+
+            const linha =
+                    event.target.closest("tr");
+
+            if (botao || linha) {
+
+                selecionarProdutoPeloModal(linha);
+            }
+        });
+    }
+
+    if (modalProduto) {
+
+        modalProduto.addEventListener("click", function (event) {
+
+            if (event.target === modalProduto) {
+                fecharModalSelecaoProduto();
+            }
+        });
+    }
 
     /* =========================================================
      22. INICIALIZAÇÃO DA TELA
      ========================================================= */
 
     configurarCampoQuantidade();
+    atualizarProdutoSelecionadoVisual();
     atualizarResumo();
 });
