@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Relatório de Compras</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                RELATÓRIO DE COMPRAS
+            </h1>
+
+            <p class="texto-relatorio">
+                Consulte compras realizadas por período.
+            </p>
+
+            <form th:action="@{/relatorios/compras}"
+                  method="get"
+                  class="filtro-relatorio">
+
+                <div class="campo-filtro">
+
+                    <label for="dataInicio">
+                        Data inicial
+                    </label>
+
+                    <input type="date"
+                           id="dataInicio"
+                           name="dataInicio"
+                           class="input-pdv"
+                           th:value="${dataInicio}">
+
+                </div>
+
+                <div class="campo-filtro">
+
+                    <label for="dataFim">
+                        Data final
+                    </label>
+
+                    <input type="date"
+                           id="dataFim"
+                           name="dataFim"
+                           class="input-pdv"
+                           th:value="${dataFim}">
+
+                </div>
+
+                <div class="botoes-filtro-relatorio">
+
+                    <button type="submit"
+                            class="botao botao-verde">
+                        FILTRAR
+                    </button>
+
+                    <a th:href="@{/relatorios/compras}"
+                       class="botao botao-azul">
+                        LIMPAR FILTRO
+                    </a>
+
+                </div>
+            </form>
+
+            <div class="indicadores-relatorio">
+
+                <div class="indicador-card">
+                    <span>Faturamento</span>
+
+                    <strong th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            faturamento,
+                            1,
+                            2)}">
+                        R$ 0,00
+                    </strong>
+                </div>
+
+                <div class="indicador-card">
+                    <span>Quantidade de compras</span>
+
+                    <strong th:text="${quantidade}">
+                        0
+                    </strong>
+                </div>
+
+                <div class="indicador-card">
+                    <span>Ticket médio</span>
+
+                    <strong th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            ticketMedio,
+                            1,
+                            2)}">
+                        R$ 0,00
+                    </strong>
+                </div>
+
+            </div>
+
+            <div th:if="${compras == null or compras.isEmpty()}"
+                 class="mensagem-info">
+                Nenhuma compra encontrada no período selecionado.
+            </div>
+
+            <div th:if="${compras != null and !compras.isEmpty()}"
+                 class="tabela-container">
+
+                <table class="tabela">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>DATA/HORA</th>
+                            <th>CLIENTE</th>
+                            <th>VALOR TOTAL</th>
+                            <th>SALDO ANTERIOR</th>
+                            <th>SALDO ATUALIZADO</th>
+                            <th>AÇÕES</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="compra : ${compras}">
+
+                            <td th:text="${compra.id}">
+                                1
+                            </td>
+
+                            <td th:text="${compra.dataHora != null
+                                ? #temporals.format(
+                                compra.dataHora,
+                                'dd/MM/yyyy HH:mm')
+                                : '-'}">
+                                -
+                            </td>
+
+                            <td th:text="${compra.usuario != null
+                                ? compra.usuario.nome
+                                : 'Cliente não localizado'}">
+                                Cliente
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                compra.valorTotal,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                compra.saldoAnterior,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td th:text="${'R$ '
+                                + #numbers.formatDecimal(
+                                compra.saldoAtualizado,
+                                1,
+                                2)}">
+                                R$ 0,00
+                            </td>
+
+                            <td>
+                                <a th:href="@{/compras/detalhes/{id}(id=${compra.id})}"
+                                   class="botao-mini botao-azul">
+                                    VER
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/relatorios}"
+                   class="botao botao-azul">
+                    VOLTAR PARA RELATÓRIOS
+                </a>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuRelatorios =
+                        document.getElementById("menu-relatorios");
+
+                if (menuRelatorios) {
+                    menuRelatorios.classList.add("ativo");
+                }
+            });
+        </script>
+
+    </body>
+</html>

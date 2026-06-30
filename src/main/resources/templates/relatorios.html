@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Relatórios</title>
+
+        <link rel="stylesheet"
+              th:href="@{/css/style.css}">
+    </head>
+
+    <body>
+
+        <div class="painel">
+
+            <div class="topo"></div>
+
+            <div th:replace="~{fragments/menu :: menu}"></div>
+
+            <h1 class="titulo">
+                RELATÓRIOS
+            </h1>
+
+            <p class="texto-relatorio">
+                Acompanhe os principais indicadores financeiros e operacionais do refeitório.
+            </p>
+
+            <div class="indicadores-relatorio">
+
+                <div class="indicador-card">
+                    <span>Faturamento do dia</span>
+
+                    <strong th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            faturamentoDia,
+                            1,
+                            2)}">
+                        R$ 0,00
+                    </strong>
+                </div>
+
+                <div class="indicador-card">
+                    <span>Compras do dia</span>
+
+                    <strong th:text="${quantidadeComprasDia}">
+                        0
+                    </strong>
+                </div>
+
+                <div class="indicador-card">
+                    <span>Ticket médio do dia</span>
+
+                    <strong th:text="${'R$ '
+                            + #numbers.formatDecimal(
+                            ticketMedioDia,
+                            1,
+                            2)}">
+                        R$ 0,00
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="relatorios-grid">
+
+                <a th:href="@{/relatorios/compras}"
+                   class="relatorio-card">
+
+                    <span>01</span>
+
+                    <h2>
+                        Compras por Período
+                    </h2>
+
+                    <p>
+                        Consulte compras realizadas entre datas, com total arrecadado,
+                        quantidade de vendas e ticket médio.
+                    </p>
+
+                    <strong>
+                        ABRIR RELATÓRIO
+                    </strong>
+
+                </a>
+
+                <a th:href="@{/relatorios/devedores}"
+                   class="relatorio-card">
+
+                    <span>02</span>
+
+                    <h2>
+                        Clientes Devedores
+                    </h2>
+
+                    <p>
+                        Lista clientes com saldo negativo e sem pagamento nos últimos 30 dias.
+                    </p>
+
+                    <strong>
+                        ABRIR RELATÓRIO
+                    </strong>
+
+                </a>
+
+            </div>
+
+            <div class="acoes acoes-pagina">
+
+                <a th:href="@{/}"
+                   class="botao botao-azul">
+                    VOLTAR PARA O PAINEL
+                </a>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const menuRelatorios =
+                        document.getElementById("menu-relatorios");
+
+                if (menuRelatorios) {
+                    menuRelatorios.classList.add("ativo");
+                }
+            });
+        </script>
+
+    </body>
+</html>

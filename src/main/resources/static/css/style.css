@@ -2915,3 +2915,287 @@ textarea:focus {
 #abrirLeitorClienteQr[hidden] {
     display: none !important;
 }
+
+/* =========================================================
+   TELA PRINCIPAL DE RELATÓRIOS
+   ========================================================= */
+
+.texto-relatorio {
+    margin: 0 0 24px;
+
+    color: #555;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.relatorios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.relatorio-card {
+    padding: 22px;
+    box-sizing: border-box;
+
+    border-radius: 20px;
+    border: 1px solid #d7dde6;
+    background-color: white;
+
+    text-decoration: none;
+    color: inherit;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    transition: 0.2s ease-in-out;
+}
+
+.relatorio-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.relatorio-card span {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+    background-color: #eef8ff;
+    color: #07538f;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.relatorio-card h2 {
+    margin: 0;
+
+    color: #1f2d3d;
+    font-size: 20px;
+}
+
+.relatorio-card p {
+    margin: 0;
+
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.relatorio-card strong {
+    margin-top: 8px;
+
+    color: #0b9ed9;
+    font-size: 13px;
+}
+
+.relatorio-card-bloqueado {
+    opacity: 0.75;
+}
+
+.relatorio-card-bloqueado:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.relatorio-card-bloqueado strong {
+    color: #777;
+}
+
+@media (max-width: 800px) {
+
+    .relatorios-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   RELATÓRIOS
+   ========================================================= */
+
+.texto-relatorio {
+    margin: 0 0 24px;
+
+    color: #555;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.indicadores-relatorio {
+    margin-bottom: 24px;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.indicador-card {
+    padding: 20px;
+    box-sizing: border-box;
+
+    border-radius: 20px;
+    border: 1px solid #d7dde6;
+    background-color: white;
+}
+
+.indicador-card span {
+    display: block;
+    margin-bottom: 8px;
+
+    color: #666;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.indicador-card strong {
+    color: #1f2d3d;
+    font-size: 28px;
+}
+
+.relatorios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.relatorio-card {
+    padding: 22px;
+    box-sizing: border-box;
+
+    border-radius: 20px;
+    border: 1px solid #d7dde6;
+    background-color: white;
+
+    text-decoration: none;
+    color: inherit;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    transition: 0.2s ease-in-out;
+}
+
+.relatorio-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+.relatorio-card span {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+    background-color: #eef8ff;
+    color: #07538f;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.relatorio-card h2 {
+    margin: 0;
+
+    color: #1f2d3d;
+    font-size: 20px;
+}
+
+.relatorio-card p {
+    margin: 0;
+
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.relatorio-card strong {
+    margin-top: 8px;
+
+    color: #0b9ed9;
+    font-size: 13px;
+}
+
+.filtro-relatorio {
+    margin-bottom: 24px;
+    padding: 18px;
+    box-sizing: border-box;
+
+    border-radius: 20px;
+    border: 1px solid #d7dde6;
+    background-color: white;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 160px;
+    gap: 16px;
+    align-items: end;
+}
+
+.campo-filtro label {
+    display: block;
+    margin-bottom: 8px;
+
+    font-weight: bold;
+}
+
+.filtro-relatorio .botao {
+    height: 44px;
+}
+
+@media (max-width: 900px) {
+
+    .indicadores-relatorio,
+    .relatorios-grid,
+    .filtro-relatorio {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   BOTÕES DOS RELATÓRIOS
+   ========================================================= */
+
+.botoes-filtro-relatorio {
+    display: flex;
+    gap: 10px;
+    align-items: end;
+}
+
+.botoes-filtro-relatorio .botao {
+    height: 44px;
+    min-width: 120px;
+}
+
+@media (max-width: 900px) {
+
+    .botoes-filtro-relatorio {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .botoes-filtro-relatorio .botao {
+        width: 100%;
+    }
+}
+
+.filtro-relatorio {
+    margin-bottom: 24px;
+    padding: 18px;
+    box-sizing: border-box;
+
+    border-radius: 20px;
+    border: 1px solid #d7dde6;
+    background-color: white;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 16px;
+    align-items: end;
+}

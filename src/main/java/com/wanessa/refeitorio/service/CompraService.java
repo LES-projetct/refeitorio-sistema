@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
@@ -182,5 +181,54 @@ public class CompraService {
 
     public long quantidadeCompras() {
         return compraRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    public BigDecimal calcularFaturamentoPorPeriodo(
+            LocalDateTime inicio,
+            LocalDateTime fim) {
+
+        BigDecimal total
+                = compraRepository.calcularFaturamentoPorPeriodo(inicio, fim);
+
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
+    @Transactional(readOnly = true)
+    public long contarComprasPorPeriodo(
+            LocalDateTime inicio,
+            LocalDateTime fim) {
+
+        return compraRepository.contarComprasPorPeriodo(inicio, fim);
+    }
+
+    @Transactional(readOnly = true)
+    public BigDecimal calcularTicketMedioPorPeriodo(
+            LocalDateTime inicio,
+            LocalDateTime fim) {
+
+        BigDecimal faturamento
+                = calcularFaturamentoPorPeriodo(inicio, fim);
+
+        long quantidade
+                = contarComprasPorPeriodo(inicio, fim);
+
+        if (quantidade == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        return faturamento.divide(
+                BigDecimal.valueOf(quantidade),
+                2,
+                java.math.RoundingMode.HALF_UP
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<Compra> listarComprasPorPeriodo(
+            LocalDateTime inicio,
+            LocalDateTime fim) {
+
+        return compraRepository.listarComprasPorPeriodo(inicio, fim);
     }
 }
