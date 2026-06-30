@@ -15,25 +15,25 @@
 
     <body>
 
-        <div class="painel">
+        <div class="painel painel-conteudo-relatorio">
 
             <div class="topo"></div>
 
             <div th:replace="~{fragments/menu :: menu}"></div>
 
-            <h1 class="titulo">
-                RELATÓRIO DE COMPRAS
-            </h1>
+            <div class="cabecalho-relatorio">
+                <h1 class="titulo">RELATÓRIO DE COMPRAS</h1>
 
-            <p class="texto-relatorio">
-                Consulte compras realizadas por período.
-            </p>
+                <p class="subtitulo-relatorio">
+                    Consulte compras realizadas por período.
+                </p>
+            </div>
 
             <form th:action="@{/relatorios/compras}"
                   method="get"
                   class="filtro-relatorio">
 
-                <div class="campo-filtro">
+                <div class="campo-filtro-relatorio">
 
                     <label for="dataInicio">
                         Data inicial
@@ -42,12 +42,12 @@
                     <input type="date"
                            id="dataInicio"
                            name="dataInicio"
-                           class="input-pdv"
+                           class="input-arredondado"
                            th:value="${dataInicio}">
 
                 </div>
 
-                <div class="campo-filtro">
+                <div class="campo-filtro-relatorio">
 
                     <label for="dataFim">
                         Data final
@@ -56,12 +56,12 @@
                     <input type="date"
                            id="dataFim"
                            name="dataFim"
-                           class="input-pdv"
+                           class="input-arredondado"
                            th:value="${dataFim}">
 
                 </div>
 
-                <div class="botoes-filtro-relatorio">
+                <div class="acoes-filtro-relatorio">
 
                     <button type="submit"
                             class="botao botao-verde">
@@ -74,40 +74,41 @@
                     </a>
 
                 </div>
+
             </form>
 
-            <div class="indicadores-relatorio">
+            <div class="grid-indicadores-relatorio">
 
-                <div class="indicador-card">
-                    <span>Faturamento</span>
+                <div class="card-resumo card-relatorio-kpi">
+                    <p>Faturamento</p>
 
-                    <strong th:text="${'R$ '
-                            + #numbers.formatDecimal(
-                            faturamento,
-                            1,
-                            2)}">
+                    <h2 th:text="${'R$ '
+                        + #numbers.formatDecimal(
+                        faturamento,
+                        1,
+                        2)}">
                         R$ 0,00
-                    </strong>
+                    </h2>
                 </div>
 
-                <div class="indicador-card">
-                    <span>Quantidade de compras</span>
+                <div class="card-resumo card-relatorio-kpi">
+                    <p>Quantidade de compras</p>
 
-                    <strong th:text="${quantidade}">
+                    <h2 th:text="${quantidade}">
                         0
-                    </strong>
+                    </h2>
                 </div>
 
-                <div class="indicador-card">
-                    <span>Ticket médio</span>
+                <div class="card-resumo card-relatorio-kpi">
+                    <p>Ticket médio</p>
 
-                    <strong th:text="${'R$ '
-                            + #numbers.formatDecimal(
-                            ticketMedio,
-                            1,
-                            2)}">
+                    <h2 th:text="${'R$ '
+                        + #numbers.formatDecimal(
+                        ticketMedio,
+                        1,
+                        2)}">
                         R$ 0,00
-                    </strong>
+                    </h2>
                 </div>
 
             </div>
@@ -195,15 +196,11 @@
 
             </div>
 
-            <div class="acoes acoes-pagina">
-
-                <a th:href="@{/relatorios}"
-                   class="botao botao-azul">
+            <div class="acoes-centralizadas">
+                <a th:href="@{/relatorios}" class="botao botao-azul">
                     VOLTAR PARA RELATÓRIOS
                 </a>
-
             </div>
-
         </div>
 
         <script>

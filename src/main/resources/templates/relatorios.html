@@ -15,108 +15,71 @@
 
     <body>
 
-        <div class="painel">
+        <div class="painel painel-conteudo-relatorio">
 
             <div class="topo"></div>
 
             <div th:replace="~{fragments/menu :: menu}"></div>
 
-            <h1 class="titulo">
-                RELATÓRIOS
-            </h1>
+            <div class="cabecalho-relatorio">
+                <h1 class="titulo">RELATÓRIOS</h1>
 
-            <p class="texto-relatorio">
-                Acompanhe os principais indicadores financeiros e operacionais do refeitório.
-            </p>
-
-            <div class="indicadores-relatorio">
-
-                <div class="indicador-card">
-                    <span>Faturamento do dia</span>
-
-                    <strong th:text="${'R$ '
-                            + #numbers.formatDecimal(
-                            faturamentoDia,
-                            1,
-                            2)}">
-                        R$ 0,00
-                    </strong>
-                </div>
-
-                <div class="indicador-card">
-                    <span>Compras do dia</span>
-
-                    <strong th:text="${quantidadeComprasDia}">
-                        0
-                    </strong>
-                </div>
-
-                <div class="indicador-card">
-                    <span>Ticket médio do dia</span>
-
-                    <strong th:text="${'R$ '
-                            + #numbers.formatDecimal(
-                            ticketMedioDia,
-                            1,
-                            2)}">
-                        R$ 0,00
-                    </strong>
-                </div>
-
+                <p class="subtitulo-relatorio">
+                    Acompanhe os principais indicadores financeiros e operacionais do refeitório.
+                </p>
             </div>
 
-            <div class="relatorios-grid">
+            <div class="grid-indicadores-relatorio">
+                <div class="card-resumo card-relatorio-kpi">
+                    <p>Faturamento do dia</p>
+                    <h2>R$ 0,00</h2>
+                </div>
 
-                <a th:href="@{/relatorios/compras}"
-                   class="relatorio-card">
+                <div class="card-resumo card-relatorio-kpi">
+                    <p>Compras do dia</p>
+                    <h2>0</h2>
+                </div>
 
-                    <span>01</span>
+                <div class="card-resumo card-relatorio-kpi">
+                    <p>Ticket médio do dia</p>
+                    <h2>R$ 0,00</h2>
+                </div>
+            </div>
 
-                    <h2>
-                        Compras por Período
-                    </h2>
-
+            <div class="grid-cards-relatorios">
+                <div class="card-relatorio-opcao">
+                    <div class="numero-relatorio">01</div>
+                    <h3>Compras por Período</h3>
                     <p>
                         Consulte compras realizadas entre datas, com total arrecadado,
                         quantidade de vendas e ticket médio.
                     </p>
 
-                    <strong>
+                    <a th:href="@{/relatorios/compras}"
+                       class="link-relatorio">
                         ABRIR RELATÓRIO
-                    </strong>
+                    </a>
+                </div>
 
-                </a>
-
-                <a th:href="@{/relatorios/devedores}"
-                   class="relatorio-card">
-
-                    <span>02</span>
-
-                    <h2>
-                        Clientes Devedores
-                    </h2>
-
+                <div class="card-relatorio-opcao">
+                    <div class="numero-relatorio">02</div>
+                    <h3>Clientes Devedores</h3>
                     <p>
                         Lista clientes com saldo negativo e sem pagamento nos últimos 30 dias.
                     </p>
 
-                    <strong>
+                    <a th:href="@{/relatorios/devedores}"
+                       class="link-relatorio">
                         ABRIR RELATÓRIO
-                    </strong>
-
-                </a>
-
+                    </a>
+                </div>
             </div>
 
-            <div class="acoes acoes-pagina">
-
-                <a th:href="@{/}"
-                   class="botao botao-azul">
+            <div class="acoes-centralizadas">
+                <a th:href="@{/}" class="botao botao-azul">
                     VOLTAR PARA O PAINEL
                 </a>
-
             </div>
-
         </div>
 
         <script>
