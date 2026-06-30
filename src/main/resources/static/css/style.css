@@ -2763,3 +2763,155 @@ textarea:focus {
         max-width: none;
     }
 }
+
+/* =========================================================
+   LEITOR DE CÓDIGO DE BARRAS - NOVA COMPRA
+   ========================================================= */
+
+.btn-leitor-codigo-card {
+    width: 100%;
+    height: 44px;
+    margin-top: 10px;
+}
+
+.modal-codigo-barras-conteudo {
+    width: 94%;
+    max-width: 560px;
+}
+
+.texto-codigo-barras {
+    margin: 0 0 16px;
+
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.leitor-codigo-barras {
+    width: 100%;
+    min-height: 300px;
+
+    border-radius: 18px;
+    overflow: hidden;
+
+    background-color: #111;
+}
+
+.leitor-codigo-barras video {
+    border-radius: 18px;
+}
+
+@media (max-width: 700px) {
+
+    .leitor-codigo-barras {
+        min-height: 230px;
+    }
+}
+
+/* =========================================================
+   CÓDIGO DE BARRAS VISUAL - MODAL DE PRODUTOS
+   ========================================================= */
+
+.coluna-codigo-visual {
+    min-width: 150px;
+    text-align: center;
+}
+
+.codigo-barras-produto {
+    width: 140px;
+    max-width: 140px;
+    height: auto;
+
+    background-color: white;
+    border-radius: 6px;
+}
+
+/* =========================================================
+   IDENTIFICAÇÃO DO CLIENTE POR QR CODE - NOVA COMPRA
+   ========================================================= */
+
+.modal-cliente-conteudo {
+    width: 94%;
+    max-width: 480px;
+}
+
+.texto-identificacao-cliente {
+    margin: 0 0 16px;
+
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.area-leitor-cliente-qr {
+    margin-top: 16px;
+    padding: 14px;
+
+    border-radius: 18px;
+    border: 1px solid #d7dde6;
+    background-color: #f8fbff;
+}
+
+.area-leitor-cliente-qr[hidden] {
+    display: none !important;
+}
+
+.leitor-cliente-qr {
+    width: 100%;
+    min-height: 260px;
+
+    border-radius: 16px;
+    overflow: hidden;
+
+    background-color: #111;
+}
+
+.leitor-cliente-qr video {
+    border-radius: 16px;
+}
+
+.area-leitor-cliente-qr .botao {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.identificacao-manual-cliente {
+    margin-top: 16px;
+    padding: 14px;
+
+    border-radius: 16px;
+    border: 1px solid #d7dde6;
+    background-color: white;
+}
+
+.identificacao-manual-cliente summary {
+    cursor: pointer;
+
+    color: #07538f;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.identificacao-manual-conteudo {
+    margin-top: 14px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.identificacao-manual-conteudo .botao {
+    width: 100%;
+}
+
+@media (max-width: 700px) {
+
+    .leitor-cliente-qr {
+        min-height: 220px;
+    }
+}
+
+#abrirLeitorClienteQr[hidden] {
+    display: none !important;
+}

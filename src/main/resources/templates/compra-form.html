@@ -157,6 +157,12 @@
                                         SELECIONAR PRODUTO
                                     </button>
 
+                                    <button type="button"
+                                            id="abrirLeitorCodigoBarras"
+                                            class="botao botao-azul botao-pdv btn-leitor-codigo-card">
+                                        LER CÓDIGO DE BARRAS
+                                    </button>
+
                                     <p id="erroProduto"
                                        class="mensagem-validacao"
                                        aria-live="polite"
@@ -233,6 +239,7 @@
                                     <thead>
                                         <tr>
                                             <th>PRODUTO</th>
+                                            <th>CÓDIGO</th>
                                             <th>QTD/PESO</th>
                                             <th>VALOR</th>
                                             <th>TOTAL</th>
@@ -314,19 +321,63 @@
         </div>
 
         <!-- =============================================
-             MODAL DE IDENTIFICAÇÃO DO CLIENTE
-             ============================================= -->
+     MODAL DE IDENTIFICAÇÃO DO CLIENTE
+     ============================================= -->
         <div id="modalCliente" class="modal">
 
-            <div class="modal-conteudo">
+            <div class="modal-conteudo modal-cliente-conteudo">
 
                 <h2>IDENTIFICAR CLIENTE</h2>
 
-                <input type="text"
-                       id="rfidInput"
-                       placeholder="Aproxime o RFID ou digite o código"
-                       class="input-pdv"
-                       autocomplete="off">
+                <p class="texto-identificacao-cliente">
+                    Leia o QR Code do cliente para vincular a compra à conta dele.
+                </p>
+
+                <button type="button"
+                        id="abrirLeitorClienteQr"
+                        class="botao botao-azul botao-pdv">
+                    LER QR CODE DO CLIENTE
+                </button>
+
+                <div id="areaLeitorClienteQr"
+                     class="area-leitor-cliente-qr"
+                     hidden>
+
+                    <div id="leitorClienteQr"
+                         class="leitor-cliente-qr">
+                    </div>
+
+                    <button type="button"
+                            id="pararLeitorClienteQr"
+                            class="botao botao-vermelho botao-pdv">
+                        PARAR CÂMERA
+                    </button>
+
+                </div>
+
+                <details class="identificacao-manual-cliente">
+
+                    <summary>
+                        Inserir RFID manualmente
+                    </summary>
+
+                    <div class="identificacao-manual-conteudo">
+
+                        <input type="text"
+                               id="rfidInput"
+                               placeholder="Digite o RFID do cliente"
+                               class="input-pdv"
+                               autocomplete="off">
+
+                        <button type="button"
+                                id="buscarCliente"
+                                class="botao botao-verde">
+                            IDENTIFICAR MANUALMENTE
+                        </button>
+
+                    </div>
+
+                </details>
 
                 <p id="erroCliente"
                    class="mensagem-validacao"
@@ -337,19 +388,9 @@
                 <div class="acoes">
 
                     <button type="button"
-                            id="buscarCliente"
-                            class="botao botao-verde">
-
-                        IDENTIFICAR
-
-                    </button>
-
-                    <button type="button"
                             id="fecharModalCliente"
                             class="botao botao-vermelho">
-
                         CANCELAR
-
                     </button>
 
                 </div>
@@ -409,6 +450,21 @@
                                     ? produto.codigoBarras
                                     : '-'}">
                                     -
+                                </td>
+
+                                <td class="coluna-codigo-visual">
+
+                                    <svg th:if="${produto.codigoBarras != null
+                                         and !produto.codigoBarras.isBlank()}"
+                                         class="codigo-barras-produto"
+                                         th:attr="data-codigo=${produto.codigoBarras}">
+                                    </svg>
+
+                                    <span th:unless="${produto.codigoBarras != null
+                                          and !produto.codigoBarras.isBlank()}">
+                                        -
+                                    </span>
+
                                 </td>
 
                                 <td th:text="${'R$ '
@@ -535,6 +591,46 @@
 
         </div>
 
+        <!-- =============================================
+        MODAL DO LEITOR DE CÓDIGO DE BARRAS
+        ============================================= -->
+        <div id="modalCodigoBarras" class="modal">
+
+            <div class="modal-conteudo modal-codigo-barras-conteudo">
+
+                <h2>LEITOR DE CÓDIGO DE BARRAS</h2>
+
+                <p class="texto-codigo-barras">
+                    Aponte a câmera para o código de barras do produto.
+                    O sistema buscará o produto automaticamente.
+                </p>
+
+                <div id="leitorCodigoBarras"
+                     class="leitor-codigo-barras">
+                </div>
+
+                <p id="mensagemCodigoBarras"
+                   class="mensagem-validacao"
+                   aria-live="polite"
+                   hidden>
+                </p>
+
+                <div class="acoes">
+
+                    <button type="button"
+                            id="fecharLeitorCodigoBarras"
+                            class="botao botao-vermelho">
+                        FECHAR LEITOR
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <script src="https://unpkg.com/html5-qrcode"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
         <script th:src="@{/js/compra.js(v=${#dates.createNow().time})}"></script>
 
     </body>

@@ -73,6 +73,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const erroCliente =
             document.getElementById("erroCliente");
 
+    const abrirLeitorClienteQr =
+            document.getElementById("abrirLeitorClienteQr");
+
+    const areaLeitorClienteQr =
+            document.getElementById("areaLeitorClienteQr");
+
+    const pararLeitorClienteQr =
+            document.getElementById("pararLeitorClienteQr");
+
     /* =========================================================
      3.1 ELEMENTOS DO MODAL DA BALANÇA
      ========================================================= */
@@ -126,12 +135,37 @@ document.addEventListener("DOMContentLoaded", function () {
     const produtoSelecionadoDetalhes =
             document.getElementById("produtoSelecionadoDetalhes");
     /* =========================================================
+     3.3 ELEMENTOS DO LEITOR DE CÓDIGO DE BARRAS
+     ========================================================= */
+
+    const abrirLeitorCodigoBarras =
+            document.getElementById("abrirLeitorCodigoBarras");
+
+    const modalCodigoBarras =
+            document.getElementById("modalCodigoBarras");
+
+    const fecharLeitorCodigoBarras =
+            document.getElementById("fecharLeitorCodigoBarras");
+
+    const mensagemCodigoBarras =
+            document.getElementById("mensagemCodigoBarras");
+
+
+    /* =========================================================
      4. DADOS DO CLIENTE IDENTIFICADO
      ========================================================= */
 
     let saldoAtualCliente = 0;
     let limiteCreditoCliente = 0;
     let adicaoLiberadaPelaBalanca = false;
+
+    let leitorCodigoBarras = null;
+    let leitorCodigoBarrasAtivo = false;
+    let leituraCodigoBarrasEmProcessamento = false;
+
+    let leitorClienteQr = null;
+    let leitorClienteQrAtivo = false;
+    let leituraClienteQrEmProcessamento = false;
 
     /* =========================================================
      5. CONFIGURAÇÃO INICIAL
@@ -512,6 +546,213 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /* =========================================================
+     6.3 FUNÇÕES DO LEITOR DE CÓDIGO DE BARRAS
+     ========================================================= */
+
+    function mostrarMensagemCodigoBarras(mensagem) {
+
+        if (!mensagemCodigoBarras) {
+            return;
+        }
+
+        mensagemCodigoBarras.textContent = mensagem;
+        mensagemCodigoBarras.hidden = false;
+    }
+
+    function limparMensagemCodigoBarras() {
+
+        if (!mensagemCodigoBarras) {
+            return;
+        }
+
+        mensagemCodigoBarras.textContent = "";
+        mensagemCodigoBarras.hidden = true;
+    }
+
+    function localizarProdutoPorCodigoBarras(codigoLido) {
+
+        if (!codigoLido) {
+            return null;
+        }
+
+        const codigoNormalizado =
+                String(codigoLido).trim();
+
+        const opcoes =
+                produto.querySelectorAll("option");
+
+        for (const opcao of opcoes) {
+
+            const codigoProduto =
+                    opcao.getAttribute("data-codigo-barras");
+            if (codigoProduto
+                    && String(codigoProduto).trim() === codigoNormalizado) {
+
+                return opcao;
+            }
+        }
+
+        return null;
+    }
+
+    function selecionarProdutoPorCodigoBarras(codigoLido) {
+
+        const opcaoEncontrada =
+                localizarProdutoPorCodigoBarras(codigoLido);
+
+        if (!opcaoEncontrada) {
+
+            leituraCodigoBarrasEmProcessamento = false;
+
+            mostrarMensagemCodigoBarras(
+                    "Nenhum produto encontrado com o código: " + codigoLido
+                    );
+
+            return;
+        }
+
+        produto.value =
+                opcaoEncontrada.value;
+
+        produto.dispatchEvent(
+                new Event("change")
+                );
+
+        atualizarProdutoSelecionadoVisual();
+
+        limparMensagemCodigoBarras();
+
+        fecharModalCodigoBarras();
+    }
+
+    function abrirModalCodigoBarras() {
+
+        if (!modalCodigoBarras) {
+            return;
+        }
+
+        limparMensagemCodigoBarras();
+
+        modalCodigoBarras.style.display = "flex";
+
+        iniciarLeitorCodigoBarras();
+    }
+
+    function fecharModalCodigoBarras() {
+
+        if (modalCodigoBarras) {
+            modalCodigoBarras.style.display = "none";
+        }
+
+        pararLeitorCodigoBarras();
+    }
+
+
+    function iniciarLeitorCodigoBarras() {
+
+        if (leitorCodigoBarrasAtivo) {
+            return;
+        }
+
+        if (typeof Html5Qrcode === "undefined") {
+
+            mostrarMensagemCodigoBarras(
+                    "Biblioteca do leitor não carregada."
+                    );
+
+            return;
+        }
+
+        leituraCodigoBarrasEmProcessamento = false;
+
+        leitorCodigoBarras =
+                new Html5Qrcode("leitorCodigoBarras");
+
+        const configuracao = {
+            fps: 10,
+            qrbox: {
+                width: 320,
+                height: 180
+            },
+            formatsToSupport: [
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.EAN_8,
+                Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.UPC_E
+            ]
+        };
+
+        leitorCodigoBarras.start(
+                {facingMode: "environment"},
+                configuracao,
+                function (codigoLido) {
+
+                    if (!codigoLido || leituraCodigoBarrasEmProcessamento) {
+                        return;
+                    }
+
+                    leituraCodigoBarrasEmProcessamento = true;
+
+                    selecionarProdutoPorCodigoBarras(
+                            codigoLido.trim()
+                            );
+                },
+                function () {
+                    /*
+                     * Falhas contínuas de leitura são normais
+                     * enquanto a câmera ainda não encontrou um código.
+                     */
+                }
+        ).then(function () {
+
+            leitorCodigoBarrasAtivo = true;
+
+            mostrarMensagemCodigoBarras(
+                    "Câmera ativa. Aponte para o código de barras do produto."
+                    );
+
+        }).catch(function () {
+
+            mostrarMensagemCodigoBarras(
+                    "Não foi possível acessar a câmera. Use localhost ou HTTPS."
+                    );
+        });
+    }
+
+    function pararLeitorCodigoBarras() {
+
+        if (!leitorCodigoBarras) {
+
+            leitorCodigoBarrasAtivo = false;
+            leituraCodigoBarrasEmProcessamento = false;
+
+            return;
+        }
+
+        if (!leitorCodigoBarrasAtivo) {
+
+            leituraCodigoBarrasEmProcessamento = false;
+
+            return;
+        }
+
+        leitorCodigoBarrasAtivo = false;
+        leituraCodigoBarrasEmProcessamento = false;
+
+        leitorCodigoBarras.stop().then(function () {
+
+            leitorCodigoBarras.clear();
+            leitorCodigoBarras = null;
+
+        }).catch(function () {
+
+            leitorCodigoBarras = null;
+        });
+    }
+
 
     /* =========================================================
      7. CONFIGURAÇÃO DO CAMPO QUANTIDADE/PESO
@@ -856,6 +1097,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const nomeProduto =
                 opcaoSelecionada.textContent.trim();
 
+        const codigoProduto =
+                opcaoSelecionada.getAttribute("data-codigo-barras") || "-";
+
         const vendidoPorPeso =
                 produtoVendidoPorPeso();
 
@@ -929,6 +1173,7 @@ document.addEventListener("DOMContentLoaded", function () {
             criarNovaLinhaProduto(
                     produtoId,
                     nomeProduto,
+                    codigoProduto,
                     quantidadeInformada,
                     valor,
                     vendidoPorPeso
@@ -977,15 +1222,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 novoTotal.toFixed(2)
                 );
 
-        linha.children[1].textContent =
+        linha.children[2].textContent =
                 vendidoPorPeso
                 ? novaQuantidade.toFixed(3)
                 : novaQuantidade.toFixed(0);
 
-        linha.children[2].textContent =
+        linha.children[3].textContent =
                 formatarDinheiro(valor);
 
-        linha.children[3].textContent =
+        linha.children[4].textContent =
                 formatarDinheiro(novoTotal);
     }
 
@@ -997,6 +1242,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function criarNovaLinhaProduto(
             produtoId,
             nomeProduto,
+            codigoProduto,
             quantidadeInformada,
             valor,
             vendidoPorPeso) {
@@ -1015,6 +1261,11 @@ document.addEventListener("DOMContentLoaded", function () {
         linha.setAttribute(
                 "data-produto-id",
                 produtoId
+                );
+
+        linha.setAttribute(
+                "data-codigo-barras",
+                codigoProduto
                 );
 
         linha.setAttribute(
@@ -1038,21 +1289,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
         linha.innerHTML = `
-            <td>${nomeProduto}</td>
+        <td>${nomeProduto}</td>
 
-            <td>${quantidadeExibida}</td>
+        <td>${codigoProduto}</td>
 
-            <td>${formatarDinheiro(valor)}</td>
+        <td>${quantidadeExibida}</td>
 
-            <td>${formatarDinheiro(totalItem)}</td>
+        <td>${formatarDinheiro(valor)}</td>
 
-            <td>
-                <button type="button"
-                        class="botao-mini botao-vermelho btn-remover-item">
-                    REMOVER
-                </button>
-            </td>
-        `;
+        <td>${formatarDinheiro(totalItem)}</td>
+
+        <td>
+            <button type="button"
+                    class="botao-mini botao-vermelho btn-remover-item">
+                REMOVER
+            </button>
+        </td>
+    `;
 
         tabelaItens.appendChild(linha);
     }
@@ -1146,7 +1399,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fecharModalCliente.addEventListener("click", function () {
 
         limparErroCliente();
-        modalCliente.style.display = "none";
+        fecharModalIdentificacaoCliente();
     });
 
     /* Fecha ao clicar fora da caixa branca */
@@ -1155,7 +1408,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.target === modalCliente) {
 
             limparErroCliente();
-            modalCliente.style.display = "none";
+            fecharModalIdentificacaoCliente();
         }
     });
 
@@ -1164,23 +1417,22 @@ document.addEventListener("DOMContentLoaded", function () {
      18. IDENTIFICAR CLIENTE POR RFID
      ========================================================= */
 
-    /**
-     * Busca o usuário pelo RFID e preenche os dados na tela.
-     */
-    async function identificarCliente() {
+    async function identificarClientePorCodigo(codigoCliente) {
 
-        const rfid = rfidInput.value.trim();
+        const rfid = String(codigoCliente || "").trim();
 
         limparErroCliente();
 
         if (!rfid) {
 
             mostrarErroCliente(
-                    "Informe ou aproxime o código RFID do cliente."
+                    "Informe ou leia o QR Code do cliente."
                     );
 
             return;
         }
+
+        rfidInput.value = rfid;
 
         buscarCliente.disabled = true;
         buscarCliente.textContent = "IDENTIFICANDO...";
@@ -1196,7 +1448,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (resposta.status === 404) {
 
                     throw new Error(
-                            "Nenhum usuário foi encontrado com este RFID."
+                            "Nenhum usuário foi encontrado com este QR Code/RFID."
                             );
                 }
 
@@ -1218,10 +1470,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const limiteNegativo = -limite;
 
-            /*
-             * Não permite identificar quem já ultrapassou
-             * completamente o limite de crédito.
-             */
             if (saldo < limiteNegativo) {
 
                 mostrarErroCliente(
@@ -1231,13 +1479,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            /*
-             * Usuário inativo com saldo positivo ou zero
-             * é considerado bloqueado manualmente.
-             *
-             * Usuário inativo com saldo negativo dentro do limite
-             * ainda é aceito temporariamente por causa da regra antiga.
-             */
             if (usuario.ativo === false && saldo >= 0) {
 
                 mostrarErroCliente(
@@ -1247,19 +1488,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            /* Armazena os dados para os cálculos */
             saldoAtualCliente = saldo;
             limiteCreditoCliente = limite;
 
             usuarioSelecionado.value = usuario.id;
 
-            /* Atualiza os dados visíveis */
             nomeCliente.textContent =
                     usuario.nome || "Cliente identificado";
 
             saldoCliente.textContent =
-                    "Saldo: R$ "
-                    + formatarDinheiro(saldo);
+                    "Saldo: R$ " + formatarDinheiro(saldo);
 
             const creditoUtilizado =
                     saldo < 0 ? Math.abs(saldo) : 0;
@@ -1277,7 +1515,7 @@ document.addEventListener("DOMContentLoaded", function () {
             limparErroCompra();
             limparErroCliente();
 
-            modalCliente.style.display = "none";
+            fecharModalIdentificacaoCliente();
 
             atualizarResumo();
 
@@ -1296,7 +1534,171 @@ document.addEventListener("DOMContentLoaded", function () {
         } finally {
 
             buscarCliente.disabled = false;
-            buscarCliente.textContent = "IDENTIFICAR";
+            buscarCliente.textContent = "IDENTIFICAR MANUALMENTE";
+        }
+    }
+
+    function identificarCliente() {
+
+        identificarClientePorCodigo(
+                rfidInput.value.trim()
+                );
+    }
+
+    /* =========================================================
+     18.1 LEITOR DE QR CODE DO CLIENTE
+     ========================================================= */
+
+    function abrirLeitorQrCliente() {
+
+        if (!areaLeitorClienteQr) {
+            return;
+        }
+
+        limparErroCliente();
+
+        areaLeitorClienteQr.hidden = false;
+
+        if (abrirLeitorClienteQr) {
+            abrirLeitorClienteQr.hidden = true;
+        }
+
+        iniciarLeitorQrCliente();
+    }
+
+    function iniciarLeitorQrCliente() {
+
+        if (leitorClienteQrAtivo) {
+            return;
+        }
+
+        if (typeof Html5Qrcode === "undefined") {
+
+            mostrarErroCliente(
+                    "Biblioteca do leitor QR Code não carregada."
+                    );
+
+            return;
+        }
+
+        leituraClienteQrEmProcessamento = false;
+
+        leitorClienteQr =
+                new Html5Qrcode("leitorClienteQr");
+
+        const configuracao = {
+            fps: 10,
+            qrbox: {
+                width: 220,
+                height: 220
+            }
+        };
+
+        leitorClienteQr.start(
+                {facingMode: "environment"},
+                configuracao,
+                function (codigoLido) {
+
+                    if (!codigoLido || leituraClienteQrEmProcessamento) {
+                        return;
+                    }
+
+                    leituraClienteQrEmProcessamento = true;
+
+                    const codigo =
+                            codigoLido.trim();
+
+                    pararLeitorQrCliente();
+
+                    identificarClientePorCodigo(codigo);
+                },
+                function () {
+                    /*
+                     * Erros contínuos de leitura são normais enquanto
+                     * a câmera ainda não encontrou um QR Code.
+                     */
+                }
+        ).then(function () {
+
+            leitorClienteQrAtivo = true;
+
+        }).catch(function () {
+
+            mostrarErroCliente(
+                    "Não foi possível acessar a câmera. Use localhost ou HTTPS."
+                    );
+        });
+    }
+
+    function pararLeitorQrCliente() {
+
+        if (!leitorClienteQr) {
+
+            leitorClienteQrAtivo = false;
+            leituraClienteQrEmProcessamento = false;
+
+            if (areaLeitorClienteQr) {
+                areaLeitorClienteQr.hidden = true;
+            }
+
+            if (abrirLeitorClienteQr) {
+                abrirLeitorClienteQr.hidden = false;
+            }
+
+            return;
+        }
+
+        if (!leitorClienteQrAtivo) {
+
+            leituraClienteQrEmProcessamento = false;
+
+            if (areaLeitorClienteQr) {
+                areaLeitorClienteQr.hidden = true;
+            }
+
+            if (abrirLeitorClienteQr) {
+                abrirLeitorClienteQr.hidden = false;
+            }
+
+            return;
+        }
+
+        leitorClienteQrAtivo = false;
+        leituraClienteQrEmProcessamento = false;
+
+        leitorClienteQr.stop().then(function () {
+
+            leitorClienteQr.clear();
+            leitorClienteQr = null;
+
+            if (areaLeitorClienteQr) {
+                areaLeitorClienteQr.hidden = true;
+            }
+
+            if (abrirLeitorClienteQr) {
+                abrirLeitorClienteQr.hidden = false;
+            }
+
+        }).catch(function () {
+
+            leitorClienteQr = null;
+
+            if (areaLeitorClienteQr) {
+                areaLeitorClienteQr.hidden = true;
+            }
+
+            if (abrirLeitorClienteQr) {
+                abrirLeitorClienteQr.hidden = false;
+            }
+        });
+    }
+
+    function fecharModalIdentificacaoCliente() {
+
+        pararLeitorQrCliente();
+
+        if (modalCliente) {
+            modalCliente.style.display = "none";
         }
     }
 
@@ -1323,6 +1725,20 @@ document.addEventListener("DOMContentLoaded", function () {
             identificarCliente();
         }
     });
+
+    if (abrirLeitorClienteQr) {
+
+        abrirLeitorClienteQr.addEventListener("click", function () {
+            abrirLeitorQrCliente();
+        });
+    }
+
+    if (pararLeitorClienteQr) {
+
+        pararLeitorClienteQr.addEventListener("click", function () {
+            pararLeitorQrCliente();
+        });
+    }
 
 
     /* =========================================================
@@ -1519,10 +1935,83 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     /* =========================================================
+     21.3 EVENTOS DO LEITOR DE CÓDIGO DE BARRAS
+     ========================================================= */
+
+    if (abrirLeitorCodigoBarras) {
+
+        abrirLeitorCodigoBarras.addEventListener("click", function () {
+            abrirModalCodigoBarras();
+        });
+    }
+
+    if (fecharLeitorCodigoBarras) {
+
+        fecharLeitorCodigoBarras.addEventListener("click", function () {
+            fecharModalCodigoBarras();
+        });
+    }
+
+    if (modalCodigoBarras) {
+
+        modalCodigoBarras.addEventListener("click", function (event) {
+
+            if (event.target === modalCodigoBarras) {
+                fecharModalCodigoBarras();
+            }
+        });
+    }
+
+    /* =========================================================
+     21.4 GERAR IMAGENS DOS CÓDIGOS DE BARRAS
+     ========================================================= */
+
+    function gerarCodigosDeBarrasDosProdutos() {
+
+        if (typeof JsBarcode === "undefined") {
+            return;
+        }
+
+        const codigos =
+                document.querySelectorAll(".codigo-barras-produto");
+
+        codigos.forEach(function (codigoVisual) {
+
+            const codigo =
+                    codigoVisual.getAttribute("data-codigo");
+
+            if (!codigo) {
+                return;
+            }
+
+            try {
+
+                JsBarcode(codigoVisual, codigo, {
+                    format: "CODE128",
+                    width: 1.4,
+                    height: 42,
+                    displayValue: true,
+                    fontSize: 11,
+                    margin: 4
+                });
+
+            } catch (erro) {
+
+                console.error(
+                        "Erro ao gerar código de barras:",
+                        codigo,
+                        erro
+                        );
+            }
+        });
+    }
+
+    /* =========================================================
      22. INICIALIZAÇÃO DA TELA
      ========================================================= */
 
     configurarCampoQuantidade();
     atualizarProdutoSelecionadoVisual();
     atualizarResumo();
+    gerarCodigosDeBarrasDosProdutos();
 });
