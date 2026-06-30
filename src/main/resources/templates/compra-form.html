@@ -425,7 +425,7 @@
                         <thead>
                             <tr>
                                 <th>PRODUTO</th>
-                                <th>CÓDIGO</th>
+                                <th>CÓDIGO DE BARRAS</th>
                                 <th>PREÇO</th>
                                 <th>TIPO</th>
                                 <th>AÇÃO</th>
@@ -441,15 +441,12 @@
                                 th:data-produto-peso="${produto.vendidoPorPeso}"
                                 th:data-produto-codigo="${produto.codigoBarras}">
 
-                                <td th:text="${produto.nome}">
-                                    Produto
-                                </td>
+                                <td class="produto-modal-nome">
 
-                                <td th:text="${produto.codigoBarras != null
-                                    and !produto.codigoBarras.isBlank()
-                                    ? produto.codigoBarras
-                                    : '-'}">
-                                    -
+                                    <strong th:text="${produto.nome}">
+                                        Produto
+                                    </strong>
+
                                 </td>
 
                                 <td class="coluna-codigo-visual">
@@ -460,6 +457,12 @@
                                          th:attr="data-codigo=${produto.codigoBarras}">
                                     </svg>
 
+                                    <small th:if="${produto.codigoBarras != null
+                                           and !produto.codigoBarras.isBlank()}"
+                                           th:text="${produto.codigoBarras}">
+                                        7890000000000
+                                    </small>
+
                                     <span th:unless="${produto.codigoBarras != null
                                           and !produto.codigoBarras.isBlank()}">
                                         -
@@ -467,7 +470,8 @@
 
                                 </td>
 
-                                <td th:text="${'R$ '
+                                <td class="produto-modal-preco"
+                                    th:text="${'R$ '
                                     + #numbers.formatDecimal(
                                     produto.precoVenda,
                                     1,
@@ -475,7 +479,8 @@
                                     R$ 0,00
                                 </td>
 
-                                <td>
+                                <td class="produto-modal-tipo">
+
                                     <span th:if="${produto.vendidoPorPeso}"
                                           class="status status-info">
                                         PESO
@@ -485,13 +490,16 @@
                                           class="status status-ok">
                                         UNITÁRIO
                                     </span>
+
                                 </td>
 
-                                <td>
+                                <td class="produto-modal-acao">
+
                                     <button type="button"
                                             class="botao-mini botao-azul btn-selecionar-produto-modal">
                                         USAR
                                     </button>
+
                                 </td>
 
                             </tr>
