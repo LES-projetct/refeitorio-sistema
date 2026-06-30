@@ -41,6 +41,7 @@ Além disso, o sistema registra entradas e saídas por meio de uma catraca simul
 <img src="https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
 
 </div>
+<div align="center">
 
 ### Frontend
 
@@ -78,6 +79,7 @@ Além disso, o sistema registra entradas e saídas por meio de uma catraca simul
 <img src="https://img.shields.io/badge/Insomnia-4000BF?style=for-the-badge&logo=insomnia&logoColor=white">
 <img src="https://img.shields.io/badge/Navegador%20Web-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white">
 
+</div>
 </div>
 
 ## Funcionalidades
