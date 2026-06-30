@@ -1,192 +1,208 @@
-# Sistema de Controle de Refeitório
+# RefeCard — Sistema de Controle de Refeitório
 
-Sistema web desenvolvido para controle de acesso, consumo, pagamentos e despesas em refeitórios, com identificação de usuários por RFID, controle de saldo, limite de crédito, histórico de compras, comprovantes e dashboard administrativo.
+Sistema web desenvolvido para controle de acesso, consumo, saldo, pagamentos e relatórios em refeitórios institucionais.
 
----
+Projeto desenvolvido para a disciplina de **Laboratório de Engenharia de Software**, no curso de **Sistemas de Informação — IFES Campus Colatina**.
 
-## Tecnologias utilizadas
+## Problema
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge\&logo=openjdk\&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge\&logo=springboot\&logoColor=white)
-![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge\&logo=springsecurity\&logoColor=white)
-![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-59666C?style=for-the-badge\&logo=hibernate\&logoColor=white)
-![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge\&logo=thymeleaf\&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge\&logo=postgresql\&logoColor=white)
-![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge\&logo=apachemaven\&logoColor=white)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge\&logo=html5\&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge\&logo=css\&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge\&logo=javascript\&logoColor=black)
-![NetBeans](https://img.shields.io/badge/NetBeans-1B6AC6?style=for-the-badge\&logo=apachenetbeanside\&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge\&logo=github\&logoColor=white)
+Em muitos refeitórios, o controle de acesso, consumo e pagamento ainda é feito de forma manual ou pouco integrada. Isso pode gerar demora no atendimento, erros no registro de compras, dificuldade no controle de saldo dos usuários e falta de histórico confiável para acompanhamento administrativo.
 
----
+## Objetivo
 
-## Sobre o projeto
+Desenvolver um sistema web capaz de auxiliar o gerenciamento de refeitórios institucionais, permitindo:
 
-O Sistema de Controle de Refeitório foi desenvolvido para simular o funcionamento de um refeitório informatizado, permitindo o controle de usuários, produtos, compras, pagamentos, acessos e despesas.
+* Identificação de clientes;
+* Controle de acesso;
+* Registro de compras;
+* Controle de saldo e limite de crédito;
+* Registro de pagamentos;
+* Consulta de relatórios;
+* Simulação de periféricos utilizados em um ambiente real.
 
-O sistema utiliza identificação por RFID para localizar clientes, controla saldo e limite de crédito, registra compras por unidade ou por peso, gera comprovantes e apresenta indicadores administrativos no dashboard.
+## Solução Proposta
 
-A aplicação possui controle de perfis de acesso, separando as funções disponíveis para administrador, operador e cliente.
+O **RefeCard** centraliza o controle do refeitório em uma única plataforma. O sistema permite que clientes sejam identificados por QR Code ou RFID, que produtos sejam selecionados manualmente ou por código de barras, e que produtos vendidos por peso utilizem uma balança simulada.
 
----
+Além disso, o sistema registra entradas e saídas por meio de uma catraca simulada, controla saldo e limite de crédito dos usuários e gera relatórios administrativos.
 
-## Funcionalidades principais
+## Tecnologias Utilizadas
 
-* Cadastro, edição, ativação e desativação de usuários.
-* Geração automática de RFID para clientes.
-* Criação automática de conta de acesso para cliente.
-* Troca obrigatória de PIN no primeiro acesso.
-* Cadastro e gerenciamento de produtos.
-* Produtos vendidos por unidade ou por peso.
-* Registro de compras.
-* Cálculo automático do valor total da compra.
-* Controle de saldo e limite de crédito.
-* Bloqueio de compra quando o limite de crédito é ultrapassado.
-* Geração de comprovante de compra.
-* Histórico de compras.
-* Consulta de detalhes e comprovantes.
-* Registro de pagamentos e recargas de saldo.
+<div align="center">
+
+### Backend
+
+<img src="https://skillicons.dev/icons?i=java,spring,maven" />
+
+<br><br>
+
+<img src="https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">
+<img src="https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+
+</div>
+
+### Frontend
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=html,css,js" />
+
+<br><br>
+
+<img src="https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white">
+
+</div>
+
+### Banco de Dados
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=postgres" />
+
+<br><br>
+
+<img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white">
+
+</div>
+
+### Ferramentas
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=git,github,vscode" />
+
+<br><br>
+
+<img src="https://img.shields.io/badge/NetBeans-1B6AC6?style=for-the-badge&logo=apachenetbeanside&logoColor=white">
+<img src="https://img.shields.io/badge/Insomnia-4000BF?style=for-the-badge&logo=insomnia&logoColor=white">
+<img src="https://img.shields.io/badge/Navegador%20Web-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white">
+
+</div>
+
+## Funcionalidades
+
+### Usuários
+
+* Cadastro de clientes;
+* Cadastro de administradores e operadores;
+* Controle de status ativo ou bloqueado;
+* Vinculação de QR Code/RFID ao cliente;
+* Consulta de saldo e limite de crédito.
+
+### Produtos
+
+* Cadastro de produtos;
+* Código de barras gerado automaticamente em padrão EAN-13;
+* Produtos vendidos por unidade;
+* Produtos vendidos por peso;
+* Ativação e desativação de produtos.
+
+### Compras
+
+* Identificação do cliente por QR Code ou RFID;
+* Seleção de produto por modal de busca;
+* Leitura de código de barras pela câmera;
+* Cálculo automático do valor da compra;
+* Validação de saldo e limite de crédito;
+* Atualização automática do saldo do cliente;
+* Registro do histórico de compras.
+
+### Simulação de Balança
+
+Para produtos vendidos por peso, o sistema abre uma simulação de balança. Como não há periférico físico conectado, o peso é informado manualmente no modal, simulando a entrada de dados de uma balança real.
+
+### Simulação de Catraca
+
+O sistema possui uma tela de catraca simulada, que permite registrar entrada e saída do cliente por QR Code/RFID. O sistema verifica o status do cliente, saldo e limite antes de permitir o acesso.
+
+### Pagamentos
+
+* Identificação do cliente por QR Code ou RFID;
+* Registro de valor pago;
+* Escolha da forma de pagamento;
+* Atualização automática do saldo;
 * Histórico de pagamentos.
-* Registro de entrada e saída no refeitório.
-* Controle de acesso por RFID.
-* Dashboard administrativo com indicadores gerais.
-* Relatório de clientes devedores.
-* Controle de despesas com fornecedores.
-* Cálculo de despesas pagas, despesas pendentes e lucro estimado.
-* Controle de permissões por perfil de acesso.
 
----
+### Relatórios
 
-## Perfis de acesso
+* Faturamento do dia;
+* Quantidade de compras;
+* Ticket médio;
+* Compras por período;
+* Clientes devedores;
+* Histórico administrativo.
+
+## Fluxo Principal do Sistema
+
+1. O cliente é cadastrado no sistema;
+2. O sistema gera um QR Code/RFID para o cliente;
+3. O operador inicia uma nova compra;
+4. O cliente é identificado por QR Code ou RFID;
+5. O produto é selecionado manualmente ou por código de barras;
+6. Se o produto for vendido por peso, o sistema abre a balança simulada;
+7. O sistema calcula o valor da compra;
+8. O sistema valida saldo e limite de crédito;
+9. A compra é finalizada;
+10. O saldo do cliente é atualizado;
+11. Os dados ficam disponíveis nos relatórios.
+
+## Fluxo de Acesso ao Refeitório
+
+1. O cliente apresenta o QR Code;
+2. A catraca simulada lê o código;
+3. O sistema identifica o cliente;
+4. O sistema verifica status, saldo e limite;
+5. O acesso é liberado ou bloqueado;
+6. O registro aparece no histórico de acessos.
+
+## Perfis de Acesso
 
 ### Administrador
 
-O administrador possui acesso completo ao sistema. Pode gerenciar usuários, produtos, compras, pagamentos, acessos, contas, relatórios, despesas e visualizar o dashboard administrativo.
+* Gerencia usuários;
+* Gerencia produtos;
+* Consulta relatórios;
+* Acompanha acessos;
+* Registra pagamentos;
+* Acessa as principais funcionalidades administrativas.
 
 ### Operador
 
-O operador possui acesso às funções operacionais do refeitório, como produtos, compras, nova compra, pagamentos e acessos.
+* Realiza compras;
+* Identifica clientes;
+* Registra pagamentos;
+* Utiliza os periféricos simulados.
 
 ### Cliente
 
-O cliente possui acesso à área própria, onde pode consultar saldo, limite de crédito, histórico de compras, comprovantes, acessos e pagamentos.
+* Acessa sua conta;
+* Visualiza QR Code;
+* Consulta saldo;
+* Consulta histórico de compras.
 
----
+## Simulações Implementadas
 
-## Simulação de periféricos
+O projeto simula três periféricos comuns em refeitórios:
 
-O sistema simula o uso de periféricos comuns em refeitórios.
+* **QR Code/RFID:** identificação do cliente;
+* **Leitor de código de barras:** seleção automática do produto;
+* **Balança:** entrada de peso para produtos vendidos por quilo;
+* **Catraca:** controle de entrada e saída do refeitório.
 
-### Leitor RFID
+Essas simulações permitem demonstrar o funcionamento do sistema mesmo sem equipamentos físicos conectados.
 
-O leitor RFID é simulado por um campo de identificação do cliente. Ao informar o código RFID, o sistema localiza o usuário correspondente e verifica se ele está autorizado a realizar compras ou acessar o refeitório.
+## Requisitos para Executar
 
-### Balança
+* Java 22 ou superior;
+* Maven;
+* PostgreSQL;
+* NetBeans ou outra IDE compatível;
+* Navegador com permissão de câmera para uso de QR Code e código de barras.
 
-A balança é simulada pelo campo de peso em quilogramas. Esse campo é usado apenas para produtos vendidos por peso, como refeição por quilo ou salada por quilo.
+## Configuração do Banco de Dados
 
-### Leitor de código de barras
-
-O leitor de código de barras é representado pelo cadastro dos produtos com código próprio, permitindo a simulação da identificação dos itens vendidos.
-
----
-
-## Regras de negócio
-
-* Usuários inativos não podem realizar compras.
-* Usuários ativos podem realizar compras enquanto estiverem dentro do limite de crédito.
-* O sistema verifica saldo e limite antes de finalizar a compra.
-* Produtos vendidos por unidade aceitam apenas quantidades inteiras.
-* Produtos vendidos por peso aceitam valores decimais em quilogramas.
-* O saldo do cliente é atualizado automaticamente após cada compra.
-* Pagamentos aumentam o saldo disponível do cliente.
-* O cliente deve trocar o PIN temporário no primeiro acesso.
-* Despesas ativas entram nos cálculos financeiros.
-* Despesas desativadas permanecem no histórico, mas não entram nos cálculos.
-* O lucro estimado é calculado com base no faturamento total menos as despesas pagas.
-* O acesso ao sistema é controlado conforme o perfil do usuário.
-
----
-
-## Módulo financeiro
-
-O sistema possui controle financeiro dividido em entradas e saídas.
-
-### Entradas
-
-As entradas são representadas pelas compras realizadas pelos clientes.
-
-### Saídas
-
-As saídas são representadas pelas despesas cadastradas com fornecedores.
-
-### Indicadores financeiros
-
-O dashboard apresenta:
-
-* Faturamento total.
-* Despesas pagas.
-* Despesas pendentes.
-* Lucro estimado.
-
-A regra usada é:
-
-```text
-Lucro estimado = Faturamento total - Despesas pagas
-```
-
----
-
-## Principais telas
-
-* Login.
-* Dashboard administrativo.
-* Usuários.
-* Produtos.
-* Compras.
-* Nova compra.
-* Comprovante de compra.
-* Pagamentos.
-* Acessos.
-* Despesas.
-* Relatórios.
-* Contas do sistema.
-* Minha conta.
-* Minhas compras.
-* Meus acessos.
-* Meus pagamentos.
-
----
-
-## Como executar o projeto
-
-### Pré-requisitos
-
-Antes de executar o projeto, é necessário ter instalado:
-
-* Java JDK 17 ou superior.
-* PostgreSQL.
-* Maven ou Maven Wrapper.
-* NetBeans, IntelliJ IDEA, VS Code ou outra IDE compatível.
-
----
-
-## Configuração do banco de dados
-
-Crie um banco de dados PostgreSQL com o nome:
-
-```sql
-CREATE DATABASE refeitorio;
-```
-
-Depois configure o arquivo:
-
-```text
-src/main/resources/application.properties
-```
-
-Exemplo de configuração local:
+No arquivo `application.properties`, configure o acesso ao PostgreSQL:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/refeitorio
@@ -194,106 +210,70 @@ spring.datasource.username=postgres
 spring.datasource.password=sua_senha
 
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
 
 server.port=8080
 ```
 
----
+## Como Executar
 
-## Conta administrativa inicial
-
-O sistema pode criar uma conta administrativa inicial por meio de variáveis de ambiente.
-
-Exemplo:
-
-```text
-APP_ADMIN_NOME=Administrador
-APP_ADMIN_LOGIN=admin
-APP_ADMIN_SENHA=1234
-```
-
-No Windows, é possível configurar pelo terminal:
-
-```cmd
-setx APP_ADMIN_NOME "Administrador"
-setx APP_ADMIN_LOGIN "admin"
-setx APP_ADMIN_SENHA "1234"
-```
-
-Após configurar as variáveis, feche e abra novamente a IDE ou o terminal.
-
----
-
-## Executando pela IDE
-
-Abra o projeto no NetBeans ou em outra IDE compatível e execute a classe principal:
-
-```text
-RefeitorioApplication.java
-```
-
-Depois acesse no navegador:
-
-```text
-http://localhost:8080/login
-```
-
----
-
-## Executando pelo terminal
-
-Na pasta do projeto, execute:
+1. Clone o repositório:
 
 ```bash
-./mvnw spring-boot:run
+git clone URL_DO_REPOSITORIO
 ```
 
-No Windows:
+2. Acesse a pasta do projeto:
 
-```cmd
-mvnw.cmd spring-boot:run
+```bash
+cd refeitorio
 ```
 
-Depois acesse:
+3. Configure o banco PostgreSQL.
+
+4. Execute o projeto pela IDE ou pelo Maven:
+
+```bash
+mvn spring-boot:run
+```
+
+5. Acesse no navegador:
 
 ```text
 http://localhost:8080/login
 ```
 
----
+## Demonstração Recomendada
 
-## Estrutura geral do projeto
+Para apresentar o sistema, recomenda-se seguir esta ordem:
 
-```text
-src/main/java/com/wanessa/refeitorio
-├── config
-├── controller
-├── dto
-├── enums
-├── model
-├── repository
-├── service
-└── RefeitorioApplication.java
-```
+1. Login no sistema;
+2. Cadastro ou consulta de cliente;
+3. Visualização do QR Code do cliente;
+4. Nova compra com identificação por QR Code;
+5. Seleção de produto por busca manual;
+6. Seleção de produto por código de barras;
+7. Produto por peso com balança simulada;
+8. Finalização da compra;
+9. Pagamento com identificação por QR Code/RFID;
+10. Catraca simulada com entrada e saída;
+11. Relatórios administrativos.
 
-```text
-src/main/resources
-├── static
-│   ├── css
-│   └── js
-├── templates
-└── application.properties
-```
+## Benefícios da Solução
 
----
+* Reduz erros manuais;
+* Agiliza o atendimento;
+* Melhora o controle financeiro;
+* Registra compras, pagamentos e acessos;
+* Facilita a consulta de relatórios;
+* Simula periféricos reais sem necessidade de hardware físico;
+* Centraliza as principais operações do refeitório em uma única plataforma.
 
-## Status do projeto
+## Status do Projeto
 
-Projeto acadêmico desenvolvido para fins de demonstração de um sistema de controle de refeitório, com foco em regras de negócio, controle de acesso, integração simulada com periféricos, controle financeiro e gerenciamento de consumo.
+Projeto acadêmico funcional, desenvolvido como protótipo de sistema web para controle de refeitórios institucionais.
 
----
+## Considerações Finais
 
-## Autora
-
-Desenvolvido por **Wanessa Laurindo Rodrigues**.
+O RefeCard demonstra uma solução integrada para controle de acesso, consumo e pagamento em refeitórios. Mesmo sendo um protótipo acadêmico, o sistema apresenta regras de negócio aplicadas, integração com banco de dados, controle de usuários, simulação de periféricos e geração de relatórios administrativos.
